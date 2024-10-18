@@ -57,6 +57,13 @@ import {
   FileOutlined,
 } from '@ant-design/icons-vue';
 import { ref } from 'vue';
+import { Command } from '@tauri-apps/plugin-shell';
+
+
+const command = Command.sidecar('bin/main');
+const output = await command.execute();
+// console.log(111)
+console.log(output)
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
 </script>

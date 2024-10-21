@@ -19,7 +19,7 @@
             </span>
           </template>
           <a-menu-item key="3"><RouterLink to="/weibo">发送</RouterLink></a-menu-item>
-          <a-menu-item key="4"><RouterLink to="/weibo">点赞</RouterLink></a-menu-item>
+          <a-menu-item key="4"><RouterLink to="/jd">点赞</RouterLink></a-menu-item>
           <a-menu-item key="5">Alex</a-menu-item>
         </a-sub-menu>
         <a-sub-menu key="sub2">
@@ -39,7 +39,7 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-content :style="{background: '#fff', overflow: 'initial' }">
+      <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'  }">
         <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
 
           <RouterView />
@@ -57,13 +57,7 @@ import {
   FileOutlined,
 } from '@ant-design/icons-vue';
 import { ref } from 'vue';
-import { Command } from '@tauri-apps/plugin-shell';
 
-
-const command = Command.sidecar('bin/main');
-const output = await command.execute();
-// console.log(111)
-console.log(output)
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
 </script>

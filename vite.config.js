@@ -27,5 +27,12 @@ export default defineConfig(async () => ({
       // 3. tell vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
     },
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000', // 目标服务器地址
+        changeOrigin: true, // 改变源地址
+        rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
+      }
+    },
   },
 }));

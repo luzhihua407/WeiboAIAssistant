@@ -8,6 +8,17 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "shell:default"
+    "shell:allow-execute",
+    "log:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "bin/main",
+          "cmd": "sh",
+          "sidecar": true
+        }
+      ]
+    }
   ]
 }

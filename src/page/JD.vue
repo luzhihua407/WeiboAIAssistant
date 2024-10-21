@@ -1,8 +1,8 @@
 <template>
   <a-table :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
-    <template #bodyCell="{ column }">
+    <template #bodyCell="{ column ,record }">
       <template v-if="column.key === 'operation'">
-        <a>发微博</a>
+        <a @click="onSendWeibo(record .id)">发微博</a>
       </template>
     </template>
   </a-table>
@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
-import { getProductPage } from '../js/aiapi'; // 根据实际路径引入
+import { getProductPage,sendWeibo } from '../js/aiapi'; // 根据实际路径引入
 
 const columns: TableColumnsType = [
   { title: '商品', width: 100, dataIndex: 'sku_name' },
@@ -40,6 +40,20 @@ const pagination = ref({
 async function getpage(pageNo: number, pageSize: number) {
   try {
     const response = await getProductPage({ pageNo, pageSize });
+    if (response && response.products) {
+      data.value = response.products;
+      pagination.value.total = response.total; // 假设返回的数据中有总数信息
+      console.log(data.value);
+    } else {
+      console.error('Invalid response structure:', response);
+    }
+  } catch (error) {
+    console.error('Error fetching product page:', error);
+  }
+}
+async function onSendWeibo(id:any) {
+  try {
+    const response = await sendWeibo({ id:id });
     if (response && response.products) {
       data.value = response.products;
       pagination.value.total = response.total; // 假设返回的数据中有总数信息

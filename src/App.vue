@@ -1,6 +1,6 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" theme="light" collapsible :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }">
+    <a-layout-sider v-model:collapsed="collapsed" theme="light" collapsible :style="{ overflow: 'auto', height: '100vh', left: 0, top: 0, bottom: 0 }">
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys"  mode="inline" style="height: 100%">
         <a-menu-item key="1">
@@ -39,8 +39,8 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'  }">
-        <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
+      <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'}">
+        <div :style="{ padding: '24px', background: '#fff', textAlign: 'center'}">
 
           <RouterView />
         </div>

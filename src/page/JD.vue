@@ -12,7 +12,7 @@
 import { ref, onMounted } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo } from '../js/aiapi'; // 根据实际路径引入
-
+import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
   { title: '商品', width: 100, dataIndex: 'sku_name' },
   { title: '价格', width: 100, dataIndex: 'purchase_price' },
@@ -40,8 +40,8 @@ const pagination = ref({
 async function getpage(pageNo: number, pageSize: number) {
   try {
     const response = await getProductPage({ pageNo, pageSize });
-    if (response && response.products) {
-      data.value = response.products;
+    if (response && response.data.products) {
+      data.value = response.data.products;
       pagination.value.total = response.total; // 假设返回的数据中有总数信息
       console.log(data.value);
     } else {
@@ -54,11 +54,13 @@ async function getpage(pageNo: number, pageSize: number) {
 async function onSendWeibo(id:any) {
   try {
     const response = await sendWeibo({ id:id });
-    if (response && response.products) {
-      data.value = response.products;
+    if (response && response.data.products) {
+      data.value = response.data.products;
       pagination.value.total = response.total; // 假设返回的数据中有总数信息
       console.log(data.value);
     } else {
+      // Shows message
+      await message(response.msg, { title: '系统提示', kind: 'error' });
       console.error('Invalid response structure:', response);
     }
   } catch (error) {

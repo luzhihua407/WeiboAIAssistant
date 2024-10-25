@@ -1,6 +1,6 @@
-use std::process::Command;
 use std::env;
 use std::error::Error;
+use std::process::Command;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -20,6 +20,7 @@ fn start_server() -> Result<(), Box<dyn Error>> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
@@ -28,7 +29,6 @@ pub fn run() {
         //     if let Err(err) = start_server() {
         //         eprintln!("Failed to start Express server: {}", err);
         //     }
-
         //     Ok(())
         // })
         .run(tauri::generate_context!())

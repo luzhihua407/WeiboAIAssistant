@@ -1,8 +1,10 @@
 <template>
+  <a-button type="primary" :loading="loading" @click="onSaveGoods()">更新商品</a-button>
+    
   <a-table :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
       <template v-if="column.key === 'operation'">
-        <a @click="onSendWeibo(record .id)">发微博</a>
+        <a-button type="primary" :loading="sendLoading" @click="onSendWeibo(record.id)">发微博</a-button>
       </template>
     </template>
   </a-table>
@@ -11,7 +13,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
-import { getProductPage,sendWeibo } from '../js/aiapi'; // 根据实际路径引入
+import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
 import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
   { title: '商品', width: 100, dataIndex: 'sku_name' },
@@ -31,6 +33,8 @@ interface DataItem {
 }
 
 const data = ref<DataItem[]>([]);
+const loading = ref<boolean>(false);
+const sendLoading = ref<boolean>(false);
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -42,8 +46,8 @@ async function getpage(pageNo: number, pageSize: number) {
     const response = await getProductPage({ pageNo, pageSize });
     if (response && response.data.products) {
       data.value = response.data.products;
-      pagination.value.total = response.total; // 假设返回的数据中有总数信息
-      console.log(data.value);
+      pagination.value.total = response.data.total; // 假设返回的数据中有总数信息
+      console.log(pagination);
     } else {
       console.error('Invalid response structure:', response);
     }
@@ -53,17 +57,35 @@ async function getpage(pageNo: number, pageSize: number) {
 }
 async function onSendWeibo(id:any) {
   try {
+    this.sendLoading=true
     const response = await sendWeibo({ id:id });
-    if (response && response.data.products) {
-      data.value = response.data.products;
-      pagination.value.total = response.total; // 假设返回的数据中有总数信息
-      console.log(data.value);
-    } else {
+    if (response.code!=200) {
       // Shows message
+      
       await message(response.msg, { title: '系统提示', kind: 'error' });
       console.error('Invalid response structure:', response);
     }
+    this.sendLoading=false
   } catch (error) {
+    this.sendLoading=false
+    console.error('Error fetching product page:', error);
+  }
+}
+async function onSaveGoods() {
+  try {
+    this.loading=true
+    const response = await saveGoods({ rankId:200000 });
+    if (response.code!=200) {
+      // Shows message
+      await message(response.msg, { title: '系统提示', kind: 'error' });
+      console.error('Invalid response structure:', response);
+    }else{
+      this.loading=false
+      await message('操作完成', { title: '系统提示', kind: 'info' });
+      getpage(pagination.value.current, pagination.value.pageSize);
+    }
+  } catch (error) {
+    this.loading=false
     console.error('Error fetching product page:', error);
   }
 }

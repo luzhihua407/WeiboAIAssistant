@@ -1,7 +1,8 @@
 <template>
-  <a-button type="primary" :loading="loading" @click="onSaveGoods()">更新商品</a-button>
-    
-  <a-table :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
+  <div class="table-operations">
+    <a-button type="primary" :loading="loading" @click="onSaveGoods()">更新商品</a-button>
+  </div>  
+  <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
       <template v-if="column.key === 'operation'">
         <a-button type="primary" :loading="sendLoading" @click="onSendWeibo(record.id)">发微博</a-button>
@@ -11,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
 import { message } from '@tauri-apps/plugin-dialog';
@@ -40,9 +41,16 @@ const pagination = ref({
   pageSize: 10,
   total: 0,
 });
-
+const state = reactive<{
+  selectedRowKeys: Key[];
+  loading: boolean;
+}>({
+  selectedRowKeys: [], // Check here to configure the default column
+  loading: false,
+});
 async function getpage(pageNo: number, pageSize: number) {
   try {
+    state.loading=true;
     const response = await getProductPage({ pageNo, pageSize });
     if (response && response.data.products) {
       data.value = response.data.products;
@@ -51,6 +59,7 @@ async function getpage(pageNo: number, pageSize: number) {
     } else {
       console.error('Invalid response structure:', response);
     }
+    state.loading=false;
   } catch (error) {
     console.error('Error fetching product page:', error);
   }
@@ -74,6 +83,7 @@ async function onSendWeibo(id:any) {
 async function onSaveGoods() {
   try {
     this.loading=true
+    state.loading=true;
     const response = await saveGoods({ rankId:200000 });
     if (response.code!=200) {
       // Shows message
@@ -86,20 +96,16 @@ async function onSaveGoods() {
     }
   } catch (error) {
     this.loading=false
+    state.loading=false;
     console.error('Error fetching product page:', error);
   }
 }
 
 function handlePageChange(page: number) {
-  console.log('page')
+  console.log(page)
   pagination.value.current=page.current
+  pagination.value.pageSize = page.pageSize;
   getpage(page.current, page.pageSize);
-}
-
-function handlePageSizeChange(current: number, pageSize: number) {
-  pagination.value.current = current;
-  pagination.value.pageSize = pageSize;
-  getpage(current, pageSize);
 }
 
 onMounted(() => {
@@ -107,3 +113,12 @@ onMounted(() => {
 });
 
 </script>
+<style scoped>
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-operations > button {
+  margin-right: 8px;
+}
+</style>

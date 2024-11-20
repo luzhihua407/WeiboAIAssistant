@@ -1,6 +1,6 @@
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-sider v-model:collapsed="collapsed" theme="light" collapsible :style="{ overflow: 'auto', height: '100vh', left: 0, top: 0, bottom: 0 }">
+    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0 }">
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys"  mode="inline" style="height: 100%">
         <a-menu-item key="1">
@@ -20,7 +20,7 @@
           </template>
           <a-menu-item key="3"><RouterLink to="/weibo">发送</RouterLink></a-menu-item>
           <a-menu-item key="4"><RouterLink to="/jd">点赞</RouterLink></a-menu-item>
-          <a-menu-item key="5">Alex</a-menu-item>
+          <a-menu-item key="5"><RouterLink to="/weibo_list">列表</RouterLink></a-menu-item>
         </a-sub-menu>
         <a-sub-menu key="sub2">
           <template #title>
@@ -38,9 +38,9 @@
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout>
+    <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'}">
-        <div :style="{ padding: '24px', background: '#fff', textAlign: 'center'}">
+        <div :style="{ padding: '4px', background: '#fff'}">
 
           <RouterView />
         </div>

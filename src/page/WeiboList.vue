@@ -3,19 +3,19 @@
   <a-row>
     <a-col :span="24">
       <a-space :size="16" wrap>
-            <a-avatar :src="user_pic" />
-    
-            <!-- <a-avatar style="background-color: #87d068">
+            <a-avatar :src="user_pic" v-if="isLogined==true" />
+            <a-avatar v-if="isLogined==false">
                     <template #icon>
                       <UserOutlined />
                     </template>
-            </a-avatar> -->
+            </a-avatar>
         </a-space>  
     </a-col>
   </a-row>
   <div class="table-operations">
     <a-button type="primary" @click="onRemoveSelect">删除所选</a-button>
   </div>
+
   <a-table :loading="state.loading" :row-selection="rowSelection" :row-key="record => record.id"
   :columns="columns" :data-source="data" :pagination="false" bordered>
     <template #bodyCell="{ column ,record }">
@@ -44,11 +44,11 @@
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,get_user } from '../js/weiboapi'; // 根据实际路径引入
+import { page,delete_by_id,get_user,login } from '../js/weiboapi'; // 根据实际路径引入
 import { UserOutlined } from '@ant-design/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
-
-
+import { useStore } from 'vuex';
+const store = useStore();
 // import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
   { title: '内容', width: 150, dataIndex: 'text',ellipsis: true },
@@ -70,8 +70,8 @@ interface DataItem {
   comments_count: string;
   visible: string;
 }
-
 const data = ref<DataItem[]>([]);
+const isLogined = ref<boolean>(false);
 const sendLoading = ref<boolean>(false);
 const user_pic = ref<string>();
 const pagination = ref({
@@ -143,14 +143,18 @@ async function deleteWeibo(data:any) {
   }
 }
 
-async function getLogo() {
+async function getLogin() {
   const response=await get_user()
     if (response.code==200) {
       const user_img=response.data.user_img
       const assetUrl = convertFileSrc(user_img);
       user_pic.value=assetUrl
+      isLogined.value=true
+      getpage(pagination.value.current, pagination.value.pageSize);
+    }else if(response.code==10000){
+      login()
     }
-    console.log(user_pic)
+    console.log("登录状态",isLogined)
 }
 
 function handlePageChange(page:number, pageSize:number) {
@@ -161,8 +165,7 @@ function handlePageChange(page:number, pageSize:number) {
 }
 
 onMounted(() => {
-  getpage(pagination.value.current, pagination.value.pageSize);
-  getLogo()
+  getLogin()
 });
 
 </script>

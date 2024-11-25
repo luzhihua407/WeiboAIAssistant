@@ -41,7 +41,7 @@
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'}">
         <div :style="{ padding: '4px', background: '#fff'}">
-
+          <Login/>
           <RouterView />
         </div>
       </a-layout-content>
@@ -56,10 +56,50 @@ import {
   TeamOutlined,
   FileOutlined,
 } from '@ant-design/icons-vue';
-import { ref } from 'vue';
-
+import { ref,onMounted } from 'vue';
+import Login from "./Login.vue";
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { useStore } from 'vuex';
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
+const store = useStore();
+function initWebSocket() {
+let socket = new WebSocket('ws://127.0.0.1:8000/ws/notifications/');
+console.log('WebSocket',socket);
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established.');
+    };
+
+    socket.onmessage = (event) => {
+      console.log('WebSocket onmessage.',event);
+      const resp = JSON.parse(event.data);
+      if(resp.message.event=='not_login'){
+        const qrcode=resp.message.qrcode
+        const assetUrl = convertFileSrc(qrcode);
+        console.log(qrcode)
+        console.log(assetUrl)
+        store.dispatch('loginWin',{"show":true,"qrcode":assetUrl});
+      }
+      if(resp.message.event=='login_success'){
+        const islogined=resp.message.islogined
+        if(islogined){
+          store.dispatch('loginWin',{"show":false});
+        }
+      }
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+}
+onMounted(() => {
+initWebSocket()
+});
 </script>
 <style scoped>
 #components-layout-demo-side .logo {

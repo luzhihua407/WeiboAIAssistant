@@ -15,6 +15,7 @@
 import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
+import { login } from '../js/yuanbaoapi'; // 根据实际路径引入
 import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
   { title: '商品', width: 100, dataIndex: 'sku_name' },
@@ -67,13 +68,15 @@ async function getpage(pageNo: number, pageSize: number) {
 async function onSendWeibo(id:any) {
   try {
     this.sendLoading=true
-    const response = await sendWeibo({ id:id });
-    if (response.code!=200) {
-      // Shows message
-      
-      await message(response.msg, { title: '系统提示', kind: 'error' });
-      console.error('Invalid response structure:', response);
+    const resp = await login();
+    if(resp.data.is_logined){
+      const response = await sendWeibo({ id:id });
+      if (response.code!=200) {
+        await message(response.msg, { title: '系统提示', kind: 'error' });
+        console.error('Invalid response structure:', response);
+      }
     }
+ 
     this.sendLoading=false
   } catch (error) {
     this.sendLoading=false

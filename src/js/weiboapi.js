@@ -22,6 +22,17 @@ export async function get_user(data) {
     throw error;
   }
 }
+export async function login(data) {
+  const url = '/weibo/login';
+  try {
+    const response = await api.get(url, data);
+    console.log('操作成功:', response);
+    return response;
+  } catch (error) {
+    console.error('操作失败:', error);
+    throw error;
+  }
+}
 export async function delete_by_id(data) {
   const url = '/weibo/delete';
   try {

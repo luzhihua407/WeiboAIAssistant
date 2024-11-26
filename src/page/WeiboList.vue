@@ -52,6 +52,7 @@ const store = useStore();
 // import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
   { title: '内容', width: 150, dataIndex: 'text',ellipsis: true },
+  { title: '发布时间', width: 150, dataIndex: 'created_at',ellipsis: false },
   { title: '阅读数', width: 50, dataIndex: 'reads_count' },
   { title: '评论数', width: 50, dataIndex: 'comments_count' },
   { title: '可见性', width: 50, dataIndex: 'visible' },

@@ -17,6 +17,7 @@
     "@tauri-apps/plugin-log": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "@tauri-apps/plugin-updater": "^2.0.0",
+    "@vueup/vue-quill": "^1.2.0",
     "ant-design-vue": "^4.2.5",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",

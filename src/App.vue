@@ -3,44 +3,22 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0 }">
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys"  mode="inline" style="height: 100%">
-        <a-menu-item key="1">
-          <pie-chart-outlined />
-          <span>启动服务</span>
-        </a-menu-item>
-        <a-menu-item key="2">
-          <desktop-outlined />
-          <span>Option 2</span>
-        </a-menu-item>
-        <a-sub-menu key="sub1">
+        <a-sub-menu key="1">
           <template #title>
             <span>
               <user-outlined />
               <span>微博</span>
             </span>
           </template>
-          <a-menu-item key="3"><RouterLink to="/weibo">发送</RouterLink></a-menu-item>
-          <a-menu-item key="4"><RouterLink to="/jd">点赞</RouterLink></a-menu-item>
-          <a-menu-item key="5"><RouterLink to="/weibo_list">列表</RouterLink></a-menu-item>
+          <a-menu-item key="3"><RouterLink to="/weibo">发送微博</RouterLink></a-menu-item>
+          <a-menu-item key="4"><RouterLink to="/jd">京东</RouterLink></a-menu-item>
+          <a-menu-item key="5"><RouterLink to="/weibo_list">微博列表</RouterLink></a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="sub2">
-          <template #title>
-            <span>
-              <team-outlined />
-              <span>Team</span>
-            </span>
-          </template>
-          <a-menu-item key="6">Team 1</a-menu-item>
-          <a-menu-item key="8">Team 2</a-menu-item>
-        </a-sub-menu>
-        <a-menu-item key="9">
-          <file-outlined />
-          <span>File</span>
-        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-content :style="{background: '#fff', overflow: 'initial',minHeight: '280px'}">
-        <div :style="{ padding: '4px', background: '#fff'}">
+        <div :style="{ padding: '20px', background: '#fff'}">
           <Login/>
           <RouterView />
         </div>

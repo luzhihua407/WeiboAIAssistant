@@ -21,13 +21,22 @@ import { refresh_qrcode } from './js/yuanbaoapi';
 import { useStore } from 'vuex';
 const store = useStore();
 const qrcodeImg  = computed(() => store.state.qrcode);
-const open = computed(() => store.state.login_win_show);
+const open = computed({
+  // getter
+  get() {
+    return store.state.login_win_show
+  },
+  // setter
+  set(newValue) {
+    store.state.login_win_show = newValue
+  }
+})
 const handleOk = (e: MouseEvent) => {
   console.log(e);
   refreshQrcode();
 };
 const handleCancel = (e: MouseEvent) => {
-  store.dispatch('closeLoginWin');
+  open.value=false
 };
 async function refreshQrcode(data:any) {
   try {

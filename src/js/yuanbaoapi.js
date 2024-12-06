@@ -11,3 +11,14 @@ export async function login(data) {
     throw error;
   }
 }
+export async function refresh_qrcode(data) {
+  const url = '/yuanbao/refresh_qrcode';
+  try {
+    const response = await api.get(url, data);
+    console.log('操作成功:', response);
+    return response;
+  } catch (error) {
+    console.error('操作失败:', error);
+    throw error;
+  }
+}

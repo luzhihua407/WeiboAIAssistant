@@ -14,8 +14,8 @@ const AxiosUtil = (baseUrl) => ({
     this.instance.interceptors.request.use(
       function (config) {
         // 打印请求数据
-        console.log('Request Data:', config.data);
-        console.log('Request Params:', config.params);
+        // console.log('Request Data:', config.data);
+        // console.log('Request Params:', config.params);
 
         // 在发送请求之前做些什么，例如添加认证信息
         const token = localStorage.getItem('token');
@@ -36,8 +36,8 @@ const AxiosUtil = (baseUrl) => ({
     this.instance.interceptors.response.use(
       function (response) {
         // 打印响应数据
-        console.log('Response Data:', response.data);
-        console.log('Response Status:', response.status);
+        // console.log('Response Data:', response.data);
+        // console.log('Response Status:', response.status);
 
         // 对响应数据做点什么，例如将数据转换为特定格式
         return response.data;

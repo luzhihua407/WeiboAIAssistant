@@ -2,8 +2,12 @@
     <a-modal
       v-model:open="open"
       title="请扫码登录"
+      ok-text="刷新" cancel-text="关闭"
+      @cancel="handleCancel"
+      @ok="handleOk"
     >
     <a-image
+    :preview=false
     :width="200"
     :height="200"
     :src="qrcodeImg"
@@ -12,13 +16,27 @@
     </a-modal>
 </template>
 <script lang="ts" setup>
-import { ref,computed } from 'vue';
+import { computed } from 'vue';
+import { refresh_qrcode } from './js/yuanbaoapi';
 import { useStore } from 'vuex';
-
 const store = useStore();
-const open  = computed(() => store.state.login_win_show);
 const qrcodeImg  = computed(() => store.state.qrcode);
-
+const open = computed(() => store.state.login_win_show);
+const handleOk = (e: MouseEvent) => {
+  console.log(e);
+  refreshQrcode();
+};
+const handleCancel = (e: MouseEvent) => {
+  store.dispatch('closeLoginWin');
+};
+async function refreshQrcode(data:any) {
+  try {
+    await refresh_qrcode(data);
+    
+  } catch (error) {
+    console.error('Error fetching product page:', error);
+  }
+}
 </script>
 <style scoped>
 </style>

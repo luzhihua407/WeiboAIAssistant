@@ -9,3 +9,9 @@ npm run tauri dev
 
 ## 平台后缀
 rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}
+
+## 打包工具
+npm run tauri build
+
+## websocket lib
+https://github.com/joewalnes/reconnecting-websocket

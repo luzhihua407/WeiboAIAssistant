@@ -56,7 +56,6 @@ async function getpage(pageNo: number, pageSize: number) {
     if (response && response.data.products) {
       data.value = response.data.products;
       pagination.value.total = response.data.total; // 假设返回的数据中有总数信息
-      console.log(pagination);
     } else {
       console.error('Invalid response structure:', response);
     }
@@ -67,7 +66,7 @@ async function getpage(pageNo: number, pageSize: number) {
 }
 async function onSendWeibo(id:any) {
   try {
-    this.sendLoading=true
+    sendLoading.value=true
     const resp = await login();
     if(resp.data.is_logined){
       const response = await sendWeibo({ id:id });
@@ -77,9 +76,9 @@ async function onSendWeibo(id:any) {
       }
     }
  
-    this.sendLoading=false
+    sendLoading.value=false
   } catch (error) {
-    this.sendLoading=false
+    sendLoading.value=false
     console.error('Error fetching product page:', error);
   }
 }

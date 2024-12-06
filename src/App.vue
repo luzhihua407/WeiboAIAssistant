@@ -38,42 +38,39 @@ import { ref,onMounted } from 'vue';
 import Login from "./Login.vue";
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useStore } from 'vuex';
+import ReconnectingWebSocket from 'reconnectingwebsocket';
+
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
 const store = useStore();
 function initWebSocket() {
-let socket = new WebSocket('ws://127.0.0.1:8000/ws/notifications/');
-console.log('WebSocket',socket);
+  var socket = new ReconnectingWebSocket('ws://127.0.0.1:8000/ws/notifications/');
+  socket.debug = true;
+  socket.timeoutInterval = 5400;
+  socket.onopen = () => {
+    console.log('WebSocket connection established.');
+  };
+  socket.onmessage = (event) => {
+  console.log('WebSocket onmessage.',event);
+  const resp = JSON.parse(event.data);
+  if(resp.message.event=='not_login'){
+    const qrcode=resp.message.qrcode
+    const assetUrl = convertFileSrc(qrcode);
+    console.log(qrcode)
+    console.log(assetUrl)
+    store.dispatch('loginWin',{"show":true,"qrcode":assetUrl});
+  }
+  if(resp.message.event=='login_success'){
+    const islogined=resp.message.islogined
+    if(islogined){
+      store.dispatch('loginWin',{"show":false});
+    }
+  }
+};
 
-    socket.onopen = () => {
-      console.log('WebSocket connection established.');
-    };
-
-    socket.onmessage = (event) => {
-      console.log('WebSocket onmessage.',event);
-      const resp = JSON.parse(event.data);
-      if(resp.message.event=='not_login'){
-        const qrcode=resp.message.qrcode
-        const assetUrl = convertFileSrc(qrcode);
-        console.log(qrcode)
-        console.log(assetUrl)
-        store.dispatch('loginWin',{"show":true,"qrcode":assetUrl});
-      }
-      if(resp.message.event=='login_success'){
-        const islogined=resp.message.islogined
-        if(islogined){
-          store.dispatch('loginWin',{"show":false});
-        }
-      }
-    };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed.');
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+socket.onclose = () => {
+  console.log('WebSocket connection closed.');
+};
 }
 onMounted(() => {
 initWebSocket()

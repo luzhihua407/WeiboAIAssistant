@@ -112,9 +112,7 @@ async function getpage(pageNo: number, pageSize: number) {
     const response = await page({ pageNo, pageSize });
     if (response.code==200) {
       data.value = response.data.items;
-      console.log('--------',data.value)
       pagination.value.total = response.data.total; // 假设返回的数据中有总数信息
-      console.log(pagination);
     } else {
       console.error('Invalid response structure:', response);
     }
@@ -136,7 +134,6 @@ async function deleteWeibo(data:any) {
       // Shows message
       message.info(response.msg);
       // await message(response.msg, { title: '系统提示', kind: 'info' });
-      console.error('Invalid response structure:', response);
     }
     getpage(pagination.value.current, pagination.value.pageSize);
   } catch (error) {

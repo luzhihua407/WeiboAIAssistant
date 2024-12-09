@@ -108,6 +108,7 @@ const onSubmit =async () => {
     loading.value=false
     if(response.code==200){
       formRef.value.resetFields()
+      img_list.value=[]
       quillRef.value.setText('')
     }
     

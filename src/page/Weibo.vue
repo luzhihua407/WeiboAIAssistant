@@ -98,12 +98,12 @@ const handleChange = async (info: UploadChangeParam) => {
     console.log(formState.img_list)
     };
 const onSubmit =async () => {
+  // 验证表单
+  await formRef.value.validate();
+  console.log('values', formState);
+  loading.value=true
+  // 发送微博，这里假设 send_weibo 是一个返回 Promise 的函数
   try {
-    // 验证表单
-    await formRef.value.validate();
-    console.log('values', formState);
-    loading.value=true
-    // 发送微博，这里假设 send_weibo 是一个返回 Promise 的函数
     const response = await send_weibo(toRaw(formState));
     loading.value=false
     if(response.code==200){

@@ -11,7 +11,7 @@ export async function login(data) {
     throw error;
   }
 }
-export async function refresh_qrcode(data) {
+export async function yuanbao_refresh_qrcode(data) {
   const url = '/yuanbao/refresh_qrcode';
   try {
     const response = await api.get(url, data);

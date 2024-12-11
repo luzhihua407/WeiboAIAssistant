@@ -55,10 +55,11 @@ function initWebSocket() {
   const resp = JSON.parse(event.data);
   if(resp.message.event=='not_login'){
     const qrcode=resp.message.qrcode
+    const channel=resp.message.channel
     const assetUrl = convertFileSrc(qrcode);
     console.log(qrcode)
     console.log(assetUrl)
-    store.dispatch('loginWin',{"show":true,"qrcode":assetUrl});
+    store.dispatch('loginWin',{"show":true,"qrcode":assetUrl,"channel":channel});
   }
   if(resp.message.event=='login_success'){
     const islogined=resp.message.islogined

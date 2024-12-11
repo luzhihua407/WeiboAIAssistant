@@ -1,7 +1,7 @@
 <template>
     <a-modal
       v-model:open="open"
-      title="请扫码登录"
+      :title="`请${channel}扫码登录`"
       ok-text="刷新" cancel-text="关闭"
       @cancel="handleCancel"
       @ok="handleOk"
@@ -17,10 +17,12 @@
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { refresh_qrcode } from './js/yuanbaoapi';
+import { yuanbao_refresh_qrcode } from './js/yuanbaoapi';
+import { weibo_refresh_qrcode } from './js/weiboapi';
 import { useStore } from 'vuex';
 const store = useStore();
 const qrcodeImg  = computed(() => store.state.qrcode);
+const channel  = computed(() => store.state.channel);
 const open = computed({
   // getter
   get() {
@@ -33,14 +35,27 @@ const open = computed({
 })
 const handleOk = (e: MouseEvent) => {
   console.log(e);
-  refreshQrcode();
+  if(channel=='微博'){
+    weiboRefreshQrcode()
+  }
+  if(channel=='元宝'){
+    yuanbaoRefreshQrcode()
+  }
 };
 const handleCancel = (e: MouseEvent) => {
   open.value=false
 };
-async function refreshQrcode(data:any) {
+async function yuanbaoRefreshQrcode(data:any) {
   try {
-    await refresh_qrcode(data);
+    await yuanbao_refresh_qrcode(data);
+    
+  } catch (error) {
+    console.error('Error fetching product page:', error);
+  }
+}
+async function weiboRefreshQrcode(data:any) {
+  try {
+    await weibo_refresh_qrcode(data);
     
   } catch (error) {
     console.error('Error fetching product page:', error);

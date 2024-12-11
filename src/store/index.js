@@ -4,7 +4,8 @@ export default createStore({
   state() {
     return {
       login_win_show: false,
-      qrcode: null
+      qrcode: null,
+      channel: null
     };
   },
   mutations: {
@@ -12,6 +13,7 @@ export default createStore({
       console.log("openLogin=",data)
       state.login_win_show=data.show;
       state.qrcode=data.qrcode;
+      state.channel=data.channel;
     },
   },
   actions: {

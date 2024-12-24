@@ -1,6 +1,7 @@
 <template>
   <div class="table-operations">
     <a-button type="primary" :loading="loading" @click="onSaveGoods()">更新商品</a-button>
+    <a-button type="primary" :loading="loading" @click="handlePage()">刷新</a-button>
   </div>  
   <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
@@ -108,6 +109,10 @@ function handlePageChange(page: number) {
   pagination.value.current=page.current
   pagination.value.pageSize = page.pageSize;
   getpage(page.current, page.pageSize);
+}
+
+function handlePage() {
+  getpage(pagination.value.current, pagination.value.pageSize);
 }
 
 onMounted(() => {

@@ -35,10 +35,10 @@ const open = computed({
 })
 const handleOk = (e: MouseEvent) => {
   console.log(e);
-  if(channel=='微博'){
+  if(channel.value=='微博'){
     weiboRefreshQrcode()
   }
-  if(channel=='元宝'){
+  if(channel.value=='元宝'){
     yuanbaoRefreshQrcode()
   }
 };

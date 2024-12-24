@@ -1,0 +1,56 @@
+ai:
+  kimi:
+    apiKey: sk-nTAzkGBk6Jwj1iadJ9ibqqeGLkpQqGapP6QUWHq0f56caRwk
+    baseUrl: https://api.moonshot.cn/v1/chat/completions
+    model: moonshot-v1-8k
+
+  qwen:
+    apiKey: sk-266518257f644fd78cabdca229ca6d12
+    baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+    model: qwen2-72b-instruct
+
+chrome:
+  yuanbao:
+    baseUrl: https://yuanbao.tencent.com/chat
+    storePath: D://yuanbao
+
+  kimi:
+    baseUrl: https://kimi.moonshot.cn/chat
+    storePath: D://kimi/
+ 
+
+  yiyan:
+    baseUrl: https://yiyan.baidu.com/
+    storePath: D://yiyan/
+ 
+  qwen:
+    baseUrl: https://tongyi.aliyun.com/qianwen/
+    storePath: D://qwen/
+    loginPhoneNum: 14749326367
+
+  official_account:
+    baseUrl: https://mp.weixin.qq.com/
+    cookieCache: D://official_account.json
+   
+
+  xiaohongshu:
+    baseUrl: https://www.xiaohongshu.com/
+    storePath: D://xiaohongshu/
+ 
+
+  doubao:
+    baseUrl: https://www.doubao.com
+    storePath: D://doubao/
+ 
+ 
+rpa:
+  headless: true
+  # headless: false
+weibo:
+  prompt: "你是一名精通微博推荐算法的专家和知名博客主，请利用你掌握的知识，把我提供的资料写一篇微博，要求第一人称分享，接地气，最好有点知识性，只返回微博内容 ："
+  baseUrl: https://weibo.com/
+  storePath: D://weibo/
+#企业微信机器人
+bot:
+  qy:
+    webhook: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=c0f4ca07-d124-46ae-82d8-863f6b2de510

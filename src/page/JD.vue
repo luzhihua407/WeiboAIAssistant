@@ -17,7 +17,8 @@ import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
 import { login } from '../js/yuanbaoapi'; // 根据实际路径引入
-import { message } from '@tauri-apps/plugin-dialog';
+import { message as message_tauri } from '@tauri-apps/plugin-dialog';
+import { message as message_ant } from 'ant-design-vue';
 const columns: TableColumnsType = [
   { title: '商品', width: 100, dataIndex: 'sku_name' },
   { title: '价格', width: 100, dataIndex: 'purchase_price' },
@@ -72,7 +73,7 @@ async function onSendWeibo(id:any) {
     if(resp.data.is_logined){
       const response = await sendWeibo({ id:id });
       if (response.code!=200) {
-        await message(response.msg, { title: '系统提示', kind: 'error' });
+        await message_tauri(response.msg, { title: '系统提示', kind: 'error' });
         console.error('Invalid response structure:', response);
       }
     }
@@ -90,11 +91,10 @@ async function onSaveGoods() {
     const response = await saveGoods({ rankId:200000 });
     if (response.code!=200) {
       // Shows message
-      await message(response.msg, { title: '系统提示', kind: 'error' });
-      console.error('Invalid response structure:', response);
+      await message_tauri(response.msg, { title: '系统提示', kind: 'error' });
     }else{
       this.loading=false
-      await message('操作完成', { title: '系统提示', kind: 'info' });
+      message_ant.info('操作完成');
       getpage(pagination.value.current, pagination.value.pageSize);
     }
   } catch (error) {

@@ -127,12 +127,6 @@ class YuanBaoAgent extends BaseAgent {
         logger.info("Sent prompt request.");
     }
 
-    // Utility functions
-    async saveCookie() {
-        const storageState = await Playwright.browserContext.storageState();
-        fs.writeFileSync(this.cookieCache, JSON.stringify(storageState));
-        logger.info("Cookie saved.");
-    }
 }
 
 export default YuanBaoAgent;

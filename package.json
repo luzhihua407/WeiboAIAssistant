@@ -7,7 +7,12 @@
     "dev": "vite --mode development",
     "build": "vite build --mode production",
     "preview": "vite preview --mode production",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:run": "tauri run",
+    "tauri:dev:run": "tauri dev && tauri run",
+    "start:express": "node src/app.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
@@ -44,6 +49,7 @@
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.3",
     "@vitejs/plugin-vue": "^5.0.5",
+    "concurrently": "^9.1.0",
     "vite": "^5.3.1"
   }
 }

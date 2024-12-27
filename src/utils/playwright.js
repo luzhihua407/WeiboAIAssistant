@@ -13,7 +13,7 @@ class Playwright {
     }
 
     // Get the browser instance, launch if not already done
-    static async getBrowser(headless = false) {
+    static async getBrowser(headless = true) {
         if (!Playwright.browser) {
             console.log(">>> browser is none");
             Playwright.browser = await chromium.launch({

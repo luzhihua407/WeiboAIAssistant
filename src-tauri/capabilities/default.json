@@ -10,16 +10,6 @@
     "shell:allow-open",
     "shell:allow-execute",
     "log:default",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "bin/main",
-          "cmd": "sh",
-          "sidecar": true
-        }
-      ]
-    },
     "dialog:default"
   ]
 }

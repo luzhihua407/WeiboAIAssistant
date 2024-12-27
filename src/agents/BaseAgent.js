@@ -29,8 +29,7 @@ class BaseAgent {
 
     async saveCookie() {
         const cookieCachePath = path.resolve(this.cookieCache);
-        const context = await this.browserContext;
-        const storageState = await context.storageState();
+        const storageState = await this.browserContext.storageState();
         fs.writeFileSync(cookieCachePath, JSON.stringify(storageState));
         logger.info(`保存cookie，${cookieCachePath}`);
     }

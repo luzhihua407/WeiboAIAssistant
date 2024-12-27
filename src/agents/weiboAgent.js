@@ -14,6 +14,7 @@ class WeiboAgent extends BaseAgent {
     super.browserContextOptions = {
       storageState: this.cookieCache
     }
+    Utils.createJsonFile(this.cookieCache);
     this.baseUrl = config.weibo.baseUrl;
   }
 
@@ -37,6 +38,7 @@ class WeiboAgent extends BaseAgent {
     try {
       await this.getLoginQRCode();
       const responsePromise  = this.page.waitForResponse('**/config/get_config', { timeout: 60000 });
+      // await Utils.sleep(1000);
       const response = await responsePromise;
       console.log("发送微博登录通知")
       if (response.status() === 200) {
@@ -71,7 +73,6 @@ class WeiboAgent extends BaseAgent {
 
   async doSendPost(content, imgList, isSelfSee) {
     console.log(content);
-    await this.page.goto(this.baseUrl);
     if (isSelfSee) {
       await this.page.locator('div[title="公开"]').click();
       await this.page.locator('div:text("仅自己可见")').click();
@@ -87,13 +88,12 @@ class WeiboAgent extends BaseAgent {
       }
     }
 
-    await this.page.locator('button:text("发送")').click();
+    await this.page.locator('span:text("发送")').click();
     return true;
   }
 
   async send(content, imgList, isSelfSee) {
     console.log(content);
-    await this.page.goto(this.baseUrl);
     if (isSelfSee) {
       await this.page.locator('div[title="公开"]').click();
       await this.page.locator('div:text("仅自己可见")').click();
@@ -117,7 +117,7 @@ class WeiboAgent extends BaseAgent {
       }
     }
 
-    await this.page.locator('button:text("发送")').click();
+    await this.page.locator('span:text("发送")').click();
     return true;
   }
 
@@ -175,16 +175,16 @@ class WeiboAgent extends BaseAgent {
 
   async deletePost(ids) {
     console.log('Deleting posts:', ids);
-    await this.initBrowser();
+    page=await Playwright.initPlaywright();
     const url = 'https://weibo.com/ajax/statuses/destroy';
-    const cookies = await this.page.context().cookies();
+    const cookies = await page.context().cookies();
     const xsrfToken = Utils.getCookie(cookies, 'XSRF-TOKEN');
     const headers = { 'x-xsrf-token': xsrfToken };
 
     for (let idstr of ids) {
       const data = { id: idstr };
       try {
-        const response = await this.page.request.post(url, { data, headers });
+        const response = await page.request.post(url, { data, headers });
         const json = await response.json();
         if (!json.ok) {
           console.log(`Failed to delete post: ${idstr}`);
@@ -193,22 +193,10 @@ class WeiboAgent extends BaseAgent {
         console.log(`Error deleting post: ${e}`);
       }
     }
+    await page.close();
   }
 
-  async initBrowser() {
-    if (!this.browser) {
-      this.browser = await chromium.launch({ headless: false });
-      const context = await this.browser.newContext();
-      this.page = await context.newPage();
-      await this.page.goto(this.baseUrl);
-    }
-  }
 
-  async saveCookie() {
-    const storageState = await Playwright.browserContext.storageState();
-    fs.writeFileSync(this.cookieCache, JSON.stringify(storageState));
-    console.log("Cookie saved.");
-  }
 }
 
 export default WeiboAgent;

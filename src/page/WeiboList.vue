@@ -14,6 +14,7 @@
   </a-row>
   <div class="table-operations">
     <a-button type="primary" @click="onRemoveSelect">删除所选</a-button>
+    <a-button type="primary" @click="onFreshData">刷新</a-button>
   </div>
 
   <a-table :loading="state.loading" :row-selection="rowSelection" :row-key="record => record.id"
@@ -141,7 +142,9 @@ async function deleteWeibo(data:any) {
     console.error('Error fetching product page:', error);
   }
 }
-
+function onFreshData(){
+  getpage(pagination.value.current, pagination.value.pageSize);
+}
 async function getLogin() {
   const response=await get_user()
     if (response.code==200) {

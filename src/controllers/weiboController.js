@@ -53,7 +53,7 @@ const getUser = async (req, res) => {
         return res.json(responseModel.modelDump());
     } catch (error) {
         logger.error(`捕获到自定义异常: ${error.message}`);
-        const responseModel = new ResponseModel({ code: error.code, msg: error.message });
+        const responseModel = new ResponseModel({ code: 10000, msg: error.message });
         return res.json(responseModel.modelDump());
     }
 };

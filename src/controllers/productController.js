@@ -104,7 +104,7 @@ const get = async (req, res) => {
 
         const weiboReq = {
             content,
-            is_self_see: true,
+            is_self_see: false,
             img_list: imgList,
             comment: `点击领券：${buyUrl}`
         };

@@ -29,7 +29,7 @@ class WeiboService {
       let deltaY = 600;
 
       while (true) {
-        const moreButton = await this.weiboAgent.page.$('i[title="更多"]');
+        const moreButton = await this.weiboAgent.page.locator('i[title="更多"]');
         if (!moreButton) break;
 
         console.log(`Found visible Weibo: ${await this.weiboAgent.page.$$eval('i[title="更多"]', els => els.length)}`);
@@ -47,8 +47,6 @@ class WeiboService {
       }
     } catch (e) {
       console.error(`Error occurred: ${e.message}`);
-    } finally {
-      await this.weiboAgent.page.close();
     }
   }
 
@@ -57,13 +55,11 @@ class WeiboService {
     
     try {
       await this.weiboAgent.doSendPost(request.content, request.img_list, request.is_self_see);
-
+      await Utils.sleep(3)
       // Send comment if provided
       if (request.comment) {
-        const commentButton = await this.weiboAgent.page.$('button[title="Comment"]');
-        await commentButton.click();
-        await this.weiboAgent.page.type('textarea', request.comment);
-        await this.weiboAgent.page.click('button[text="Send Comment"]');
+        await this.weiboAgent.sendComment("我要省购",request.comment);
+        await this.weiboAgent.sendLike("我要省购");
       }
     } catch (e) {
       console.error(`Error occurred: ${e.message}`);
@@ -110,11 +106,12 @@ class WeiboService {
     const headers = {
       'x-xsrf-token': this.xsrfToken,
       'Content-Type': 'application/json',
+      'Cookie': this.cookieHeader
     };
 
     for (let idstr of ids) {
       try {
-        const response = await axios.post(url, { id: idstr }, { headers, cookies: this.cookies });
+        const response = await axios.post(url, { id: idstr }, { headers});
         if (response.data.ok !== 1) {
           throw new Error('Delete failed');
         }
@@ -129,8 +126,8 @@ class WeiboService {
     const url = 'https://weibo.com/';
     const headers = { Cookie: this.cookieHeader };
 
-    try {
       const response = await axios.get(url, { headers });
+      console.log(response.data)
       const $ = cheerio.load(response.data);
       const script = $('script').toArray().find(s => s.children[0] && s.children[0].data.includes('window.$CONFIG'));
 
@@ -139,15 +136,16 @@ class WeiboService {
         if (jsonMatch) {
           const config = JSON.parse(jsonMatch[1]);
           const user = config.user;
-          const profileImageUrl = `https://image.baidu.com/search/down?url=${user.profile_image_url}`;
-          const userImg = await Utils.downloadImage(profileImageUrl, this.storePath, 'avatar.png');
-          return { userId: user.idstr, userImg };
+          if(user!=undefined){
+
+            const profileImageUrl = `https://image.baidu.com/search/down?url=${user.profile_image_url}`;
+            const userImg = await Utils.downloadImage(profileImageUrl, this.storePath, 'avatar.png');
+            return { userId: user.idstr, userImg };
+          }
         }
       }
       throw new Error('User not logged in');
-    } catch (e) {
-      console.error(`Error occurred: ${e.message}`);
-    }
+
   }
 }
 

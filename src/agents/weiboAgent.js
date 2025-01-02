@@ -87,7 +87,7 @@ class WeiboAgent extends BaseAgent {
         await fileInput.setInputFiles(filePath);
       }
     }
-
+    await Utils.sleep(3)
     await this.page.locator('span:text("发送")').click();
     return true;
   }

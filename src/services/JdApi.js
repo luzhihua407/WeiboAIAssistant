@@ -191,7 +191,6 @@ class RestApi {
       } else {
         response = await axios.get(urlString, { params: sys_parameters, timeout });
       }
-      console.log(response.data)
     } catch (err) {
       console.log(err)
     }

@@ -117,8 +117,8 @@ const get = async (req, res) => {
         const responseModel = new ResponseModel({ msg: 'Error fetching product details', code: 500 });
         return res.status(500).json(responseModel.modelDump());
     }finally{
-        await weiboAgent.page.close();
-        await llmaAgent.page.close();
+        await weiboAgent.browserContext.close();
+        await llmaAgent.browserContext.close();
     }   
 };
 

@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import sendNotification from '../utils/messageSender.js';
 import Utils from '../utils/utils.js';
@@ -87,7 +86,7 @@ class WeiboAgent extends BaseAgent {
         await fileInput.setInputFiles(filePath);
       }
     }
-    await Utils.sleep(3)
+    await Utils.sleep(3000)
     await this.page.locator('span:text("发送")').click();
     return true;
   }

@@ -55,7 +55,7 @@ class WeiboService {
     
     try {
       await this.weiboAgent.doSendPost(request.content, request.img_list, request.is_self_see);
-      await Utils.sleep(3)
+      await Utils.sleep(3000)
       // Send comment if provided
       if (request.comment) {
         await this.weiboAgent.sendComment("我要省购",request.comment);

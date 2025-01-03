@@ -14,7 +14,7 @@ app.use('/api', apiRoutes);
 const server = createServer(app);
 // Initialize Socket.IO on the server
 initializeSocket(server);
-// Start the server
+// Start the serverd
 const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

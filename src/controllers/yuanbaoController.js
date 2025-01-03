@@ -12,6 +12,8 @@ const login = async (req, res) => {
         const isLogined = await agent.isLogined();
         if (!isLogined) {
             agent.scanLogin();  // In real app, this would trigger QR code scan
+        }else{
+            await agent.browserContext.close();
         }
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
@@ -25,6 +27,7 @@ const login = async (req, res) => {
 const refreshQRCode = async (req, res) => {
     const agent = new YuanBaoAgent();
     try {
+        await agent.ready();
         agent.scanLogin();  // Trigger QR code scan
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());

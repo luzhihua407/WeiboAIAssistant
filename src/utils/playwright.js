@@ -47,15 +47,13 @@ class Playwright {
 
     // Get browser context, create if not exists
     static async getBrowserContext(browser, options = {}) {
-            console.log(">>> browser_context is none");
-            const contextOptions = {
-                ...options,
-                serviceWorkers: 'block',
-                locale: 'zh-CN',
-                deviceScaleFactor: 1,
+        const contextOptions = {
+            ...options,
+            serviceWorkers: 'block',
+            locale: 'zh-CN',
+            deviceScaleFactor: 1,
                 userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
             };
-
         const browserContext = await browser.newContext(contextOptions);
 
         // Load custom stealth.js script if needed
@@ -66,6 +64,9 @@ class Playwright {
 
     // Create a new page in the browser context
     static async newPage(context) {
+        if(context.pages.length>0){
+            return context.pages[0]
+        }
         const page = await context.newPage();
         return page;
     }

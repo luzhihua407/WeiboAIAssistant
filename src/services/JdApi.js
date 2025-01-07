@@ -183,7 +183,6 @@ class RestApi {
     const application_parameter = this.getApplicationParameters();
     sys_parameters[P_JSON_PARAM_KEY] = JSON.stringify(application_parameter, null, 2);
     sys_parameters[P_SIGN] = sign(this.__secret, sys_parameters);
-    console.log(sys_parameters)
     let response;
     try {
       if (this.__httpmethod === 'POST') {

@@ -3,7 +3,7 @@ import JdProductInfo from '../models/JdProductInfo.js';
 import JdProductImageInfo from '../models/JdProductImageInfo.js';
 import JdCouponInfo from '../models/JdCouponInfo.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
-
+import { MyCustomError } from '../exception/Exception.js';
 class ProductService {
   app_key = "e23d84918d8ac7fa077d286b41bf1332";
   app_secret = "f40faeb3ad0444b9b7b78fa28970d7ef";

@@ -29,7 +29,6 @@ class Playwright {
 
             Playwright.browser.on("disconnected", Playwright.handleDisconnected);
         } else {
-            console.log(">>> browser is not none ");
             console.log("Browser connection status", Playwright.browser.isConnected());
         }
         return Playwright.browser;

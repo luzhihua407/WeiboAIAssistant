@@ -10,7 +10,6 @@ class Config {
     static load() {
         // const filePath = path.join(__dirname, 'resources', 'app.yaml');
         const filePath = path.resolve(__dirname, '..', 'resources', 'app.yaml');
-        console.log('File Path:', filePath);
 
         try {
             const fileContent = fs.readFileSync(filePath, 'utf8');

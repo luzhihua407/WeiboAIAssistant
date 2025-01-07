@@ -118,7 +118,6 @@ class Utils {
       const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
       fs.ensureDirSync(imgPath); // Ensure the folder exists
       fs.writeFileSync(imgFilePath, response.data);
-      console.log(`Image downloaded successfully: ${imgFilePath}`);
       return imgFilePath;
     } catch (e) {
       console.log(`Failed to download image. Status code: ${e.response ? e.response.status : 'unknown'}`);

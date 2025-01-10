@@ -3,12 +3,12 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible
       :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0 }">
       <div class="logo" />
-      <a-menu v-model:selectedKeys="selectedKeys" mode="inline" style="height: 100%">
+      <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" style="height: 100%">
         <a-sub-menu key="1">
           <template #title>
             <span>
               <user-outlined />
-              <span>微博</span>
+              <span>功能</span>
             </span>
           </template>
           <a-menu-item key="3">
@@ -49,6 +49,7 @@ import { io } from 'socket.io-client';
 
 const collapsed = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
+const openKeys = ref<string[]>(['1']);
 const store = useStore();
 function initWebSocket() {
   const socket = io('http://localhost:3000', {
@@ -68,8 +69,6 @@ function initWebSocket() {
     const qrcode = data.qrcode
     const channel = data.channel
     const assetUrl = convertFileSrc(qrcode);
-    console.log(qrcode)
-    console.log(assetUrl)
     store.dispatch('loginWin', { "show": true, "qrcode": assetUrl, "channel": channel });
 
 

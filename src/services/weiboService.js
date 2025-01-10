@@ -4,7 +4,8 @@ import * as cheerio from 'cheerio';
 import { format } from 'date-fns';
 import Utils from '../utils/utils.js';
 import Config from '../utils/config.js';
-
+import WeiboAgent from '../agents/weiboAgent.js';
+import store from '../store/index.js';
 class WeiboService {
   constructor(weiboAgent) {
     const config = Config.load();
@@ -54,7 +55,7 @@ class WeiboService {
   async sendWeiboAndComment(request) {
     
     try {
-      await this.weiboAgent.doSendPost(request.content, request.img_list, request.is_self_see);
+      await this.weiboAgent.doSendPost(request.content+"\n"+request.comment, request.img_list, request.is_self_see);
       await Utils.sleep(3000)
       // Send comment if provided
       if (request.comment) {
@@ -72,15 +73,21 @@ class WeiboService {
   async getWeiboPage(pageNumber) {
     const url = 'https://weibo.com/ajax/statuses/mymblog';
     const headers = { Cookie: this.cookieHeader };
+    const uid = store.getters.weiboUserId;
     const params = {
-      uid: '5287084439', // Example user ID
+      uid: uid, // Example user ID
       page: pageNumber,
       feature: 0,
     };
 
-    try {
       const response = await axios.get(url, { headers, params });
       const data = response.data;
+      if(data.ok==-100){
+        const agent = new WeiboAgent();
+        await agent.ready();
+        agent.scanLogin();
+        return null;
+      }
       const total = data.data.total;
       const list = data.data.list;
       const result = list.map(item => {
@@ -95,9 +102,6 @@ class WeiboService {
         };
       });
       return { total, items: result };
-    } catch (e) {
-      console.error(`Error occurred: ${e.message}`);
-    }
   }
 
   // Delete Weibo by IDs
@@ -127,7 +131,6 @@ class WeiboService {
     const headers = { Cookie: this.cookieHeader };
 
       const response = await axios.get(url, { headers });
-      console.log(response.data)
       const $ = cheerio.load(response.data);
       const script = $('script').toArray().find(s => s.children[0] && s.children[0].data.includes('window.$CONFIG'));
 
@@ -140,6 +143,7 @@ class WeiboService {
 
             const profileImageUrl = `https://image.baidu.com/search/down?url=${user.profile_image_url}`;
             const userImg = await Utils.downloadImage(profileImageUrl, this.storePath, 'avatar.png');
+            store.dispatch('setWeiboUserId', { "weiboUserId": user.idstr });
             return { userId: user.idstr, userImg };
           }
         }

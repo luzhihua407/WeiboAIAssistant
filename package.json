@@ -1,5 +1,5 @@
 {
-  "name": "WeiboDeskApp",
+  "name": "weibo-desk-app",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -12,7 +12,8 @@
     "tauri:build": "tauri build",
     "tauri:run": "tauri run",
     "tauri:dev:run": "tauri dev && tauri run",
-    "start:express": "node src/app.js"
+    "start:express": "node src/app.js",
+    "build:node": "pkg src/app.mjs --out-path dist-node --targets node18-win-x64 -d"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
@@ -47,9 +48,11 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@tauri-apps/cli": "^2.0.3",
     "@vitejs/plugin-vue": "^5.0.5",
-    "concurrently": "^9.1.0",
+    "pkg": "^5.8.1",
     "vite": "^5.3.1"
   }
 }

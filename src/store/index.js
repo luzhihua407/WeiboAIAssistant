@@ -5,7 +5,8 @@ export default createStore({
     return {
       login_win_show: false,
       qrcode: null,
-      channel: null
+      channel: null,
+      weiboUserId: null
     };
   },
   mutations: {
@@ -15,13 +16,22 @@ export default createStore({
       state.qrcode=data.qrcode;
       state.channel=data.channel;
     },
+    setWeiboUserId(state,data) {
+      state.weiboUserId=data.weiboUserId;
+    }
   },
   actions: {
     loginWin(context,payload) {
       console.log("loginWin=",payload)
       context.commit('openLogin',payload);
     },
+    setWeiboUserId(context,payload) {
+      context.commit('setWeiboUserId',payload);
+    }
   },
   getters: {
+    weiboUserId(state) {
+      return state.weiboUserId;
+    }
   }
 });

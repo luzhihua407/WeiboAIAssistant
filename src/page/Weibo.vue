@@ -28,7 +28,7 @@
       </a-upload>
     </a-form-item>
       <a-form-item :wrapper-col="{ ...layout.wrapperCol, offset: 8 }">
-        <a-button type="primary" :loading="loading" @click="onSubmit">发布</a-button>
+        <a-button :loading="loading" @click="onSubmit"><SendOutlined />发布</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -41,7 +41,7 @@
   import {send_weibo} from '../js/weiboapi'; // 根据实际路径引入
   import { UploadProps,message } from 'ant-design-vue';
   import type { Rule } from 'ant-design-vue/es/form';
-  import { PlusOutlined } from '@ant-design/icons-vue';
+  import { PlusOutlined,SendOutlined } from '@ant-design/icons-vue';
   import type { UploadChangeParam } from 'ant-design-vue';
 
   const layout = {

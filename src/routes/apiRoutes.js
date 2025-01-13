@@ -22,7 +22,5 @@ router.get('/weibo/refresh_qrcode', weiboController.refreshQRCode);
 // Yuanbao Routes
 router.get('/yuanbao/login', yuanbaoController.login);
 router.get('/yuanbao/refresh_qrcode', yuanbaoController.refreshQRCode);
-router.get('/yuanbao/test2', yuanbaoController.test2);
-router.get('/yuanbao/test3', yuanbaoController.test3);
 
 export default router;

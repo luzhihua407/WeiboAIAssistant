@@ -23,7 +23,8 @@ JdCouponInfo.init({
   sequelize,
   modelName: 'JdCouponInfo',
   tableName: 'jd_coupon_info',
-  timestamps: false
+  timestamps: false,
+  comment: '京东优惠券信息'
 });
 
 export default JdCouponInfo;

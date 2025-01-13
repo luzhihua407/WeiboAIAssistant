@@ -38,51 +38,7 @@ const refreshQRCode = async (req, res) => {
     }
 };
 
-const test2 = async (req, res) => {
-    try {
-        const browser = await Playwright.getBrowser();
-        const context = await Playwright.getBrowserContext(browser);
-        const page = await Playwright.newPage(context);
-        await page.goto("https://www.baidu.com");
-
-        console.log(2, browser.isConnected());
-        // Your operations go here...
-        await page.close();
-        console.log(3, browser.isConnected());
-
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    } catch (error) {
-        logger.error(`捕获到自定义异常: ${error.message}`);
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    }
-};
-
-const test3 = async (req, res) => {
-    try {
-        const browser = await Playwright.getBrowser();
-        const context = await Playwright.getBrowserContext(browser);
-        const page = await Playwright.newPage(context);
-        await page.goto("https://www.baidu.com");
-
-        console.log(4, browser.isConnected());
-        // Your operations go here...
-        await page.close();
-        console.log(5, browser.isConnected());
-
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    } catch (error) {
-        logger.error(`捕获到自定义异常: ${error.message}`);
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    }
-};
-
 export {
     login,
-    refreshQRCode,
-    test2,
-    test3
+    refreshQRCode
 };

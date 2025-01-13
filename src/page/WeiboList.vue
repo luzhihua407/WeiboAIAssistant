@@ -1,62 +1,73 @@
 <template>
-<div>
-  <a-row>
-    <a-col :span="24">
-      <a-space :size="16" wrap>
-            <a-avatar :src="user_pic" v-if="isLogined==true" />
-            <a-avatar v-if="isLogined==false">
-                    <template #icon>
-                      <UserOutlined />
-                    </template>
-            </a-avatar>
-        </a-space>  
-    </a-col>
-  </a-row>
-  <div class="table-operations">
-    <a-button type="primary" @click="onRemoveSelect">删除所选</a-button>
-    <a-button type="primary" @click="onFreshData">刷新</a-button>
-  </div>
+  <div>
+    <a-space style="margin-bottom:16px">
+      <a-avatar :src="user_pic" v-if="isLogined == true" />
+      <a-avatar v-if="isLogined == false">
+        <template #icon>
+          <UserOutlined />
+        </template>
+      </a-avatar>
+      <a-button @click="onRemoveSelect">
+        <DeleteOutlined />
+        删除所选
+      </a-button>
+      <a-button @click="onFreshData">
+        <ReloadOutlined />
+        刷新
+      </a-button>
 
-  <a-table :loading="state.loading" :row-selection="rowSelection" :row-key="record => record.id"
-  :columns="columns" :data-source="data" :pagination="false" bordered>
-    <template #bodyCell="{ column ,record }">
-      <template v-if="column.key === 'operation'">
-        <a-popconfirm
-        title="你确定要删除该微博吗?"
-        ok-text="确定"
-        cancel-text="取消"
-        @confirm="onDeleteWeibo([record.id])"
-      >
-        <a-button type="primary" :loading="sendLoading">删除</a-button>
-      </a-popconfirm>
+    </a-space>
+    <a-table :loading="state.loading" :row-selection="rowSelection" :row-key="record => record.id" :columns="columns"
+      :data-source="data" :pagination="false" bordered>
+      <template #bodyCell="{ column ,record }">
+        <template v-if="column.dataIndex === 'text'">
+          <a-space direction="vertical">
+            <a-row>
+              <a-col :span="8">
+                <ClockCircleOutlined /> {{ record.createdAt }}
+              </a-col>
+              <a-col :span="8" v-if="record.visible=='公开'">
+                <EyeOutlined /> 公开
+              </a-col>
+              <a-col :span="8" v-if="record.visible!='公开'">
+                <EyeInvisibleOutlined /> 私密
+              </a-col>
+            </a-row>
+            <div>{{ record.text }}...</div>
+            <a-row>
+              <a-col :span="8">
+                <ReadOutlined /> {{ record.readsCount }}
+              </a-col>
+              <a-col :span="8">
+                <CommentOutlined /> {{ record.commentsCount }}
+              </a-col>
+
+            </a-row>
+          </a-space>
+        </template>
+        <template v-if="column.key === 'operation'">
+          <a-popconfirm title="你确定要删除该微博吗?" ok-text="确定" cancel-text="取消" @confirm="onDeleteWeibo([record.id])">
+            <a-button :loading="sendLoading">
+              <DeleteOutlined />
+              删除
+            </a-button>
+          </a-popconfirm>
+        </template>
       </template>
-    </template>
-  </a-table>
-  <a-pagination v-if="pagination.total>0"
-      v-model:current="pagination.current"
-      v-model:page-size="pagination.pageSize"
-      :total="pagination.total"
-      :show-total="total => `总${total}条`"
-      @change="handlePageChange" 
-    />
-</div>
+    </a-table>
+    <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
+      :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
 import { page,delete_by_id,get_user,login } from '../js/weiboapi'; // 根据实际路径引入
-import { UserOutlined } from '@ant-design/icons-vue';
+import { UserOutlined,CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { useStore } from 'vuex';
-const store = useStore();
-// import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
-  { title: '内容', width: 300, dataIndex: 'text',ellipsis: false },
-  { title: '发布时间', width: 150, dataIndex: 'createdAt',ellipsis: false },
-  { title: '阅读数', width: 50, dataIndex: 'readsCount' },
-  { title: '评论数', width: 50, dataIndex: 'commentsCount' },
-  { title: '可见性', width: 50, dataIndex: 'visible' },
+  { title: '微博内容', width: 300,key:'text',  dataIndex: 'text',ellipsis: false },
   {
     title: '操作',
     key: 'operation',
@@ -150,6 +161,7 @@ async function getLogin() {
     if (response.code==200) {
       const user_img=response.data.user_img
       const assetUrl = convertFileSrc(user_img);
+      console.log(assetUrl)
       user_pic.value=assetUrl
       isLogined.value=true
       getpage(pagination.value.current, pagination.value.pageSize);

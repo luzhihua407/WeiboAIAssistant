@@ -22,13 +22,14 @@ JdProductInfo.init({
   sequelize,
   modelName: 'JdProductInfo',
   tableName: 'jd_product_info',
-  timestamps: false
+  timestamps: false,
+  comment: '京东商品信息'
 });
 sequelize.sync({ force: false })
   .then(() => {
-    console.log('Database synchronized and User table created.');
+    console.log('表创建成功');
   })
   .catch((error) => {
-    console.error('Error synchronizing database:', error);
+    console.error('表创建失败:', err);
   });
 export default JdProductInfo;

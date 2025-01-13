@@ -10,7 +10,8 @@ JdProductImageInfo.init({
   sequelize,
   modelName: 'JdProductImageInfo',
   tableName: 'jd_product_image',
-  timestamps: false
+  timestamps: false,
+  comment: '京东商品图片信息'
 });
 
 export default JdProductImageInfo;

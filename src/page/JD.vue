@@ -1,12 +1,15 @@
 <template>
   <div class="table-operations">
-    <a-button type="primary" :loading="loading" @click="onSaveGoods()">更新商品</a-button>
-    <a-button type="primary" :loading="loading" @click="handlePage()">刷新</a-button>
+    <a-button :loading="loading" @click="onSaveGoods()"><CloudDownloadOutlined />拉取商品</a-button>
+    <a-button :loading="loading" @click="handlePage()"><ReloadOutlined />刷新</a-button>
   </div>  
   <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
+      <template v-if="column.dataIndex === 'purchase_price'">
+        ¥{{ record.purchase_price }}
+      </template>
       <template v-if="column.key === 'operation'">
-        <a-button type="primary" :loading="sendLoading" @click="onSendWeibo(record.id)">发微博</a-button>
+        <a-button :loading="sendLoading" @click="onSendWeibo(record.id)"><SendOutlined />发微博</a-button>
       </template>
     </template>
   </a-table>
@@ -19,8 +22,9 @@ import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实�
 import { login } from '../js/yuanbaoapi'; // 根据实际路径引入
 import { message as message_tauri } from '@tauri-apps/plugin-dialog';
 import { message as message_ant } from 'ant-design-vue';
+import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';
 const columns: TableColumnsType = [
-  { title: '商品', width: 100, dataIndex: 'sku_name' },
+  { title: '商品', width: 300, dataIndex: 'sku_name' },
   { title: '价格', width: 100, dataIndex: 'purchase_price' },
   {
     title: '操作',
@@ -75,6 +79,8 @@ async function onSendWeibo(id:any) {
       if (response.code!=200) {
         await message_tauri(response.msg, { title: '系统提示', kind: 'error' });
         console.error('Invalid response structure:', response);
+      } else {
+        message_ant.info('操作完成');
       }
     }
  

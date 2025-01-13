@@ -64,18 +64,21 @@ pub fn run() {
             Ok(())
         })
         .setup(|app| {
+            // 创建托盘菜单
             let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&quit_i])?;
+
+            // 创建托盘图标
             TrayIconBuilder::new()
                 .menu(&menu)
                 .menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "quit" => {
-                        println!("quit menu item was clicked");
+                        println!("退出菜单项被点击");
                         app.exit(0);
                     }
                     _ => {
-                        println!("menu item {:?} not handled", event.id);
+                        println!("未处理的菜单项: {:?}", event.id);
                     }
                 })
                 .on_tray_icon_event(|tray, event| match event {
@@ -84,8 +87,8 @@ pub fn run() {
                         button_state: MouseButtonState::Up | MouseButtonState::Down,
                         ..
                     } => {
-                        println!("left click pressed and released");
-                        // in this example, let's show and focus the main window when the tray is clicked
+                        println!("左键点击托盘图标");
+                        // 显示并聚焦主窗口
                         let app = tray.app_handle();
                         if let Some(window) = app.get_webview_window("main") {
                             let _ = window.show();
@@ -93,11 +96,12 @@ pub fn run() {
                         }
                     }
                     _ => {
-                        println!("unhandled event {event:?}");
+                        println!("未处理的事件: {event:?}");
                     }
                 })
                 .icon(app.default_window_icon().unwrap().clone())
                 .build(app)?;
+
             Ok(())
         })
         .run(tauri::generate_context!())

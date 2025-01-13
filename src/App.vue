@@ -17,9 +17,12 @@
           <a-menu-item key="4">
             <RouterLink to="/jd">京东</RouterLink>
           </a-menu-item>
-          <a-menu-item key="5">
-            <RouterLink to="/weibo_list">微博列表</RouterLink>
-          </a-menu-item>
+          <a-menu-item key="5"> 
+              <RouterLink to="/weibo_list">微博列表</RouterLink>
+            </a-menu-item>
+            <a-menu-item key="6">
+              <RouterLink to="/yaml_editor">yaml编辑器</RouterLink>
+            </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>

@@ -52,7 +52,7 @@ import { useStore } from 'vuex';
 const store = useStore();
 // import { message } from '@tauri-apps/plugin-dialog';
 const columns: TableColumnsType = [
-  { title: '内容', width: 150, dataIndex: 'text',ellipsis: true },
+  { title: '内容', width: 300, dataIndex: 'text',ellipsis: false },
   { title: '发布时间', width: 150, dataIndex: 'createdAt',ellipsis: false },
   { title: '阅读数', width: 50, dataIndex: 'readsCount' },
   { title: '评论数', width: 50, dataIndex: 'commentsCount' },

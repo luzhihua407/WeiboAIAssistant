@@ -1,5 +1,3 @@
-import Playwright from '../utils/playwright.js';
-import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import Config from '../utils/config.js';

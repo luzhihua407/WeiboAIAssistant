@@ -106,7 +106,7 @@ const get = async (req, res) => {
             content,
             is_self_see: false,
             img_list: imgList,
-            comment: `点击领券：${buyUrl}`
+            comment: `限时优惠：${buyUrl}`
         };
 
         await weiboService.sendWeiboAndComment(weiboReq);

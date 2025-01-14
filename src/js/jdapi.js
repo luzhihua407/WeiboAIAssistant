@@ -48,7 +48,7 @@ export async function saveGoods(data) {
   }
 }
 export async function sendWeibo(data) {
-  const url = '/product/get';
+  const url = '/jd/get';
   try {
     const response = await api.get(url, data);
     console.log('操作成功:', response);

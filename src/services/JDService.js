@@ -5,18 +5,13 @@ import JdCouponInfo from '../models/JdCouponInfo.js';
 import SysDictService from './SysDictService.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
 import { MyCustomError } from '../exception/Exception.js';
-class ProductService {
+class JDService {
   app_key;
   app_secret;
-  url = 'https://api.jd.com/routerjson';
-  sysDictService=new SysDictService();
-  constructor() {
-      this.sysDictService.getChildDict('jd_api').then(res=>{
-      this.app_key=res.find(item=>item.code=='jd_app_key').value;
-      this.app_secret=res.find(item=>item.code=='jd_app_secret').value;
-      console.log(this.app_key,this.app_secret)
-    })  
-    // Initialize withset_app_info your app-specific credentials (replace with actual values)
+  constructor(app_key,app_secret  ) {
+    this.url = 'https://api.jd.com/routerjson';
+    this.app_key=app_key;
+    this.app_secret=app_secret;
   }
   async getPageProducts(pageNumber, pageSize) {
     try {
@@ -147,4 +142,4 @@ class ProductService {
 
 }
 
-export default ProductService;
+export default JDService;

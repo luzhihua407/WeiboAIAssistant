@@ -18,7 +18,7 @@
 
     </a-space>
     <a-table :loading="state.loading" :row-selection="rowSelection" :row-key="record => record.id" :columns="columns"
-      :data-source="data" :pagination="false" bordered>
+      :data-source="data" :pagination="false">
       <template #bodyCell="{ column ,record }">
         <template v-if="column.dataIndex === 'text'">
           <a-space direction="vertical">

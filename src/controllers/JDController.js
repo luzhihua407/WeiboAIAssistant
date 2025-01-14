@@ -1,18 +1,19 @@
-import ProductService from '../services/JDService.js';
+import JDService from '../services/JDService.js';
 import WeiboService from '../services/WeiboService.js';
 import LLMService from '../services/LLMService.js';
 import ResponseModel from '../models/ResponseModel.js';
 import Utils  from '../utils/utils.js';
 import WeiboAgent from '../agents/WeiboAgent.js';
 import YuanBaoAgent from '../agents/YuanbaoAgent.js';
+import SysDictService from '../services/SysDictService.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;
     const pageSize = parseInt(pageParams.pageSize) || 10;
 
     try {
-        const productService = new ProductService();
-        const responseData = await productService.getPageProducts(pageNumber, pageSize);
+        const jdService = new JDService();
+        const responseData = await jdService.getPageProducts(pageNumber, pageSize);
         const responseModel = new ResponseModel({ data: responseData });
         return res.json(responseModel.modelDump());
     } catch (err) {
@@ -24,12 +25,24 @@ const page = async (req, res) => {
 
 const saveGoods = async (req, res) => {
     const rankId = req.query.rankId;
-    const productService = new ProductService();
+    const sysDictService = new SysDictService();
+    const dicts = await sysDictService.getChildDict('jd_api');
+    let app_key;
+    let app_secret;
+    dicts.forEach(item=>{
+        if(item.code=='app_key'){
+          app_key=item.value;
+        }
+        if(item.code=='app_secret'){
+          app_secret=item.value;
+        }
+      })
+    const jdService = new JDService(app_key,app_secret);
 
     try {
-        await productService.deleteCoupons();
-        await productService.deleteImages();
-        await productService.deleteProducts();
+        await jdService.deleteCoupons();
+        await jdService.deleteImages();
+        await jdService.deleteProducts();
 
         for (let idx = 1; idx <= 5; idx++) {
             const req={
@@ -38,7 +51,7 @@ const saveGoods = async (req, res) => {
                 "pageIndex" : idx,
                 "pageSize" : 20
             }
-            const goods = await productService.getGoodsRank(req);
+            const goods = await jdService.getGoodsRank(req);
 
             for (const item of goods) {
                 const { purchasePriceInfo, imgList, couponList } = item;
@@ -50,10 +63,10 @@ const saveGoods = async (req, res) => {
                     purchase_price: purchasePriceInfo.purchasePrice
                 };
 
-                const productId = await productService.saveProduct(product);
+                const productId = await jdService.saveProduct(product);
 
                 for (const img of imgList) {
-                    await productService.saveImage({ product_id: productId, image_url: img });
+                    await jdService.saveImage({ product_id: productId, image_url: img });
                 }
                 if(couponList !=undefined){
                     for (const coupon of couponList) {
@@ -63,7 +76,7 @@ const saveGoods = async (req, res) => {
                             discount: coupon.discount,
                             coupon_status: coupon.couponStatus || null
                         };
-                        await productService.saveCoupon(couponObj);
+                            await jdService.saveCoupon(couponObj);
                     }
                 }
          
@@ -80,7 +93,7 @@ const saveGoods = async (req, res) => {
 
 const get = async (req, res) => {
     const productId = req.query.id;
-    const productService = new ProductService();
+    const jdService = new JDService();
     const weiboAgent = new WeiboAgent();
     const llmaAgent = new YuanBaoAgent();
     try {
@@ -88,10 +101,10 @@ const get = async (req, res) => {
         const weiboService = new WeiboService(weiboAgent);
         await llmaAgent.ready();
         const llmService = new LLMService(llmaAgent);
-        const product = await productService.getProduct(productId);
-        const coupons = await productService.getCoupons(product.id);
+        const product = await jdService.getProduct(productId);
+        const coupons = await jdService.getCoupons(product.id);
         const couponUrls = coupons.map(coupon => coupon.link);
-        const images = await productService.getImages(product.id);
+        const images = await jdService.getImages(product.id);
         const imgList = [];
 
         for (const image of images) {
@@ -99,7 +112,7 @@ const get = async (req, res) => {
             imgList.push(imgPath);
         }
 
-        const buyUrl = await productService.convertBuyUrl(couponUrls, product.item_id);
+        const buyUrl = await jdService.convertBuyUrl(couponUrls, product.item_id);
         const content = await llmService.generateWeiboPost(product.sku_name);
 
         const weiboReq = {

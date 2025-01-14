@@ -3,7 +3,7 @@
     <a-button :loading="loading" @click="onSaveGoods()"><CloudDownloadOutlined />拉取商品</a-button>
     <a-button :loading="loading" @click="handlePage()"><ReloadOutlined />刷新</a-button>
   </div>  
-  <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="false" @change="handlePageChange">
+  <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
       <template v-if="column.dataIndex === 'purchase_price'">
         ¥{{ record.purchase_price }}
@@ -13,8 +13,6 @@
       </template>
     </template>
   </a-table>
-  <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
-    :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" style="position: absolute;right: 0;"/>
 </template>
 
 <script lang="ts" setup>

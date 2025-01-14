@@ -56,14 +56,14 @@
       </template>
     </a-table>
     <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
-      :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" />
+      :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" style="position: absolute;right: 0;"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,get_user,login } from '../js/weiboapi'; // 根据实际路径引入
+import { page,delete_by_id,get_user,login } from '../js/Weiboapi'; // 根据实际路径引入
 import { UserOutlined,CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
 const columns: TableColumnsType = [
@@ -183,13 +183,3 @@ onMounted(() => {
 });
 
 </script>
-<style scoped>
-.table-operations {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-.table-operations > button {
-  margin-right: 8px;
-}
-</style>

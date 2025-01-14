@@ -1,10 +1,10 @@
 import ProductService from '../services/ProductService.js';
-import WeiboService from '../services/weiboService.js';
-import LLMService from '../services/llmService.js';
-import ResponseModel from '../models/responseModel.js';
+import WeiboService from '../services/WeiboService.js';
+import LLMService from '../services/LLMService.js';
+import ResponseModel from '../models/ResponseModel.js';
 import Utils  from '../utils/utils.js';
-import WeiboAgent from '../agents/weiboAgent.js';
-import YuanBaoAgent from '../agents/yuanbaoAgent.js';
+import WeiboAgent from '../agents/WeiboAgent.js';
+import YuanBaoAgent from '../agents/YuanbaoAgent.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;

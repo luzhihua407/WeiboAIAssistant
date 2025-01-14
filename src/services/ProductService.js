@@ -2,6 +2,7 @@
 import JdProductInfo from '../models/JdProductInfo.js';
 import JdProductImageInfo from '../models/JdProductImageInfo.js';
 import JdCouponInfo from '../models/JdCouponInfo.js';
+import SysDict from '../models/SysDict.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
 import { MyCustomError } from '../exception/Exception.js';
 class ProductService {

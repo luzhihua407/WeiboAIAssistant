@@ -17,8 +17,8 @@
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { yuanbao_refresh_qrcode } from './js/yuanbaoapi';
-import { weibo_refresh_qrcode } from './js/weiboapi';
+import { yuanbao_refresh_qrcode } from './js/Yuanbaoapi';
+import { weibo_refresh_qrcode } from './js/Weiboapi';
 import { useStore } from 'vuex';
 const store = useStore();
 const qrcodeImg  = computed(() => store.state.qrcode);

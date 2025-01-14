@@ -25,11 +25,5 @@ JdProductInfo.init({
   timestamps: false,
   comment: '京东商品信息'
 });
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('表创建成功');
-  })
-  .catch((error) => {
-    console.error('表创建失败:', err);
-  });
+
 export default JdProductInfo;

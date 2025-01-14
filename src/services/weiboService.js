@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio';
 import { format } from 'date-fns';
 import Utils from '../utils/utils.js';
 import Config from '../utils/config.js';
-import WeiboAgent from '../agents/weiboAgent.js';
+import WeiboAgent from '../agents/WeiboAgent.js';
 import store from '../store/index.js';
 class WeiboService {
   constructor(weiboAgent) {

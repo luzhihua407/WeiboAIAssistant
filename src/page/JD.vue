@@ -3,7 +3,7 @@
     <a-button :loading="loading" @click="onSaveGoods()"><CloudDownloadOutlined />拉取商品</a-button>
     <a-button :loading="loading" @click="handlePage()"><ReloadOutlined />刷新</a-button>
   </div>  
-  <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="pagination" @change="handlePageChange">
+  <a-table :loading="state.loading" :columns="columns" :data-source="data" :pagination="false" @change="handlePageChange">
     <template #bodyCell="{ column ,record }">
       <template v-if="column.dataIndex === 'purchase_price'">
         ¥{{ record.purchase_price }}
@@ -13,13 +13,15 @@
       </template>
     </template>
   </a-table>
+  <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
+    :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" style="position: absolute;right: 0;"/>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
-import { login } from '../js/yuanbaoapi'; // 根据实际路径引入
+import { login } from '../js/Yuanbaoapi'; // 根据实际路径引入
 import { message as message_tauri } from '@tauri-apps/plugin-dialog';
 import { message as message_ant } from 'ant-design-vue';
 import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';
@@ -45,7 +47,7 @@ const loading = ref<boolean>(false);
 const sendLoading = ref<boolean>(false);
 const pagination = ref({
   current: 1,
-  pageSize: 10,
+  pageSize: 20,
   total: 0,
 });
 const state = reactive<{
@@ -59,9 +61,10 @@ async function getpage(pageNo: number, pageSize: number) {
   try {
     state.loading=true;
     const response = await getProductPage({ pageNo, pageSize });
-    if (response && response.data.products) {
+    if (response.code==200) {
       data.value = response.data.products;
       pagination.value.total = response.data.total; // 假设返回的数据中有总数信息
+      console.log(pagination)
     } else {
       console.error('Invalid response structure:', response);
     }

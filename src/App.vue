@@ -23,6 +23,9 @@
             <a-menu-item key="6">
               <RouterLink to="/yaml_editor">yaml编辑器</RouterLink>
             </a-menu-item>
+            <a-menu-item key="7">
+              <RouterLink to="/dict">字典管理</RouterLink>
+            </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>

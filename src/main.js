@@ -10,11 +10,13 @@ import store from './store/index';
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import YamlEditor from './page/YamlEditor.vue';
+import Dict from './page/Dict.vue';
 const routes = [
   { path: '/weibo', component: Weibo },
   { path: '/weibo_list', component: WeiboList },
   { path: '/jd', component: JD },
   { path: '/yaml_editor', component: YamlEditor },
+  { path: '/dict', component: Dict },
 ]
 
 const router = createRouter({

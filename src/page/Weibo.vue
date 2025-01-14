@@ -38,7 +38,7 @@
   </template>
   <script lang="ts" setup>
   import { reactive,ref,toRaw } from 'vue';
-  import {send_weibo} from '../js/weiboapi'; // 根据实际路径引入
+  import {send_weibo} from '../js/Weiboapi'; // 根据实际路径引入
   import { UploadProps,message } from 'ant-design-vue';
   import type { Rule } from 'ant-design-vue/es/form';
   import { PlusOutlined,SendOutlined } from '@ant-design/icons-vue';

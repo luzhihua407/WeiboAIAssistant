@@ -1,4 +1,4 @@
-import ProductService from '../services/ProductService.js';
+import ProductService from '../services/JDService.js';
 import WeiboService from '../services/WeiboService.js';
 import LLMService from '../services/LLMService.js';
 import ResponseModel from '../models/ResponseModel.js';

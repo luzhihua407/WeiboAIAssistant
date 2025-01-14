@@ -2,18 +2,23 @@
 import JdProductInfo from '../models/JdProductInfo.js';
 import JdProductImageInfo from '../models/JdProductImageInfo.js';
 import JdCouponInfo from '../models/JdCouponInfo.js';
-import SysDict from '../models/SysDict.js';
+import SysDictService from './SysDictService.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
 import { MyCustomError } from '../exception/Exception.js';
 class ProductService {
-  app_key = "e23d84918d8ac7fa077d286b41bf1332";
-  app_secret = "f40faeb3ad0444b9b7b78fa28970d7ef";
+  app_key;
+  app_secret;
   url = 'https://api.jd.com/routerjson';
+  sysDictService=new SysDictService();
   constructor() {
+      this.sysDictService.getChildDict('jd_api').then(res=>{
+      this.app_key=res.find(item=>item.code=='jd_app_key').value;
+      this.app_secret=res.find(item=>item.code=='jd_app_secret').value;
+      console.log(this.app_key,this.app_secret)
+    })  
     // Initialize withset_app_info your app-specific credentials (replace with actual values)
   }
   async getPageProducts(pageNumber, pageSize) {
-    console.log(">>>",pageNumber,pageSize)
     try {
       const products = await JdProductInfo.findAll({
         order: [['id', 'ASC']],

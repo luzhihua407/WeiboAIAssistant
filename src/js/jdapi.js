@@ -15,7 +15,7 @@ export async function generateText(data) {
   }
   
 export async function getProductPage(data) {
-  const url = '/product/page';
+  const url = '/jd/page';
   try {
     const response = await api.get(url, data);
     console.log('操作成功:', response);
@@ -25,8 +25,8 @@ export async function getProductPage(data) {
     throw error;
   }
 }
-export async function sendWeibo(data) {
-  const url = '/product/get';
+export async function getProduct(data) {
+  const url = '/jd/get';
   try {
     const response = await api.get(url, data);
     console.log('操作成功:', response);
@@ -37,7 +37,7 @@ export async function sendWeibo(data) {
   }
 }
 export async function saveGoods(data) {
-  const url = 'product/save_goods';
+  const url = '/jd/save_goods';
   try {
     const response = await api.get(url, data);
     console.log('操作成功:', response);

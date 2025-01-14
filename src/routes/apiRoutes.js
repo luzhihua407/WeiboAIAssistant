@@ -1,14 +1,14 @@
 import express from 'express';
-import * as productController from '../controllers/ProductController.js';
+import * as jdController from '../controllers/JDController.js';
 import * as weiboController from '../controllers/WeiboController.js';
 import * as sysDictController from '../controllers/SysDictController.js';
 import * as yuanbaoController from '../controllers/yuanbaoController.js';
 const router = express.Router();
 
 // Product Routes
-router.get('/product/page', productController.page);
-router.get('/product/get', productController.get);
-router.get('/product/save_goods', productController.saveGoods);
+router.get('/jd/page', jdController.page);
+router.get('/jd/get', jdController.get);
+router.get('/jd/save_goods', jdController.saveGoods);
 
 // Weibo Routes
 router.post('/delete_all_weibo', weiboController.deleteAllWeibo);

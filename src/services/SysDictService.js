@@ -48,6 +48,16 @@ class SysDictService {
     return sysDict;
   }
 
+  async getChildDict(parent_code) {
+    const sysDict = await SysDict.findOne({ where: { code: parent_code } });
+    const sysDicts = await SysDict.findAll({ where: { parent: sysDict.id } });
+    return sysDicts;
+  }
+
+  async getDictByCode(code) {
+    const sysDict = await SysDict.findOne({ where: { code: code } });
+    return sysDict;
+  }
 
 }
 

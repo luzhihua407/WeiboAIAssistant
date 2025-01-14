@@ -2,7 +2,6 @@
 import JdProductInfo from '../models/JdProductInfo.js';
 import JdProductImageInfo from '../models/JdProductImageInfo.js';
 import JdCouponInfo from '../models/JdCouponInfo.js';
-import SysDictService from './SysDictService.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
 import { MyCustomError } from '../exception/Exception.js';
 class JDService {

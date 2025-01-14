@@ -12,7 +12,19 @@ const page = async (req, res) => {
     const pageSize = parseInt(pageParams.pageSize) || 10;
 
     try {
-        const jdService = new JDService();
+        const sysDictService = new SysDictService();
+        const dicts = await sysDictService.getChildDict('jd_api');
+        let app_key;
+        let app_secret;
+        dicts.forEach(item=>{
+            if(item.code=='app_key'){
+              app_key=item.value;
+            }
+            if(item.code=='app_secret'){
+              app_secret=item.value;
+            }
+          })
+        const jdService = new JDService(app_key,app_secret);
         const responseData = await jdService.getPageProducts(pageNumber, pageSize);
         const responseModel = new ResponseModel({ data: responseData });
         return res.json(responseModel.modelDump());
@@ -93,7 +105,19 @@ const saveGoods = async (req, res) => {
 
 const get = async (req, res) => {
     const productId = req.query.id;
-    const jdService = new JDService();
+    const sysDictService = new SysDictService();
+    const dicts = await sysDictService.getChildDict('jd_api');
+    let app_key;
+    let app_secret;
+    dicts.forEach(item=>{
+        if(item.code=='app_key'){
+          app_key=item.value;
+        }
+        if(item.code=='app_secret'){
+          app_secret=item.value;
+        }
+      })
+    const jdService = new JDService(app_key,app_secret);
     const weiboAgent = new WeiboAgent();
     const llmaAgent = new YuanBaoAgent();
     try {

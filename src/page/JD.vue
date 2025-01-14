@@ -21,7 +21,7 @@
 import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../js/jdapi'; // 根据实际路径引入
-import { login } from '../js/Yuanbaoapi'; // 根据实际路径引入
+import { login } from '../js/yuanbaoapi'; // 根据实际路径引入
 import { message as message_tauri } from '@tauri-apps/plugin-dialog';
 import { message as message_ant } from 'ant-design-vue';
 import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';

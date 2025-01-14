@@ -63,7 +63,7 @@
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,get_user,login } from '../js/Weiboapi'; // 根据实际路径引入
+import { page,delete_by_id,get_user,login } from '../js/weiboapi'; // 根据实际路径引入
 import { UserOutlined,CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
 const columns: TableColumnsType = [

@@ -56,7 +56,7 @@ class SysDictService {
 
   async getDictByCode(code) {
     const sysDict = await SysDict.findOne({ where: { code: code } });
-    return sysDict;
+    return sysDict.value;
   }
 
 }

@@ -1,11 +1,24 @@
-import SysDictService from '../services/SysDictService.js';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
+import { fileURLToPath } from 'url';
+
+// Get __dirname equivalent in ES modules
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class Config {
     static load() {
-        const sysDictService=new SysDictService();
-        const configData=sysDictService.getDictByCode('app_config');
-        console.log(configData)
-        return configData;
+        // const filePath = path.join(__dirname, 'resources', 'app.yaml');
+        const filePath = path.resolve(__dirname, '..', 'resources', 'app.yaml');
+
+        try {
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            const configData = yaml.load(fileContent);
+            return configData;
+        } catch (error) {
+            console.error('Error loading YAML file:', error);
+            return null;
+        }
     }
 }
 

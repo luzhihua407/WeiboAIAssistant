@@ -12,4 +12,5 @@ rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}
 
 ## 打包工具
 npm run tauri build
-
+## 安装浏览器
+npx playwright install chromium

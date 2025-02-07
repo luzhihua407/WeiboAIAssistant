@@ -1,0 +1,41 @@
+{
+  "name": "weibo-desk-app",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite --mode development",
+    "build": "vite build --mode production",
+    "preview": "vite preview --mode production",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:run": "tauri run",
+    "tauri:dev:run": "tauri dev && tauri run"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-autostart": "^2.0.0",
+    "@tauri-apps/plugin-dialog": "^2.0.1",
+    "@tauri-apps/plugin-fs": "^2.0.2",
+    "@tauri-apps/plugin-log": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.0.0",
+    "@tauri-apps/plugin-updater": "^2.0.0",
+    "@vueup/vue-quill": "^1.2.0",
+    "ant-design-vue": "^4.2.5",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "vue": "^3.3.4",
+    "vue-router": "^4.4.5",
+    "vuex": "^4.0.2",
+    "socket.io-client": "^4.8.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@tauri-apps/cli": "^2.0.3",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "pkg": "^5.8.1",
+    "vite": "^5.3.1"
+  }
+}

@@ -1,15 +1,14 @@
 import path from 'path';
 import axios from 'axios';
-import Config from '../utils/config.js';
 import sendNotification from '../utils/messageSender.js';
 import Utils from '../utils/utils.js';
 import BaseAgent from './BaseAgent.js';
 import winston from 'winston';
 
 const logger = winston; // or any logging library
-const config =await Config.load();
+
 class YuanBaoAgent extends BaseAgent {
-    constructor() {
+    constructor(config) {
         super();
         this.storePath = config.chrome.yuanbao.storePath;
         this.cookieCache = path.join(this.storePath, 'yuanbao.json');

@@ -1,14 +1,11 @@
 import path from 'path';
 import sendNotification from '../utils/messageSender.js';
 import Utils from '../utils/utils.js';
-import Config from '../utils/config.js';
 import BaseAgent from './BaseAgent.js';
 import Playwright from '../utils/playwright.js';
-const config =await Config.load();
 class WeiboAgent extends BaseAgent {
-  constructor() {
+  constructor(config) {
     super();
- 
     this.storePath = config.weibo.storePath;
     this.cookieCache = path.join(this.storePath, 'weibo.json');
     super.browserContextOptions = {

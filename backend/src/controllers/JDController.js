@@ -5,6 +5,7 @@ import ResponseModel from '../models/ResponseModel.js';
 import Utils  from '../utils/utils.js';
 import WeiboAgent from '../agents/WeiboAgent.js';
 import YuanBaoAgent from '../agents/YuanbaoAgent.js';
+import Config from '../utils/config.js';
 import SysDictService from '../services/SysDictService.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
@@ -118,11 +119,13 @@ const get = async (req, res) => {
         }
       })
     const jdService = new JDService(app_key,app_secret);
-    const weiboAgent = new WeiboAgent();
-    const llmaAgent = new YuanBaoAgent();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const llmaAgent = new YuanBaoAgent(config);
     try {
         await weiboAgent.ready();
         const weiboService = new WeiboService(weiboAgent);
+        await weiboService.initialize();
         await llmaAgent.ready();
         const llmService = new LLMService(llmaAgent);
         const product = await jdService.getProduct(productId);

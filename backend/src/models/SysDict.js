@@ -17,11 +17,5 @@ SysDict.init({
     timestamps: false,
     comment: '系统字典',
 });
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('表创建成功');
-  })
-  .catch((error) => {
-    console.error('表创建失败:', err);
-  });
+
 export default SysDict;

@@ -4,6 +4,7 @@ import * as weiboController from '../controllers/WeiboController.js';
 import * as sysDictController from '../controllers/SysDictController.js';
 import * as yuanbaoController from '../controllers/yuanbaoController.js';
 import * as SysConfigController from '../controllers/SysConfigController.js';
+
 const router = express.Router();
 
 // Product Routes

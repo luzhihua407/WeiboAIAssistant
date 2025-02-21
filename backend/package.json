@@ -2,15 +2,14 @@
   "name": "backend",
   "private": true,
   "version": "1.0.0",
-  "main": "src/app.js",
+  "main": "dist/app.js",
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
-    "build": "pkg ."
+    "build": "babel src --out-dir dist",
+    "pkg": "pkg ."
   },
-  "bin": {
-    "backend": "src/app.js"
-  },
+  "bin": "dist/app.js",
   "dependencies": {
     "axios": "^0.27.0",
     "body-parser": "^1.20.3",
@@ -27,6 +26,7 @@
     "playwright": "^1.49.1",
     "sequelize": "^6.37.5",
     "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
     "winston": "^3.17.0"
   },
   "pkg": {
@@ -34,15 +34,24 @@
       "node18-win-x64"
     ],
     "assets": [
+      "public/**/*"
+    ],
+    "outputPath": "dist",
+    "files": [
+      "dist/**/*.js",
       "public/**/*",
       "./node_modules/axios/dist/node/axios.cjs"
-    ],
-    "output": "dist/backend.exe",
-    "scripts": [
-      "src/**/*.js"
     ]
   },
   "devDependencies": {
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.26.7",
+    "@babel/preset-env": "^7.26.7",
+    "babel-cli": "^6.26.0",
     "pkg": "^5.8.1"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

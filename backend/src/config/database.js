@@ -19,6 +19,13 @@ const sequelize = new Sequelize({
     logging: console.log, // 启用日志
 });
 
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('表创建成功');
+  })
+  .catch((error) => {
+    console.error('表创建失败:', err);
+  });
 // 测试连接
 sequelize.authenticate()
     .then(() => {

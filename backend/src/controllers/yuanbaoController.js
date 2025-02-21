@@ -1,11 +1,13 @@
 import YuanBaoAgent from '../agents/YuanbaoAgent.js';
 import ResponseModel from '../models/ResponseModel.js';
 import winston from 'winston';
+import Config from '../utils/config.js';
 
 const logger = winston; // or any logging library
 
 const login = async (req, res) => {
-    const agent = new YuanBaoAgent();
+    const config= await Config.load();
+    const agent = new YuanBaoAgent(config);
     try {
         await agent.openBrowser()
         const isLogined = await agent.isLogined();
@@ -24,7 +26,8 @@ const login = async (req, res) => {
 };
 
 const refreshQRCode = async (req, res) => {
-    const agent = new YuanBaoAgent();
+    const config= await Config.load();
+    const agent = new YuanBaoAgent(config);
     try {
         await agent.ready();
         agent.scanLogin();  // Trigger QR code scan

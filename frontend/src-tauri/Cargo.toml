@@ -1,5 +1,5 @@
 [package]
-name = "rpa_app_ui"
+name = "weibohelper"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]

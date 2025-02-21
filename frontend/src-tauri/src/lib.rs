@@ -1,7 +1,6 @@
 use std::{error::Error, process::Command};
 
 use tauri::{
-    menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Manager,
 };
@@ -65,13 +64,11 @@ pub fn run() {
         })
         .setup(|app| {
             // 创建托盘菜单
-            let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit_i])?;
+            // let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
+            // let menu = Menu::with_items(app, &[&quit_i])?;
 
             // 创建托盘图标
-            TrayIconBuilder::new()
-                .menu(&menu)
-                .menu_on_left_click(false)
+            TrayIconBuilder::new().show_menu_on_left_click(true)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "quit" => {
                         println!("退出菜单项被点击");

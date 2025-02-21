@@ -3,21 +3,28 @@ import fs from 'fs';
 import * as cheerio from 'cheerio';
 import { format } from 'date-fns';
 import Utils from '../utils/utils.js';
-import Config from '../utils/config.js';
 import WeiboAgent from '../agents/WeiboAgent.js';
 import SysDictService from './SysDictService.js';
-const config =await Config.load();
+import Config from '../utils/config.js';
 class WeiboService {
-  constructor(weiboAgent) {
 
-    const cookieFile = 'weibo.json';
+  constructor(weiboAgent) {
+    this.storePath = '';
+    this.xsrfToken = '';
+    this.cookieHeader = '';
+    this.cookies = '';
+    this.weiboAgent = weiboAgent;
+  }
+
+  async initialize() {
+    const config = await Config.load();
     this.storePath = config.weibo.storePath;
+    const cookieFile = 'weibo.json';
     const cookieText = fs.readFileSync(this.storePath + cookieFile, 'utf8');
     const cookieJson = JSON.parse(cookieText);
     this.cookies = cookieJson.cookies;
     this.cookieHeader = this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
     this.xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
-    this.weiboAgent = weiboAgent;
   }
 
   // Delete all Weibo posts
@@ -86,7 +93,8 @@ class WeiboService {
       const response = await axios.get(url, { headers, params });
       const data = response.data;
       if(data.ok==-100){
-        const agent = new WeiboAgent();
+        const config= await Config.load();
+        const agent = new WeiboAgent(config);
         await agent.ready();
         agent.scanLogin();
         return null;

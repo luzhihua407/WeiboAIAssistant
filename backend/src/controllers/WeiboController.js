@@ -2,12 +2,17 @@ import WeiboService from '../services/WeiboService.js';
 import WeiboAgent from '../agents/WeiboAgent.js';
 import ResponseModel from '../models/ResponseModel.js';
 import PageParams from '../models/PageParams.js';
+import Config from '../utils/config.js';
 import winston from 'winston';
 
 const logger = winston; // or any logging library
 
 const deleteAllWeibo = async (req, res) => {
-    const weiboService = new WeiboService();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    await weiboAgent.ready();
+    const weiboService = new WeiboService(weiboAgent);
+    await weiboService.initialize();
     await weiboService.deleteAllWeibo();
     const responseModel = new ResponseModel();
     return res.json(responseModel.modelDump());
@@ -17,8 +22,8 @@ const weiboPage = async (req, res) => {
     const params = req.query;  // Extract query parameters
     const pageParams = new PageParams(params);
     const pageNumber = pageParams.pageNo || 1;  // Default to page 1 if not provided
-
     const weiboService = new WeiboService();
+    await weiboService.initialize();
     const pageModel = await weiboService.getWeiboPage(pageNumber);
 
     const responseModel = new ResponseModel({ data: pageModel });
@@ -28,6 +33,7 @@ const weiboPage = async (req, res) => {
 const deleteWeibo = async (req, res) => {
     const { ids } = req.body;  // Assuming 'ids' is an array of IDs
     const weiboService = new WeiboService();
+    await weiboService.initialize();
     const success = await weiboService.deleteWeibo(ids);
 
     const msg = success === 1 ? "删除成功" : "删除失败";
@@ -38,6 +44,7 @@ const deleteWeibo = async (req, res) => {
 
 const sendWeibo = async (req, res) => {
     const weiboService = new WeiboService();
+    await weiboService.initialize();
     const params = req.body;
     await weiboService.sendWeibo(params);
 
@@ -47,6 +54,7 @@ const sendWeibo = async (req, res) => {
 
 const getUser = async (req, res) => {
     const weiboService = new WeiboService();
+    await weiboService.initialize();
     try {
         const user = await weiboService.getUser();
         const responseModel = new ResponseModel({ data: user });
@@ -59,7 +67,8 @@ const getUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const weiboAgent = new WeiboAgent();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
     try {
         await weiboAgent.openBrowser();
         weiboAgent.waitLogin();  // Use async function properly
@@ -73,7 +82,8 @@ const login = async (req, res) => {
 };
 
 const refreshQRCode = async (req, res) => {
-    const agent = new WeiboAgent();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
     try {
         await agent.ready();
         agent.scanLogin();

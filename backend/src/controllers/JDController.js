@@ -1,12 +1,12 @@
-import JDService from '../services/JDService.js';
-import WeiboService from '../services/WeiboService.js';
-import LLMService from '../services/LLMService.js';
-import ResponseModel from '../models/ResponseModel.js';
-import Utils  from '../utils/utils.js';
-import WeiboAgent from '../agents/WeiboAgent.js';
-import YuanBaoAgent from '../agents/YuanbaoAgent.js';
-import Config from '../utils/config.js';
-import SysDictService from '../services/SysDictService.js';
+import JDService from '#root/services/JDService.js';
+import WeiboService from '#root/services/WeiboService.js';
+import LLMService from '#root/services/LLMService.js';
+import ResponseModel from '#root/models/ResponseModel.js';
+import Utils  from '#root/utils/utils.js';
+import WeiboAgent from '#root/agents/WeiboAgent.js';
+import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
+import Config from '#root/utils/config.js';
+import SysDictService from '#root/services/SysDictService.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;

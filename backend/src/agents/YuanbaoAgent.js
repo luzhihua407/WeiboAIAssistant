@@ -1,7 +1,7 @@
 import path from 'path';
 import axios from 'axios';
-import sendNotification from '../utils/messageSender.js';
-import Utils from '../utils/utils.js';
+import sendNotification from '#root/utils/messageSender.js';
+import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
 import winston from 'winston';
 

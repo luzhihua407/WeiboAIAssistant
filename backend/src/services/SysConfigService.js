@@ -1,4 +1,4 @@
-import SysConfig from '../models/SysConfig.js';
+import SysConfig from '#root/models/SysConfig.js';
 class SysConfigService {
 
 

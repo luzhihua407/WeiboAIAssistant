@@ -1,8 +1,8 @@
 import path from 'path';
-import sendNotification from '../utils/messageSender.js';
-import Utils from '../utils/utils.js';
+import sendNotification from '#root/utils/messageSender.js';
+import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
-import Playwright from '../utils/playwright.js';
+import Playwright from '#root/utils/playwright.js';
 class WeiboAgent extends BaseAgent {
   constructor(config) {
     super();

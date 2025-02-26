@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import winston from 'winston';
-import Playwright from '../utils/playwright.js';
+import Playwright from '#root/utils/playwright.js';
 
 const logger = winston; // or any logging library
 

@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "playwright": "^1.50.1",
-    "sqlite3": "^5.1.7"
-  }
-}

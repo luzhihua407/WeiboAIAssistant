@@ -1,4 +1,4 @@
-import SysConfigService from '../services/SysConfigService.js';
+import SysConfigService from '#root/services/SysConfigService.js';
 import yaml from 'js-yaml';
 const sysConfigService = new SysConfigService();
 

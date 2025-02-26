@@ -1,7 +1,7 @@
-import YuanBaoAgent from '../agents/YuanbaoAgent.js';
-import ResponseModel from '../models/ResponseModel.js';
+import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
+import ResponseModel from '#root/models/ResponseModel.js';
 import winston from 'winston';
-import Config from '../utils/config.js';
+import Config from '#root/utils/config.js';
 
 const logger = winston; // or any logging library
 
@@ -19,7 +19,7 @@ const login = async (req, res) => {
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
     } catch (error) {
-        logger.error(`捕获到自定义异常: ${error.message}`);
+        logger.error(`捕获到自定义异常: ${error}`);
         const responseModel = new ResponseModel({ code: error.code, msg: error.message });
         return res.json(responseModel.modelDump());
     }

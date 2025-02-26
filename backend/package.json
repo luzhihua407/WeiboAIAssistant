@@ -2,7 +2,6 @@
   "name": "backend",
   "private": true,
   "version": "1.0.0",
-  "main": "dist/app.js",
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
@@ -33,21 +32,28 @@
     "targets": [
       "node18-win-x64"
     ],
+    "scripts": ["dist/**/*.js"],
     "assets": [
-      "public/**/*"
+      "public/**/*",
+      "dist/config/*.sqlite"
     ],
     "outputPath": "dist",
     "files": [
       "dist/**/*.js",
-      "public/**/*",
-      "./node_modules/axios/dist/node/axios.cjs"
+      "public/**/*"
     ]
+  },
+  "imports": {
+    "#root/*": "./src/*"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
-    "@babel/core": "^7.26.7",
-    "@babel/preset-env": "^7.26.7",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "babel-cli": "^6.26.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-transform-import-meta": "^2.3.2",
+    "babel-preset-env": "^1.7.0",
     "pkg": "^5.8.1"
   },
   "keywords": [],

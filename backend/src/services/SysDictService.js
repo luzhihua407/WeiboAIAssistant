@@ -1,4 +1,4 @@
-import SysDict from '../models/SysDict.js';
+import SysDict from '#root/models/SysDict.js';
 class SysDictService {
   async page(pageNumber, pageSize) {
     console.log(">>>",pageNumber,pageSize)

@@ -1,8 +1,8 @@
-import WeiboService from '../services/WeiboService.js';
-import WeiboAgent from '../agents/WeiboAgent.js';
-import ResponseModel from '../models/ResponseModel.js';
-import PageParams from '../models/PageParams.js';
-import Config from '../utils/config.js';
+import WeiboService from '#root/services/WeiboService.js';
+import WeiboAgent from '#root/agents/WeiboAgent.js';
+import ResponseModel from '#root/models/ResponseModel.js';
+import PageParams from '#root/models/PageParams.js';
+import Config from '#root/utils/config.js';
 import winston from 'winston';
 
 const logger = winston; // or any logging library

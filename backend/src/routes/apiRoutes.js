@@ -1,9 +1,9 @@
 import express from 'express';
-import * as jdController from '../controllers/JDController.js';
-import * as weiboController from '../controllers/WeiboController.js';
-import * as sysDictController from '../controllers/SysDictController.js';
-import * as yuanbaoController from '../controllers/yuanbaoController.js';
-import * as SysConfigController from '../controllers/SysConfigController.js';
+import * as jdController from '#root/controllers/JDController.js';
+import * as weiboController from '#root/controllers/WeiboController.js';
+import * as sysDictController from '#root/controllers/SysDictController.js';
+import * as yuanbaoController from '#root/controllers/yuanbaoController.js';
+import * as SysConfigController from '#root/controllers/SysConfigController.js';
 
 const router = express.Router();
 

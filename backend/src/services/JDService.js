@@ -1,9 +1,9 @@
 // services/productService.js
-import JdProductInfo from '../models/JdProductInfo.js';
-import JdProductImageInfo from '../models/JdProductImageInfo.js';
-import JdCouponInfo from '../models/JdCouponInfo.js';
+import JdProductInfo from '#root/models/JdProductInfo.js';
+import JdProductImageInfo from '#root/models/JdProductImageInfo.js';
+import JdCouponInfo from '#root/models/JdCouponInfo.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './JdApi.js';
-import { MyCustomError } from '../exception/Exception.js';
+import { MyCustomError } from '#root/exception/Exception.js';
 class JDService {
   app_key;
   app_secret;

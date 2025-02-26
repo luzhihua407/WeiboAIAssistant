@@ -1,7 +1,7 @@
 // models/JdCouponInfo.js
 import { Model, DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
-import commonAttributes from './CommonInfo.js';
+import sequelize from '#root/config/database.js';
+import commonAttributes from '#root/models/CommonInfo.js';
 class JdCouponInfo extends Model {}
 JdCouponInfo.init({
   ...commonAttributes,

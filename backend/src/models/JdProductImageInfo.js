@@ -1,6 +1,6 @@
 // models/JdProductImageInfo.js
 import { Model, DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import sequelize from '#root/config/database.js';
 
 class JdProductImageInfo extends Model {}
 JdProductImageInfo.init({

@@ -1,12 +1,21 @@
 {
-  "presets": [
+"presets": [
     [
       "@babel/preset-env",
       {
-        "targets": {
-          "node": "18"
-        },
-        "modules": false
+        "modules": "commonjs" // 不保留 ES 模块语法
+      }
+    ]
+  ],
+  "plugins": [
+    "babel-plugin-transform-import-meta",
+    [
+      "module-resolver",
+      {
+        "root": ["./dist"], // 指向打包后的目录
+        "alias": {
+          "#root": "./dist"
+        }
       }
     ]
   ]

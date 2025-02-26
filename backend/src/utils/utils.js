@@ -6,7 +6,6 @@ import ejs from 'ejs';
 import PDFDocument from 'pdfkit';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class Utils {
   // Delete file if it exists
@@ -63,11 +62,6 @@ class Utils {
     return ejs.render(template, data);
   }
 
-  // Read a resource file from the package
-  static readResource(fileName) {
-    const filePath = path.join(__dirname, 'resources', fileName);  // Adjust path if needed
-    return Utils.readFile(filePath);
-  }
 
   // Scroll the page
   static async wheel(page, deltaX, deltaY) {

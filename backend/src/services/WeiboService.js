@@ -2,10 +2,10 @@ import axios from 'axios';
 import fs from 'fs';
 import * as cheerio from 'cheerio';
 import { format } from 'date-fns';
-import Utils from '../utils/utils.js';
-import WeiboAgent from '../agents/WeiboAgent.js';
+import Utils from '#root/utils/utils.js';
+import WeiboAgent from '#root/agents/WeiboAgent.js';
 import SysDictService from './SysDictService.js';
-import Config from '../utils/config.js';
+import Config from '#root/utils/config.js';
 class WeiboService {
 
   constructor(weiboAgent) {

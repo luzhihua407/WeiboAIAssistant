@@ -1,6 +1,6 @@
-import SysDictService from '../services/SysDictService.js';
-import ResponseModel from '../models/ResponseModel.js';
-import PageParams from '../models/PageParams.js';
+import SysDictService from '#root/services/SysDictService.js';
+import ResponseModel from '#root/models/ResponseModel.js';
+import PageParams from '#root/models/PageParams.js';
 const sysDictService = new SysDictService();
 
 export const page = async (req, res) => {

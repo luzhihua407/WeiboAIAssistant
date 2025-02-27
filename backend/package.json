@@ -32,10 +32,13 @@
     "targets": [
       "node18-win-x64"
     ],
-    "scripts": ["dist/**/*.js"],
+    "scripts": ["dist/config/database.js"],
     "assets": [
       "public/**/*",
-      "dist/config/*.sqlite"
+      "dist/config/*.sqlite",
+      "node_modules/es-get-iterator/node.js",
+      "node_modules/es-get-iterator/package.json",
+      "node_modules/sqlite3/**/*"
     ],
     "outputPath": "dist",
     "files": [

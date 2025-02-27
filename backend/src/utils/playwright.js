@@ -57,7 +57,7 @@ class Playwright {
         const browserContext = await browser.newContext(contextOptions);
 
         // Load custom stealth.js script if needed
-        const filePath = path.join(__dirname, '../resources', 'stealth.min.js');
+        const filePath = path.join(process.cwd(), 'assets', 'stealth.min.js');
         await browserContext.addInitScript({ path: filePath });
         return browserContext;
     }

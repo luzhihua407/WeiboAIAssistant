@@ -1,17 +1,10 @@
 import path from 'path';
 import { Sequelize } from 'sequelize';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// 当前工作目录
+  // 构建 assets 目录的完整路径（假设 assets 在项目根目录）
+const dbPath = path.join(process.cwd(), 'assets', 'phoenix.sqlite');
 
-// 配置数据库路径
-const dbPath = process.env.VITE_BASE_PATH
-    ? path.join(process.env.VITE_BASE_PATH, 'config/phoenix.sqlite')
-    : path.join(__dirname, 'phoenix.sqlite'); // 默认存储在当前目录
-
-console.log('Database path:', dbPath);
-
+console.log('dbPath:',dbPath);
 // 初始化 Sequelize
 const sequelize = new Sequelize({
     dialect: 'sqlite',

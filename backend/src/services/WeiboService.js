@@ -6,6 +6,7 @@ import Utils from '#root/utils/utils.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
 import SysDictService from './SysDictService.js';
 import Config from '#root/utils/config.js';
+import path from 'path';
 class WeiboService {
 
   constructor(weiboAgent) {
@@ -17,14 +18,25 @@ class WeiboService {
   }
 
   async initialize() {
-    const config = await Config.load();
-    this.storePath = config.weibo.storePath;
-    const cookieFile = 'weibo.json';
-    const cookieText = fs.readFileSync(this.storePath + cookieFile, 'utf8');
-    const cookieJson = JSON.parse(cookieText);
-    this.cookies = cookieJson.cookies;
-    this.cookieHeader = this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
-    this.xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+    this.storePath = path.join(process.cwd(), 'temp');
+    const json_file=path.join(process.cwd(), 'cookies', 'weibo.json')
+    try {
+      await fs.promises.access(json_file, fs.constants.F_OK);
+      const cookieText = fs.readFileSync(json_file, 'utf8');
+      const cookieJson = JSON.parse(cookieText);
+      this.cookies = cookieJson.cookies;
+      this.cookieHeader = this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
+      this.xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        console.log('文件不存在，正在创建文件...');
+        await fs.promises.writeFile(json_file, '{}', 'utf8');
+        console.log('文件已创建');
+      } else {
+        console.error('访问文件失败:', err);
+      }
+    }
+
   }
 
   // Delete all Weibo posts
@@ -79,40 +91,45 @@ class WeiboService {
 
   // Get Weibo page (your posts)
   async getWeiboPage(pageNumber) {
-    const url = 'https://weibo.com/ajax/statuses/mymblog';
-    const headers = { Cookie: this.cookieHeader };
-    const sysDictService = new SysDictService();
-    const dict = await sysDictService.getDictByCode('weiboUserId');
-    const uid = dict.value;
-    const params = {
-      uid: uid, // Example user ID
-      page: pageNumber,
-      feature: 0,
-    };
-
-      const response = await axios.get(url, { headers, params });
-      const data = response.data;
-      if(data.ok==-100){
-        const config= await Config.load();
-        const agent = new WeiboAgent(config);
-        await agent.ready();
-        agent.scanLogin();
-        return null;
-      }
-      const total = data.data.total;
-      const list = data.data.list;
-      const result = list.map(item => {
-        const createdAt = format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss');
-        return {
-          id: item.idstr,
-          text: item.text_raw,
-          readsCount: item.reads_count,
-          commentsCount: item.comments_count,
-          visible: item.visible.type === 1 ? '仅自己可见' : '公开',
-          createdAt,
-        };
-      });
-      return { total, items: result };
+    try {
+      const url = 'https://weibo.com/ajax/statuses/mymblog';
+      const headers = { Cookie: this.cookieHeader };
+      const sysDictService = new SysDictService();
+      const dict = await sysDictService.getDictByCode('weiboUserId');
+      const uid = dict.value;
+      const params = {
+        uid: uid, // Example user ID
+        page: pageNumber,
+        feature: 0,
+      };
+  
+        const response = await axios.get(url, { headers, params });
+        const data = response.data;
+        if(data.ok==-100){
+          const config= await Config.load();
+          const agent = new WeiboAgent(config);
+          await agent.ready();
+          agent.scanLogin();
+          return null;
+        }
+        const total = data.data.total;
+        const list = data.data.list;
+        const result = list.map(item => {
+          const createdAt = format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss');
+          return {
+            id: item.idstr,
+            text: item.text_raw,
+            readsCount: item.reads_count,
+            commentsCount: item.comments_count,
+            visible: item.visible.type === 1 ? '仅自己可见' : '公开',
+            createdAt,
+          };
+        });
+        return { total, items: result };
+    } catch (err) {
+      console.error('调用失败:', err);
+    }
+    
   }
 
   // Delete Weibo by IDs

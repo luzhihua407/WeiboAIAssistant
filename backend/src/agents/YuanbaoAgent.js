@@ -10,8 +10,8 @@ const logger = winston; // or any logging library
 class YuanBaoAgent extends BaseAgent {
     constructor(config) {
         super();
-        this.storePath = config.chrome.yuanbao.storePath;
-        this.cookieCache = path.join(this.storePath, 'yuanbao.json');
+        this.storePath = path.join(process.cwd(), 'temp');
+        this.cookieCache = path.join(process.cwd(), 'cookies', 'yuanbao.json');
         super.browserContextOptions = {
             storageState: this.cookieCache
         }

@@ -6,8 +6,8 @@ import Playwright from '#root/utils/playwright.js';
 class WeiboAgent extends BaseAgent {
   constructor(config) {
     super();
-    this.storePath = config.weibo.storePath;
-    this.cookieCache = path.join(this.storePath, 'weibo.json');
+    this.storePath = path.join(process.cwd(), 'temp');
+    this.cookieCache = path.join(process.cwd(), 'cookies', 'weibo.json');
     super.browserContextOptions = {
       storageState: this.cookieCache
     }
@@ -17,17 +17,23 @@ class WeiboAgent extends BaseAgent {
 
   async getLoginQRCode() {
     const qrcodePath = await this.getQRCodeImg();
+    console.log("发起微博登录扫码")
     await sendNotification("not_login", { qrcode: qrcodePath, channel: '微博' });
   }
 
   async getQRCodeImg() {
-    await this.page.goto('https://passport.weibo.com/sso/signin');
-    const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
-    await Utils.sleep(1000); // Delay to wait for QR code to appear
-    const img = await this.page.locator('img.w-full');
-    Utils.deleteFile(qrcodePath);
-    await img.screenshot({ path: qrcodePath });
-    return qrcodePath;
+    try {
+      await this.page.goto('https://passport.weibo.com/sso/signin');
+      const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
+      await Utils.sleep(1000); // Delay to wait for QR code to appear
+      const img = await this.page.locator('img.w-full');
+      Utils.deleteFile(qrcodePath);
+      await img.screenshot({ path: qrcodePath });
+      return qrcodePath;
+    } catch (error) {
+      console.error(error)
+    }
+  
   }
 
 

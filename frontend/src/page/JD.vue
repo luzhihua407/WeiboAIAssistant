@@ -66,9 +66,11 @@ async function getpage(pageNo: number, pageSize: number) {
     } else {
       console.error('Invalid response structure:', response);
     }
-    state.loading=false;
+    
   } catch (error) {
     console.error('Error fetching product page:', error);
+  }finally{
+    state.loading=false;
   }
 }
 async function onSendWeibo(id:any) {

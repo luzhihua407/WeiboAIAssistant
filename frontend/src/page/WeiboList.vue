@@ -123,7 +123,7 @@ async function getpage(pageNo: number, pageSize: number) {
   try {
     state.loading=true;
     const response = await page({ pageNo, pageSize });
-    if (response.code==200) {
+    if (response.code==200 && response.data!=null) {
       data.value = response.data.items;
       pagination.value.total = response.data.total; // 假设返回的数据中有总数信息
     } else {

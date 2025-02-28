@@ -3,7 +3,7 @@ import path from 'path';
 
 import winston from 'winston';
 import Playwright from '#root/utils/playwright.js';
-
+import WeiboService from '#root/services/WeiboService.js';
 const logger = winston; // or any logging library
 
 class BaseAgent {
@@ -48,6 +48,10 @@ class BaseAgent {
         if (!isLoggedIn) {
             logger.info("扫码登录...");
             await this.scanLogin();
+        }else{
+            const weiboService = new WeiboService(this);
+            await weiboService.initialize();
+            await weiboService.getUser();
         }
     }
 }

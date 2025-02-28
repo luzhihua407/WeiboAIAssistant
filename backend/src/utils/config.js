@@ -1,14 +1,20 @@
-import SysConfigService from '#root/services/SysConfigService.js';
 import yaml from 'js-yaml';
-const sysConfigService = new SysConfigService();
-
-
-
+import path from 'path';
+import Utils from '#root/utils/utils.js';
 class Config {
     static async load() {
-       const data= await sysConfigService.get(1)
-       const config = yaml.load(data.content);
-       return config;
+    try {
+        // 读取文件内容（异步方式）
+        const filePath=path.join(process.cwd(), 'assets', 'app.yaml');
+        console.log("filePath",filePath)
+        const fileContent = Utils.readFile(filePath);
+        console.log("fileContent",fileContent)
+        const config = yaml.load(fileContent);
+        return config;
+    } catch (error) {
+        console.error(error)
+    }
+   
     }
 }
 

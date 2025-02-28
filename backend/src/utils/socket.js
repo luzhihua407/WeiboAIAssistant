@@ -1,8 +1,9 @@
 // socket.js
 import { Server } from 'socket.io';
-
+import WeiboAgent from '#root/agents/WeiboAgent.js';
+import YuanBaoAgent from '#root/agents/YuanBaoAgent.js';
+import Config from '#root/utils/config.js';
 let io;
-
 export function initializeSocket(server) {
   io = new Server(server, {
     cors: {
@@ -13,7 +14,14 @@ export function initializeSocket(server) {
   });
 
   io.on('connection', (socket) => {
-    console.log('A client connected');
+    console.log('客户端已连接');
+    Config.load().then((config)=>{
+      console.log("配置信息：",config)
+      const weiboAgent=new WeiboAgent(config);
+      const yuanBaoAgent=new YuanBaoAgent(config);
+      weiboAgent.ready()
+      yuanBaoAgent.ready()
+    });
 
     // Send a message to the client immediately after they connect
     socket.emit('message', 'Hello from server!');

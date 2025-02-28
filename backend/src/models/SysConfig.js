@@ -1,9 +1,8 @@
 import { Model,DataTypes } from 'sequelize';
-import sequelize from '#root/config/database.js';
 
-class SysConfig extends Model { }
-
-SysConfig.init({
+class SysConfig extends Model { 
+static init(sequelize) {
+    return super.init({
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
     content: { type: DataTypes.TEXT, comment: 'YAML数据' },
 }, {
@@ -13,4 +12,6 @@ SysConfig.init({
     timestamps: false,
     comment: '系统配置表',
 });
+}
+}
 export default SysConfig;

@@ -22,7 +22,9 @@ const weiboPage = async (req, res) => {
     const params = req.query;  // Extract query parameters
     const pageParams = new PageParams(params);
     const pageNumber = pageParams.pageNo || 1;  // Default to page 1 if not provided
-    const weiboService = new WeiboService();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const pageModel = await weiboService.getWeiboPage(pageNumber);
 
@@ -32,7 +34,9 @@ const weiboPage = async (req, res) => {
 
 const deleteWeibo = async (req, res) => {
     const { ids } = req.body;  // Assuming 'ids' is an array of IDs
-    const weiboService = new WeiboService();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const success = await weiboService.deleteWeibo(ids);
 
@@ -43,7 +47,9 @@ const deleteWeibo = async (req, res) => {
 };
 
 const sendWeibo = async (req, res) => {
-    const weiboService = new WeiboService();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const params = req.body;
     await weiboService.sendWeibo(params);
@@ -53,7 +59,9 @@ const sendWeibo = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    const weiboService = new WeiboService();
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     try {
         const user = await weiboService.getUser();

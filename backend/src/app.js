@@ -3,7 +3,6 @@ import bodyParser from 'body-parser';
 import apiRoutes from '#root/routes/apiRoutes.js';
 import { createServer } from 'http';
 import { initializeSocket } from '#root/utils/socket.js';
-
 const app = express();
 
 // Middleware

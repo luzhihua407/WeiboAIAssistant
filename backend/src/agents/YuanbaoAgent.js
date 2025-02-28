@@ -3,9 +3,6 @@ import axios from 'axios';
 import sendNotification from '#root/utils/messageSender.js';
 import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
-import winston from 'winston';
-
-const logger = winston; // or any logging library
 
 class YuanBaoAgent extends BaseAgent {
     constructor(config) {
@@ -17,7 +14,6 @@ class YuanBaoAgent extends BaseAgent {
         }
         Utils.createJsonFile(this.cookieCache);
         this.baseUrl = config.chrome.yuanbao.baseUrl;
-        this.webhook = config.bot.qy.webhook;
     }
 
     formatEventStreamMessage(text) {
@@ -51,12 +47,11 @@ class YuanBaoAgent extends BaseAgent {
             const response = await route.fetch();
             const text = await response.text();
             const formattedMessage = this.formatEventStreamMessage(text);
-            logger.info(`<<< ${formattedMessage}`);
+            console.log(formattedMessage)
             this.reply = formattedMessage;
             await route.fulfill({ response });
           });
         await this.page.goto(this.baseUrl);
-        logger.info(`Opened page: ${this.baseUrl}`);
     }
 
     getCookiesDict() {
@@ -85,10 +80,10 @@ class YuanBaoAgent extends BaseAgent {
               });
             const json = response.data;
             const loggedIn = !json.error;
-            logger.info(`Login status: ${loggedIn}`);
+            console.log("元宝已登录")
             return loggedIn;
         } catch (error) {
-            logger.error(`获取登录状态失败: ${error.message}`);
+            console.log("元宝报错",error)
             return false;
         }
     }
@@ -105,7 +100,7 @@ class YuanBaoAgent extends BaseAgent {
         const qrcodePath = path.join(this.storePath, "yuanbao_qrcode.jpg");
         Utils.deleteFile(qrcodePath);
         await Utils.screenshot(img, qrcodePath);
-        logger.info("Sent login QR code notification.");
+        console.log("Sent login QR code notification.");
         await sendNotification("not_login",{qrcode: qrcodePath, channel: "元宝" });
         const response = await responseInfo;
         if (response.status() === 200) {
@@ -120,7 +115,7 @@ class YuanBaoAgent extends BaseAgent {
         const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
         await sendButtonLocator.click();
         const response = await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
-        logger.info("Sent prompt request.");
+        console.log("Sent prompt request.");
     }
 
 }

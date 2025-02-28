@@ -112,9 +112,11 @@ async function getpage(pageNo: number, pageSize: number) {
     } else {
       console.error('Invalid response structure:', response);
     }
-    loading.value=false;
+    
   } catch (error) {
     console.error('Error fetching product page:', error);
+  }finally{
+    loading.value=false;
   }
 }
 

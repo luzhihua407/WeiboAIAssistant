@@ -30,7 +30,7 @@ class WeiboService {
     } catch (err) {
       if (err.code === 'ENOENT') {
         console.log('文件不存在，正在创建文件...');
-        await fs.promises.writeFile(json_file, '{}', 'utf8');
+        Utils.createJsonFile(json_file);
         console.log('文件已创建');
       } else {
         console.error('访问文件失败:', err);
@@ -97,35 +97,38 @@ class WeiboService {
       const sysDictService = new SysDictService();
       const dict = await sysDictService.getDictByCode('weiboUserId');
       const uid = dict.value;
-      const params = {
-        uid: uid, // Example user ID
-        page: pageNumber,
-        feature: 0,
-      };
-  
-        const response = await axios.get(url, { headers, params });
-        const data = response.data;
-        if(data.ok==-100){
-          const config= await Config.load();
-          const agent = new WeiboAgent(config);
-          await agent.ready();
-          agent.scanLogin();
-          return null;
-        }
-        const total = data.data.total;
-        const list = data.data.list;
-        const result = list.map(item => {
-          const createdAt = format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss');
-          return {
-            id: item.idstr,
-            text: item.text_raw,
-            readsCount: item.reads_count,
-            commentsCount: item.comments_count,
-            visible: item.visible.type === 1 ? '仅自己可见' : '公开',
-            createdAt,
-          };
-        });
-        return { total, items: result };
+      if(uid!=null){
+        const params = {
+          uid: uid, // Example user ID
+          page: pageNumber,
+          feature: 0,
+        };
+    
+          const response = await axios.get(url, { headers, params });
+          const data = response.data;
+          if(data.ok==-100){
+            const config= await Config.load();
+            const agent = new WeiboAgent(config);
+            await agent.ready();
+            agent.scanLogin();
+            return null;
+          }
+          const total = data.data.total;
+          const list = data.data.list;
+          const result = list.map(item => {
+            const createdAt = format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss');
+            return {
+              id: item.idstr,
+              text: item.text_raw,
+              readsCount: item.reads_count,
+              commentsCount: item.comments_count,
+              visible: item.visible.type === 1 ? '仅自己可见' : '公开',
+              createdAt,
+            };
+          });
+          return { total, items: result };
+      }
+     
     } catch (err) {
       console.error('调用失败:', err);
     }

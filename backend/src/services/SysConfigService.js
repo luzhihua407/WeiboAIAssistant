@@ -1,19 +1,21 @@
 import SysConfig from '#root/models/SysConfig.js';
+import sequelize from '#root/config/database.js';
+const SysConfigDao=SysConfig.init(sequelize);
 class SysConfigService {
 
 
   async update(sysConfig) {
-    const data=await SysConfig.findByPk(sysConfig.id);
+    const data=await SysConfigDao.findByPk(sysConfig.id);
     if(data==null){
-      await SysConfig.create(sysConfig);
+      await SysConfigDao.create(sysConfig);
     }else{  
-      await SysConfig.update(sysConfig,{where:{id:sysConfig.id}});
+      await SysConfigDao.update(sysConfig,{where:{id:sysConfig.id}});
     }
   }
 
 
   async get(id) {
-    const sysConfig = await SysConfig.findByPk(id);
+    const sysConfig = await SysConfigDao.findByPk(id);
     return sysConfig;
   }
 

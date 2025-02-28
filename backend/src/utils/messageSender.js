@@ -1,4 +1,4 @@
-import { emitMessage } from './socket.js';
+import { emitMessage } from '#root/utils/socket.js';
 
 async function sendNotification(event, data) {
   emitMessage(event, data);

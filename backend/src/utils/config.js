@@ -4,11 +4,22 @@ import Utils from '#root/utils/utils.js';
 class Config {
     static async load() {
     try {
+        let filePath;
         // 读取文件内容（异步方式）
-        const filePath=path.join(process.cwd(), 'assets', 'app.yaml');
+        if (process.pkg && process.pkg.entrypoint) {
+               // 获取可执行文件的目录
+            const entrypointDir = path.dirname(process.pkg.entrypoint);
+            // 获取上一级目录
+            const parentDir = path.dirname(entrypointDir);
+            // 打包后的环境
+            filePath=path.join(parentDir, 'assets/app.yaml');
+          } else {
+            // 开发环境
+            filePath=path.join(process.cwd(), 'assets', 'app.yaml');
+          }
+        
         console.log("filePath",filePath)
         const fileContent = Utils.readFile(filePath);
-        console.log("fileContent",fileContent)
         const config = yaml.load(fileContent);
         return config;
     } catch (error) {

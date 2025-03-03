@@ -1,8 +1,6 @@
 import { chromium} from 'playwright';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import fs from 'fs';
 
 class Playwright {
     static browser = null;
@@ -14,11 +12,14 @@ class Playwright {
 
     // Get the browser instance, launch if not already done
     static async getBrowser(headless = true) {
+        const filePath=path.join(process.cwd(), 'pw-browsers/chromium-1155/chrome-win/chrome.exe');
+       console.log("filePath",filePath,fs.existsSync(filePath));
         if (!Playwright.browser) {
             console.log(">>> browser is none");
             
             Playwright.browser = await chromium.launch({
                 headless: headless,
+                executablePath:filePath,
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -55,9 +56,20 @@ class Playwright {
                 userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
             };
         const browserContext = await browser.newContext(contextOptions);
-
-        // Load custom stealth.js script if needed
-        const filePath = path.join(process.cwd(), 'assets', 'stealth.min.js');
+        let filePath;
+        if (process.pkg && process.pkg.entrypoint) {
+            // 获取可执行文件的目录
+         const entrypointDir = path.dirname(process.pkg.entrypoint);
+         // 获取上一级目录
+         const parentDir = path.dirname(entrypointDir);
+         // 打包后的环境
+         filePath=path.join(parentDir, 'assets/stealth.min.js');
+         console.log("filePath",fs.existsSync(filePath));
+       } else {
+         // 开发环境
+         filePath=path.join(process.cwd(), 'assets', 'stealth.min.js');
+       }
+     
         await browserContext.addInitScript({ path: filePath });
         return browserContext;
     }

@@ -12,5 +12,11 @@ rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}
 
 ## 打包工具
 npm run tauri build
-## 安装浏览器
+## 安装浏览器chromium
+### 指定路径安装
+打开PowerShell，执行下面命令，
+$Env:PLAYWRIGHT_BROWSERS_PATH="具体path"
 npx playwright install chromium
+### 指定playwright启动chromium浏览器路径
+打开utils/playwright.js
+修改launch部分配置项：executablePath

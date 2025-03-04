@@ -11,6 +11,8 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import YamlEditor from './page/YamlEditor.vue';
 import Dict from './page/Dict.vue';
+import VueLazyload from 'vue-lazyload';
+
 const routes = [
   { path: '/weibo', component: Weibo },
   { path: '/weibo_list', component: WeiboList },
@@ -28,4 +30,8 @@ app.component('QuillEditor', QuillEditor)
 app.use(router)
 app.use(Antd)
 app.use(store)
+app.use(VueLazyload, {
+  preLoad: 1.3,
+  loading: './public/placeholder.png',
+});
 app.mount('#app');

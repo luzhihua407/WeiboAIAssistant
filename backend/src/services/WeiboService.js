@@ -119,7 +119,9 @@ class WeiboService {
             const createdAt = format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss');
             return {
               id: item.idstr,
-              text: item.text_raw,
+              text: item.text,
+              // text_raw: item.text_raw,
+              pic_infos: item.pic_infos,
               readsCount: item.reads_count,
               commentsCount: item.comments_count,
               visible: item.visible.type === 1 ? '仅自己可见' : '公开',
@@ -153,6 +155,28 @@ class WeiboService {
       } catch (e) {
         console.error(`Error deleting Weibo: ${e.message}`);
       }
+    }
+  }
+  async longtext(id) {
+    const url = 'https://weibo.com/ajax/statuses/longtext';
+    const headers = {
+      'x-xsrf-token': this.xsrfToken,
+      'Content-Type': 'application/json',
+      'Cookie': this.cookieHeader
+    };
+    const params = {
+      id: id, // Example user ID
+    };
+
+    try {
+      const response = await axios.get(url, { headers, params });
+      if (response.data.ok !== 1) {
+        throw new Error('Delete failed');
+      }else{
+        return response.data;
+      }
+    } catch (e) {
+      console.error(`Error deleting Weibo: ${e.message}`);
     }
   }
 

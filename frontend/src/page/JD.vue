@@ -20,7 +20,6 @@ import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../api/jdapi'; // 根据实际路径引入
 import { login } from '../api/yuanbaoapi'; // 根据实际路径引入
-import { message as message_tauri } from '@tauri-apps/plugin-dialog';
 import { message as message_ant } from 'ant-design-vue';
 import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';
 const columns: TableColumnsType = [
@@ -80,7 +79,7 @@ async function onSendWeibo(id:any) {
     if(resp.data.is_logined){
       const response = await sendWeibo({ id:id });
       if (response.code!=200) {
-        await message_tauri(response.msg, { title: '系统提示', kind: 'error' });
+        message_ant.error(response.msg);
         console.error('Invalid response structure:', response);
       } else {
         message_ant.info('操作完成');
@@ -99,8 +98,9 @@ async function onSaveGoods() {
     state.loading=true;
     const response = await saveGoods({ rankId:200000 });
     if (response.code!=200) {
-      // Shows message
-      await message_tauri(response.msg, { title: '系统提示', kind: 'error' });
+      this.loading=false
+      this.state.loading=false;
+      message_ant.error(response.msg);
     }else{
       this.loading=false
       message_ant.info('操作完成');
@@ -108,7 +108,8 @@ async function onSaveGoods() {
     }
   } catch (error) {
     this.loading=false
-    state.loading=false;
+    this.state.loading=false;
+    message_ant.error(error);
     console.error('Error fetching product page:', error);
   }
 }

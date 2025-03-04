@@ -3,6 +3,11 @@
       v-model:open="open"
       :title="`请${channel}扫码登录`"
       ok-text="刷新" cancel-text="关闭"
+      :footer="null"
+      :closable="false"
+      :centered="true"
+      :forceRender="true"
+      :maskClosable="false"
       @cancel="handleCancel"
       @ok="handleOk"
     >

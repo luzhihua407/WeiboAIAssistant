@@ -80,6 +80,7 @@ class YuanBaoAgent extends BaseAgent {
               });
             const json = response.data;
             const loggedIn = !json.error;
+            await sendNotification("login_success",{islogined: true });
             console.log("元宝已登录")
             return loggedIn;
         } catch (error) {
@@ -89,24 +90,30 @@ class YuanBaoAgent extends BaseAgent {
     }
 
     async scanLogin() {
-        await this.page.goto("https://yuanbao.tencent.com");
-        const responseInfo = this.page.waitForResponse("**/api/joint/login", { timeout: 60000 });
-        await this.page.locator("//span[text()='登录']").click();
-        await this.page.waitForTimeout(5000);
-        const iframeLocator = this.page.locator(".hyc-wechat-login");
-        await iframeLocator.waitFor({ timeout: 60000 });
-        const iframe = iframeLocator.frameLocator("iframe");
-        const img = iframe.locator(".wrp_code").locator("img");
-        const qrcodePath = path.join(this.storePath, "yuanbao_qrcode.jpg");
-        Utils.deleteFile(qrcodePath);
-        await Utils.screenshot(img, qrcodePath);
-        console.log("Sent login QR code notification.");
-        await sendNotification("not_login",{qrcode: qrcodePath, channel: "元宝" });
-        const response = await responseInfo;
-        if (response.status() === 200) {
-            await this.saveCookie();
-            await sendNotification("login_success",{islogined: true });
+        try {
+            await this.page.goto("https://yuanbao.tencent.com");
+            const responseInfo = this.page.waitForResponse("**/api/joint/login", { timeout: 60000 });
+            await this.page.locator("//span[text()='登录']").click();
+            await this.page.waitForTimeout(5000);
+            const iframeLocator = this.page.locator(".hyc-wechat-login");
+            await iframeLocator.waitFor({ timeout: 60000 });
+            const iframe = iframeLocator.frameLocator("iframe");
+            const img = iframe.locator(".wrp_code").locator("img");
+            const qrcodePath = path.join(this.storePath, "yuanbao_qrcode.jpg");
+            Utils.deleteFile(qrcodePath);
+            await Utils.screenshot(img, qrcodePath);
+            console.log("Sent login QR code notification.");
+            await sendNotification("not_login",{qrcode: qrcodePath, channel: "元宝" });
+            const response = await responseInfo;
+            if (response.status() === 200) {
+                await this.saveCookie();
+                await sendNotification("login_success",{islogined: true });
+            }
+        } catch (error) {
+            console.log("元宝扫描登录报错：",error)
+            this.scanLogin();
         }
+        
     }
 
     async fillSubmit(prompt, sysPrompt = '') {

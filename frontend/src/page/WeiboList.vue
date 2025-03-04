@@ -33,7 +33,15 @@
                 <EyeInvisibleOutlined /> 私密
               </a-col>
             </a-row>
-            <div>{{ record.text }}...</div>
+            <!-- <div>{{ record.text }}...</div> -->
+             
+            <div><div v-html="record.text"></div>   {/* 动态绑定点击事件 */}
+                <span
+                  class="expand"
+                  @click="handleExpand"
+                >
+                  展开
+                </span></div>
             <a-row>
               <a-col :span="8">
                 <ReadOutlined /> {{ record.readsCount }}
@@ -43,6 +51,12 @@
               </a-col>
 
             </a-row>
+            <div class="photo-wall">
+            <div class="photo-item" v-for="(photo, index) in record.pic_infos">
+              <img v-lazy="photo.large.url" :alt="`Photo ${index + 1}`" />
+            </div>
+          </div>
+              
           </a-space>
         </template>
         <template v-if="column.key === 'operation'">
@@ -119,6 +133,24 @@ const onRemoveSelect = () => {
   }
 
 };
+// 点击展开的处理函数
+async function handleExpand() {
+      console.log("点击了展开按钮");
+
+      try {
+        // 调用后端接口
+        const response = await axios.post("/api/expand", {
+          message: "用户点击了展开按钮",
+        });
+        console.log("后端接口返回：", response.data);
+
+        // 根据接口返回结果更新表格或其他逻辑
+        this.$message.success("展开成功！");
+      } catch (error) {
+        console.error("展开失败：", error);
+        this.$message.error("展开失败，请稍后重试！");
+      }
+    }
 async function getpage(pageNo: number, pageSize: number) {
   try {
     state.loading=true;
@@ -164,7 +196,7 @@ async function getLogin() {
       console.log(assetUrl)
       user_pic.value=assetUrl
       isLogined.value=true
-      getpage(pagination.value.current, pagination.value.pageSize);
+      this.onFreshData();
     }else if(response.code==10000){
       login()
     }
@@ -177,9 +209,29 @@ function handlePageChange(page:number, pageSize:number) {
   pagination.value.pageSize = pageSize;
   getpage(page, pageSize);
 }
-
 onMounted(() => {
   getLogin()
 });
 
 </script>
+<style scoped>
+.photo-wall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.photo-item {
+  width: 130px;
+  height: 130px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #f0f0f0; /* 占位符背景色 */
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>

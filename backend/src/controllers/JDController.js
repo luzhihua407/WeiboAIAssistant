@@ -32,7 +32,7 @@ const page = async (req, res) => {
     } catch (err) {
         console.log(err);
         const responseModel = new ResponseModel({ msg: 'Error fetching products', code: 500 });
-        return res.status(500).json(responseModel.modelDump());
+        return res.status(200).json(responseModel.modelDump());
     }
 };
 
@@ -99,8 +99,8 @@ const saveGoods = async (req, res) => {
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (err) {
-        const responseModel = new ResponseModel({ msg: 'Error saving goods', code: 500 });
-        return res.status(500).json(responseModel.modelDump());
+        const responseModel = new ResponseModel({ msg: err, code: 500 });
+        return res.status(200).json(responseModel.modelDump());
     }
 };
 
@@ -155,7 +155,7 @@ const get = async (req, res) => {
         return res.json(responseModel.modelDump());
     } catch (err) {
         const responseModel = new ResponseModel({ msg: 'Error fetching product details', code: 500 });
-        return res.status(500).json(responseModel.modelDump());
+        return res.status(200).json(responseModel.modelDump());
     }finally{
         await weiboAgent.browserContext.close();
         await llmaAgent.browserContext.close();

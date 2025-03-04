@@ -46,6 +46,19 @@ const deleteWeibo = async (req, res) => {
     return res.json(responseModel.modelDump());
 };
 
+const longtext = async (req, res) => {
+    const { ids } = req.body;  // Assuming 'ids' is an array of IDs
+    const config= await Config.load();
+    const weiboAgent = new WeiboAgent(config);
+    const weiboService = new WeiboService(weiboAgent);
+    await weiboService.initialize();
+    const data = await weiboService.longtext(ids);
+
+    const responseModel = new ResponseModel({ data });
+
+    return res.json(responseModel.modelDump());
+};
+
 const sendWeibo = async (req, res) => {
     const config= await Config.load();
     const weiboAgent = new WeiboAgent(config);
@@ -111,5 +124,6 @@ export {
     sendWeibo,
     getUser,
     login,
+    longtext,
     refreshQRCode
 };

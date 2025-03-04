@@ -59,6 +59,7 @@ class WeiboAgent extends BaseAgent {
     await this.page.goto(this.baseUrl);
     const visible = await this.page.locator('textarea[placeholder="有什么新鲜事想分享给大家？"]').isVisible();
     if (visible) {
+      await sendNotification("login_success",{islogined: true });
       console.log('微博已登录');
       return true;
     }

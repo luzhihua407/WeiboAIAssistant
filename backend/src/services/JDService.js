@@ -124,14 +124,19 @@ class JDService {
       apiRequest.RankGoodsReq = req
       const response = await apiRequest.getResponse();
       console.log('API Response:', response);
+      const error = response.error_response;
+      if(error==null){
+        const result = JSON.parse(response.jd_union_open_goods_rank_query_responce.queryResult);
 
-      const result = JSON.parse(response.jd_union_open_goods_rank_query_responce.queryResult);
-
-      if (result.code === 200) {
-        return result.data;
-      } else {
-        throw new MyCustomError(result.message, result.code);
+        if (result.code === 200) {
+          return result.data;
+        } else {
+          throw new MyCustomError(result.message, result.code);
+        }
+      }else{
+        throw error.zh_desc;
       }
+  
     } catch (err) {
       console.error('Error fetching goods rank:', err);
       throw err;

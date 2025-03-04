@@ -20,7 +20,7 @@ router.get('/weibo/get_user', weiboController.getUser);
 router.get('/weibo/login', weiboController.login);
 router.post('/weibo/delete', weiboController.deleteWeibo);
 router.get('/weibo/refresh_qrcode', weiboController.refreshQRCode);
-
+router.get('/weibo/longtext', weiboController.longtext);
 // Yuanbao Routes
 router.get('/yuanbao/login', yuanbaoController.login);
 router.get('/yuanbao/refresh_qrcode', yuanbaoController.refreshQRCode);

@@ -24,9 +24,6 @@
               <RouterLink to="/sys_config"><EditOutlined />系统配置</RouterLink>
             </a-menu-item>
             <a-menu-item key="7">
-              <RouterLink to="/dict"><TableOutlined />数据字典</RouterLink>
-            </a-menu-item>
-            <a-menu-item key="8">
               <RouterLink to="/setting"><TableOutlined />系统设置</RouterLink>
             </a-menu-item>
         </a-sub-menu>

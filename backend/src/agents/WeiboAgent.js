@@ -76,7 +76,6 @@ class WeiboAgent extends BaseAgent {
   }
 
   async doSendPost(content, imgList, isSelfSee) {
-    console.log(content);
     if (isSelfSee) {
       await this.page.locator('div[title="公开"]').click();
       await this.page.locator('div:text("仅自己可见")').click();

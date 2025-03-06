@@ -122,7 +122,6 @@ class YuanBaoAgent extends BaseAgent {
         const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
         await sendButtonLocator.click();
         const response = await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
-        console.log("Sent prompt request.");
     }
 
 }

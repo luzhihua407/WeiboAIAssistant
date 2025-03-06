@@ -20,9 +20,6 @@
           <a-menu-item key="5"> 
               <RouterLink to="/weibo_list"><WeiboOutlined />微博列表</RouterLink>
             </a-menu-item>
-            <a-menu-item key="6">
-              <RouterLink to="/sys_config"><EditOutlined />系统配置</RouterLink>
-            </a-menu-item>
             <a-menu-item key="7">
               <RouterLink to="/setting"><TableOutlined />系统设置</RouterLink>
             </a-menu-item>

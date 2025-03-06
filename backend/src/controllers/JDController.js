@@ -4,25 +4,17 @@ import ResponseModel from '#root/models/ResponseModel.js';
 import Utils  from '#root/utils/utils.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
 import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
-import SysDictService from '#root/services/SysDictService.js';
+import JdAppConfigService from '#root/services/JdAppConfigService.js';
+import WeiboAccountService from '#root/services/WeiboAccountService.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;
     const pageSize = parseInt(pageParams.pageSize) || 10;
 
     try {
-        const sysDictService = new SysDictService();
-        const dicts = await sysDictService.getChildDict('jd_api');
-        let app_key;
-        let app_secret;
-        dicts.forEach(item=>{
-            if(item.code=='app_key'){
-              app_key=item.value;
-            }
-            if(item.code=='app_secret'){
-              app_secret=item.value;
-            }
-          })
+        const jdConfig = await JdAppConfigService.getConfigById(1);
+        const app_key=jdConfig.jd_app_key;
+        const app_secret=jdConfig.jd_app_secret;
         const jdService = new JDService(app_key,app_secret);
         const responseData = await jdService.getPageProducts(pageNumber, pageSize);
         const responseModel = new ResponseModel({ data: responseData });
@@ -36,18 +28,9 @@ const page = async (req, res) => {
 
 const saveGoods = async (req, res) => {
     const rankId = req.query.rankId;
-    const sysDictService = new SysDictService();
-    const dicts = await sysDictService.getChildDict('jd_api');
-    let app_key;
-    let app_secret;
-    dicts.forEach(item=>{
-        if(item.code=='app_key'){
-          app_key=item.value;
-        }
-        if(item.code=='app_secret'){
-          app_secret=item.value;
-        }
-      })
+    const jdConfig = await JdAppConfigService.getConfigById(1);
+    const app_key=jdConfig.jd_app_key;
+    const app_secret=jdConfig.jd_app_secret;
     const jdService = new JDService(app_key,app_secret);
 
     try {
@@ -104,9 +87,9 @@ const saveGoods = async (req, res) => {
 
 const get = async (req, res) => {
     const productId = req.query.id;
-    const jdConfig = await JdAppConfigService.getConfigById(req.params.id);
-    const app_key=jdConfig.app_key;
-    const app_secret=jdConfig.app_secret;
+    const jdConfig = await JdAppConfigService.getConfigById(1);
+    const app_key=jdConfig.jd_app_key;
+    const app_secret=jdConfig.jd_app_secret;
     const jdService = new JDService(app_key,app_secret);
     const weiboAgent = new WeiboAgent();
     const llmaAgent = new YuanBaoAgent();
@@ -115,6 +98,7 @@ const get = async (req, res) => {
         const weiboService = new WeiboService(weiboAgent);
         await weiboService.initialize();
         await llmaAgent.ready();
+        const weiboAccountService = new WeiboAccountService();
         const weiboAccount = await weiboAccountService.getById(1);
         const product = await jdService.getProduct(productId);
         const coupons = await jdService.getCoupons(product.id);
@@ -130,9 +114,7 @@ const get = async (req, res) => {
         const buyUrl = await jdService.convertBuyUrl(couponUrls, product.item_id);
         await llmaAgent.setSseHandler()
         await llmaAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
-        console.log(`<<< ${this.agent.reply} >>>`);
         const content = llmaAgent.reply;
-        // const content = await llmService.generateWeiboPost(product.sku_name);
 
         const weiboReq = {
             content,
@@ -146,6 +128,7 @@ const get = async (req, res) => {
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (err) {
+        console.error(err);
         const responseModel = new ResponseModel({ msg: 'Error fetching product details', code: 500 });
         return res.status(200).json(responseModel.modelDump());
     }finally{

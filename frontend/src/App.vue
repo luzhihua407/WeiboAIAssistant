@@ -1,9 +1,9 @@
 <template>
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible
-      :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0 }">
+      :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, background: '#001529' }">
       <div class="logo" />
-      <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" style="height: 100%">
+      <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" style="height: 100%; border-right: 0;">
         <a-sub-menu key="1">
           <template #title>
             <span>
@@ -27,27 +27,24 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
-      <a-layout-content :style="{ background: '#fff', overflow: 'initial', minHeight: '280px' }">
-        <div :style="{ padding: '20px', background: '#fff' }">
+      <a-layout-content :style="{ background: '#f0f2f5', overflow: 'initial', minHeight: '280px', padding: '24px' }">
+        <div :style="{ padding: '24px', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }">
           <a-config-provider :theme="{ token: { fontSize: 15 } }">
             <Login />
             <RouterView />
           </a-config-provider>
-
         </div>
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
+
 <script lang="ts" setup>
 import {
   WeiboCircleOutlined,
-  DesktopOutlined,
   UserOutlined,
   ShoppingOutlined,
-  FileOutlined,
   WeiboOutlined,
-  EditOutlined,
   TableOutlined
 } from '@ant-design/icons-vue';
 import { ref, onMounted } from 'vue';
@@ -79,8 +76,6 @@ function initWebSocket() {
     const channel = data.channel
     const assetUrl = convertFileSrc(qrcode);
     store.dispatch('loginWin', { "show": true, "qrcode": assetUrl, "channel": channel });
-
-
   });
   socket.on('login_success', (data) => {
     console.log('New message:', data);
@@ -94,11 +89,13 @@ onMounted(() => {
   initWebSocket()
 });
 </script>
+
 <style scoped>
 #components-layout-demo-side .logo {
   height: 32px;
   margin: 16px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
 }
 
 .site-layout .site-layout-background {
@@ -107,5 +104,27 @@ onMounted(() => {
 
 [data-theme='light'] .site-layout .site-layout-background {
   background: #fff;
+}
+
+a-layout-sider {
+  background: #001529;
+}
+
+a-menu {
+  background: #001529;
+  color: #fff;
+}
+
+a-menu-item, a-sub-menu-title {
+  color: #fff;
+}
+
+a-menu-item:hover, a-menu-item-active, a-menu-item-selected {
+  background: #1890ff;
+  color: #fff;
+}
+
+a-menu-item-selected {
+  font-weight: bold;
 }
 </style>

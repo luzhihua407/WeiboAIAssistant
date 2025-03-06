@@ -84,6 +84,7 @@
     const formState = reactive({
       weibo_account_id: '',
       weibo_account_name: '',
+      system_prompt: '',
       jd_app_key: '',
       jd_app_secret: '',
     });
@@ -112,6 +113,7 @@
                 const weiboAccount = response.data;
                 formState.weibo_account_id = weiboAccount.weibo_account_id;
                 formState.weibo_account_name = weiboAccount.weibo_account_name;
+                formState.system_prompt = weiboAccount.system_prompt;
             }
   
             const resp = await getJdAppConfigById(1);

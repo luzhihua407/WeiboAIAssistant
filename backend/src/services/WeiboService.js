@@ -192,7 +192,6 @@ class WeiboService {
         if (jsonMatch) {
           const config = JSON.parse(jsonMatch[1]);
           const user = config.user;
-          console.log(user);
           if(user!=undefined){
             const id=user.id;
             const screen_name=user.screen_name;

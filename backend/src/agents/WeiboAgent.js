@@ -4,7 +4,7 @@ import Utils from '#root/utils/utils.js';
 import BaseAgent from '#root/agents/BaseAgent.js';
 import Playwright from '#root/utils/playwright.js';
 class WeiboAgent extends BaseAgent {
-  constructor(config) {
+  constructor() {
     super();
     this.storePath = path.join(process.cwd(), 'temp');
     this.cookieCache = path.join(process.cwd(), 'cookies', 'weibo.json');
@@ -12,7 +12,7 @@ class WeiboAgent extends BaseAgent {
       storageState: this.cookieCache
     }
     Utils.createJsonFile(this.cookieCache);
-    this.baseUrl = config.weibo.baseUrl;
+    this.baseUrl = "https://weibo.com/";
   }
 
   async getLoginQRCode() {

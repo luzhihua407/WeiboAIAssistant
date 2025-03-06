@@ -5,7 +5,6 @@ import ResponseModel from '#root/models/ResponseModel.js';
 import Utils  from '#root/utils/utils.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
 import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
-import Config from '#root/utils/config.js';
 import SysDictService from '#root/services/SysDictService.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
@@ -106,28 +105,18 @@ const saveGoods = async (req, res) => {
 
 const get = async (req, res) => {
     const productId = req.query.id;
-    const sysDictService = new SysDictService();
-    const dicts = await sysDictService.getChildDict('jd_api');
-    let app_key;
-    let app_secret;
-    dicts.forEach(item=>{
-        if(item.code=='app_key'){
-          app_key=item.value;
-        }
-        if(item.code=='app_secret'){
-          app_secret=item.value;
-        }
-      })
+    const jdConfig = await JdAppConfigService.getConfigById(req.params.id);
+    const app_key=jdConfig.app_key;
+    const app_secret=jdConfig.app_secret;
     const jdService = new JDService(app_key,app_secret);
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
-    const llmaAgent = new YuanBaoAgent(config);
+    const weiboAgent = new WeiboAgent();
+    const llmaAgent = new YuanBaoAgent();
     try {
         await weiboAgent.ready();
         const weiboService = new WeiboService(weiboAgent);
         await weiboService.initialize();
         await llmaAgent.ready();
-        const llmService = new LLMService(llmaAgent);
+        const weiboAccount = await weiboAccountService.getById(1);
         const product = await jdService.getProduct(productId);
         const coupons = await jdService.getCoupons(product.id);
         const couponUrls = coupons.map(coupon => coupon.link);
@@ -140,7 +129,11 @@ const get = async (req, res) => {
         }
 
         const buyUrl = await jdService.convertBuyUrl(couponUrls, product.item_id);
-        const content = await llmService.generateWeiboPost(product.sku_name);
+        await llmaAgent.setSseHandler()
+        await llmaAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
+        console.log(`<<< ${this.agent.reply} >>>`);
+        const content = llmaAgent.reply;
+        // const content = await llmService.generateWeiboPost(product.sku_name);
 
         const weiboReq = {
             content,

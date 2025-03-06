@@ -5,7 +5,7 @@ import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
 
 class YuanBaoAgent extends BaseAgent {
-    constructor(config) {
+    constructor() {
         super();
         this.storePath = path.join(process.cwd(), 'temp');
         this.cookieCache = path.join(process.cwd(), 'cookies', 'yuanbao.json');
@@ -13,7 +13,7 @@ class YuanBaoAgent extends BaseAgent {
             storageState: this.cookieCache
         }
         Utils.createJsonFile(this.cookieCache);
-        this.baseUrl = config.chrome.yuanbao.baseUrl;
+        this.baseUrl = "https://yuanbao.tencent.com/chat";
     }
 
     formatEventStreamMessage(text) {

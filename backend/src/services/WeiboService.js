@@ -5,7 +5,6 @@ import { format } from 'date-fns';
 import Utils from '#root/utils/utils.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
 import WeiboAccountService from './WeiboAccountService.js';
-import Config from '#root/utils/config.js';
 import path from 'path';
 class WeiboService {
 
@@ -108,8 +107,7 @@ class WeiboService {
           const response = await axios.get(url, { headers, params });
           const data = response.data;
           if(data.ok==-100){
-            const config= await Config.load();
-            const agent = new WeiboAgent(config);
+            const agent = new WeiboAgent();
             await agent.ready();
             agent.scanLogin();
             return null;

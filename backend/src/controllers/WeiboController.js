@@ -2,14 +2,12 @@ import WeiboService from '#root/services/WeiboService.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
 import ResponseModel from '#root/models/ResponseModel.js';
 import PageParams from '#root/models/PageParams.js';
-import Config from '#root/utils/config.js';
 import winston from 'winston';
 
 const logger = winston; // or any logging library
 
 const deleteAllWeibo = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     await weiboAgent.ready();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
@@ -22,8 +20,7 @@ const weiboPage = async (req, res) => {
     const params = req.query;  // Extract query parameters
     const pageParams = new PageParams(params);
     const pageNumber = pageParams.pageNo || 1;  // Default to page 1 if not provided
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const pageModel = await weiboService.getWeiboPage(pageNumber);
@@ -34,8 +31,7 @@ const weiboPage = async (req, res) => {
 
 const deleteWeibo = async (req, res) => {
     const { ids } = req.body;  // Assuming 'ids' is an array of IDs
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const success = await weiboService.deleteWeibo(ids);
@@ -47,8 +43,7 @@ const deleteWeibo = async (req, res) => {
 };
 
 const longtext = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const data = await weiboService.longtext(req.query.id);
@@ -59,8 +54,7 @@ const longtext = async (req, res) => {
 };
 
 const sendWeibo = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     const params = req.body;
@@ -71,8 +65,7 @@ const sendWeibo = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
     try {
@@ -87,8 +80,7 @@ const getUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const weiboAgent = new WeiboAgent();
     try {
         await weiboAgent.openBrowser();
         weiboAgent.waitLogin();  // Use async function properly
@@ -102,8 +94,7 @@ const login = async (req, res) => {
 };
 
 const refreshQRCode = async (req, res) => {
-    const config= await Config.load();
-    const weiboAgent = new WeiboAgent(config);
+    const agent = new WeiboAgent();
     try {
         await agent.ready();
         agent.scanLogin();

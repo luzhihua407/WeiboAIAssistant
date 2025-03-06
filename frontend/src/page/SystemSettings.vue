@@ -22,6 +22,17 @@
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row :gutter="24">
+            <a-col :span="24">
+                <a-form-item label="系统提示词" name="system_prompt">
+                    <a-textarea
+                        v-model:value="formState.system_prompt"
+                        placeholder="请输入系统提示词"
+                        rows="4"
+                    />
+                </a-form-item>
+            </a-col>
+        </a-row>
       </a-card>
   
       <!-- 京东设置 -->
@@ -64,7 +75,7 @@
       getAllWeiboAccounts,
       getJdAppConfigById,
       updateOrCreateConfig,
-      getAllJdAppConfigs,
+      updateWeiboAccount,
   } from '../api/systemSettingsApi';
   
   export default {
@@ -88,6 +99,9 @@
         ],
         jd_app_secret: [
           { required: true, message: '请输入京东app_secret' },
+        ],
+        system_prompt: [
+            { required: true, message: '请输入系统提示词' },
         ],
       };
   
@@ -114,7 +128,12 @@
   
       const autoSave = async () => {
         try {
-
+            if (formState.system_prompt) {
+                await updateWeiboAccount({
+                    id: 1,
+                    system_prompt: formState.system_prompt,
+                });
+            }
             if (formState.jd_app_key) {
                 await updateOrCreateConfig({
                     id: 1,

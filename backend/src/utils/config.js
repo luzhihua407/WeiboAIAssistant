@@ -1,6 +1,7 @@
 import yaml from 'js-yaml';
 import path from 'path';
 import Utils from '#root/utils/utils.js';
+import { cwd } from 'node:process';
 class Config {
     static async load() {
     try {
@@ -17,6 +18,7 @@ class Config {
             // 开发环境
             filePath=path.join(process.cwd(), 'assets', 'app.yaml');
           }
+
         
         console.log("filePath",filePath)
         const fileContent = Utils.readFile(filePath);

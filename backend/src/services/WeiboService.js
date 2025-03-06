@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio';
 import { format } from 'date-fns';
 import Utils from '#root/utils/utils.js';
 import WeiboAgent from '#root/agents/WeiboAgent.js';
-import SysDictService from './SysDictService.js';
+import WeiboAccountService from './WeiboAccountService.js';
 import Config from '#root/utils/config.js';
 import path from 'path';
 class WeiboService {
@@ -94,9 +94,10 @@ class WeiboService {
     try {
       const url = 'https://weibo.com/ajax/statuses/mymblog';
       const headers = { Cookie: this.cookieHeader };
-      const sysDictService = new SysDictService();
-      const dict = await sysDictService.getDictByCode('weiboUserId');
-      const uid = dict.value;
+      const weiboAccountService = new WeiboAccountService();
+      const account = await weiboAccountService.findOne();
+      const uid = account ? account.weibo_account_id : null;
+
       if(uid!=null){
         const params = {
           uid: uid, // Example user ID
@@ -120,7 +121,6 @@ class WeiboService {
             return {
               id: item.idstr,
               text: item.text,
-              // text_raw: item.text_raw,
               pic_infos: item.pic_infos,
               readsCount: item.reads_count,
               commentsCount: item.comments_count,
@@ -171,7 +171,7 @@ class WeiboService {
     try {
       const response = await axios.get(url, { headers, params });
       if (response.data.ok !== 1) {
-        throw new Error('Delete failed');
+        throw new Error('longtext failed');
       }else{
         return response.data;
       }
@@ -194,18 +194,14 @@ class WeiboService {
         if (jsonMatch) {
           const config = JSON.parse(jsonMatch[1]);
           const user = config.user;
+          console.log(user);
           if(user!=undefined){
-
+            const id=user.id;
+            const screen_name=user.screen_name;
+            const weiboAccountService = new WeiboAccountService();
+            await weiboAccountService.saveOrUpdate({ weibo_account_id: id.toString(), weibo_account_name: screen_name });
             const profileImageUrl = `https://image.baidu.com/search/down?url=${user.profile_image_url}`;
             const userImg = await Utils.downloadImage(profileImageUrl, this.storePath, 'avatar.png');
-            const sysDictService = new SysDictService();
-            sysDictService.getDictByCode('weiboUserId').then((res)=>{
-              if(res==null){
-                sysDictService.save({name:"微博账号ID",code:"weiboUserId",value:user.idstr});
-              }else{
-                sysDictService.update({id:res.id,value:user.idstr});
-            }
-            });
             return { userId: user.idstr, userImg };
           }
         }

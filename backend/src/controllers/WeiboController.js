@@ -47,12 +47,11 @@ const deleteWeibo = async (req, res) => {
 };
 
 const longtext = async (req, res) => {
-    const { ids } = req.body;  // Assuming 'ids' is an array of IDs
     const config= await Config.load();
     const weiboAgent = new WeiboAgent(config);
     const weiboService = new WeiboService(weiboAgent);
     await weiboService.initialize();
-    const data = await weiboService.longtext(ids);
+    const data = await weiboService.longtext(req.query.id);
 
     const responseModel = new ResponseModel({ data });
 

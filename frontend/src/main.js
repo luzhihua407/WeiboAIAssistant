@@ -11,6 +11,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import YamlEditor from './page/YamlEditor.vue';
 import Dict from './page/Dict.vue';
+import SystemSettings from './page/SystemSettings.vue';
 import VueLazyload from 'vue-lazyload';
 
 const routes = [
@@ -19,6 +20,7 @@ const routes = [
   { path: '/jd', component: JD },
   { path: '/sys_config', component: YamlEditor },
   { path: '/dict', component: Dict },
+  { path: '/setting', component: SystemSettings },
 ]
 
 const router = createRouter({

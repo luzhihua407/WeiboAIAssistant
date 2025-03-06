@@ -66,3 +66,14 @@ export async function weibo_refresh_qrcode(data) {
     throw error;
   }
 }
+export async function longtext(data) {
+  const url = '/weibo/longtext';
+  try {
+    const response = await api.get(url, data);
+    console.log('操作成功:', response);
+    return response;
+  } catch (error) {
+    console.error('操作失败:', error);
+    throw error;
+  }
+}

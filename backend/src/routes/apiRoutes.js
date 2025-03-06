@@ -4,6 +4,8 @@ import * as weiboController from '#root/controllers/WeiboController.js';
 import * as sysDictController from '#root/controllers/SysDictController.js';
 import * as yuanbaoController from '#root/controllers/yuanbaoController.js';
 import * as SysConfigController from '#root/controllers/SysConfigController.js';
+import * as weiboAccountController from '#root/controllers/WeiboAccountController.js';
+import JdAppConfigController from '../controllers/JdAppConfigController.js';
 
 const router = express.Router();
 
@@ -32,7 +34,15 @@ router.post('/sysdict/update', sysDictController.update);
 router.get('/sysdict/delete', sysDictController.deleteDict);
 router.get('/sysdict/get', sysDictController.getDict);
 
+// WeiboAccount Routes
+router.post('/weiboAccount/save', weiboAccountController.save);
+router.post('/weiboAccount/update', weiboAccountController.update);
+router.get('/weiboAccount/get', weiboAccountController.get);
+
 router.get('/sysconfig/get', SysConfigController.get);
 router.post('/sysconfig/update', SysConfigController.update);
 
+// JdAppConfig Routes
+router.post('/jdAppConfig/updateOrCreateConfig', JdAppConfigController.updateOrCreateConfig);
+router.get('/jdAppConfig/:id', JdAppConfigController.getConfigById);
 export default router;

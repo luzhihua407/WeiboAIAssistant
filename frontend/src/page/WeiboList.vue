@@ -33,15 +33,8 @@
                 <EyeInvisibleOutlined /> 私密
               </a-col>
             </a-row>
-            <!-- <div>{{ record.text }}...</div> -->
+            <div><div v-html="record.text" @click="handleExpand(record)"></div></div>
              
-            <div><div v-html="record.text"></div>   {/* 动态绑定点击事件 */}
-                <span
-                  class="expand"
-                  @click="handleExpand"
-                >
-                  展开
-                </span></div>
             <a-row>
               <a-col :span="8">
                 <ReadOutlined /> {{ record.readsCount }}
@@ -77,7 +70,7 @@
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,get_user,login } from '../api/weiboapi'; // 根据实际路径引入
+import { page,delete_by_id,get_user,login,longtext } from '../api/weiboapi'; // 根据实际路径引入
 import { UserOutlined,CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
 const columns: TableColumnsType = [
@@ -134,21 +127,14 @@ const onRemoveSelect = () => {
 
 };
 // 点击展开的处理函数
-async function handleExpand() {
+async function handleExpand(record) {
       console.log("点击了展开按钮");
 
-      try {
-        // 调用后端接口
-        const response = await axios.post("/api/expand", {
-          message: "用户点击了展开按钮",
-        });
-        console.log("后端接口返回：", response.data);
-
-        // 根据接口返回结果更新表格或其他逻辑
-        this.$message.success("展开成功！");
-      } catch (error) {
-        console.error("展开失败：", error);
-        this.$message.error("展开失败，请稍后重试！");
+      const response = await longtext({ id:record.id });
+      if (response.code==200 && response.data!=null) {
+        record.text = response.data.data.longTextContent;
+      } else {
+        console.error('Invalid response structure:', response);
       }
     }
 async function getpage(pageNo: number, pageSize: number) {
@@ -191,12 +177,12 @@ function onFreshData(){
 async function getLogin() {
   const response=await get_user()
     if (response.code==200) {
-      const user_img=response.data.user_img
+      const user_img=response.data.userImg
       const assetUrl = convertFileSrc(user_img);
       console.log(assetUrl)
       user_pic.value=assetUrl
       isLogined.value=true
-      this.onFreshData();
+      getpage(pagination.value.current, pagination.value.pageSize);
     }else if(response.code==10000){
       login()
     }
@@ -233,5 +219,11 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+:deep(.collapse),
+:deep(span.expand) {
+  margin: 0 0 0 4px;
+  color: #eb7350;
+  cursor: pointer;
 }
 </style>

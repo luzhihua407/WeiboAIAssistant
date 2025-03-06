@@ -9,7 +9,7 @@ export default defineConfig(async () => ({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "ant-design-vue/dist/reset.css";`,
+        additionalData: `@import "ant-design-vue/dist/reset.css";@import "@/assets/custom.scss";`,// 引入自定义样式文件
       }
     }
   },

@@ -26,14 +26,20 @@
             <a-menu-item key="7">
               <RouterLink to="/dict"><TableOutlined />数据字典</RouterLink>
             </a-menu-item>
+            <a-menu-item key="8">
+              <RouterLink to="/setting"><TableOutlined />系统设置</RouterLink>
+            </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-content :style="{ background: '#fff', overflow: 'initial', minHeight: '280px' }">
         <div :style="{ padding: '20px', background: '#fff' }">
-          <Login />
-          <RouterView />
+          <a-config-provider :theme="{ token: { fontSize: 15 } }">
+            <Login />
+            <RouterView />
+          </a-config-provider>
+
         </div>
       </a-layout-content>
     </a-layout>

@@ -1,6 +1,7 @@
-import { chromium} from 'playwright';
-import path from 'path';
+import { chromium } from 'playwright';
 import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
 
 class Playwright {
     static browser = null;
@@ -11,15 +12,33 @@ class Playwright {
     }
 
     // Get the browser instance, launch if not already done
-    static async getBrowser(headless = true) {
-        const filePath=path.join(process.cwd(), 'pw-browsers/chromium-1155/chrome-win/chrome.exe');
-       console.log("filePath",filePath,fs.existsSync(filePath));
+    static async getBrowser() {
+        let config;
+        if (process.pkg && process.pkg.entrypoint) {
+            const entrypointDir = path.dirname(process.pkg.entrypoint);
+            const parentDir = path.dirname(entrypointDir);
+            config = path.join(parentDir, 'assets/config.yaml');
+        } else {
+            config = path.join(process.cwd(), 'assets', 'config.yaml');
+        }
+        let configData;
+        try {
+            const fileContents = fs.readFileSync(config, 'utf8');
+            configData = yaml.load(fileContents);
+        } catch (e) {
+            console.error("Error reading config file:", e);
+            configData = {};
+        }
+
+        const headless = configData.headless !== undefined ? configData.headless : true;
+        const filePath = path.join(process.cwd(), 'pw-browsers/chromium-1155/chrome-win/chrome.exe');
+        console.log("filePath", filePath, fs.existsSync(filePath));
         if (!Playwright.browser) {
             console.log(">>> browser is none");
-            
+
             Playwright.browser = await chromium.launch({
                 headless: headless,
-                executablePath:filePath,
+                executablePath: filePath,
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -53,41 +72,20 @@ class Playwright {
             serviceWorkers: 'block',
             locale: 'zh-CN',
             deviceScaleFactor: 1,
-                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-            };
+            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+        };
         const browserContext = await browser.newContext(contextOptions);
-        let filePath;
-        if (process.pkg && process.pkg.entrypoint) {
-            // 获取可执行文件的目录
-         const entrypointDir = path.dirname(process.pkg.entrypoint);
-         // 获取上一级目录
-         const parentDir = path.dirname(entrypointDir);
-         // 打包后的环境
-         filePath=path.join(parentDir, 'assets/stealth.min.js');
-         console.log("filePath",fs.existsSync(filePath));
-       } else {
-         // 开发环境
-         filePath=path.join(process.cwd(), 'assets', 'stealth.min.js');
-       }
-     
+        const filePath = Playwright.getStealthScriptPath();
         await browserContext.addInitScript({ path: filePath });
         return browserContext;
     }
 
     // Create a new page in the browser context
     static async newPage(context) {
-        if(context.pages.length>0){
-            return context.pages[0]
+        if (context.pages().length > 0) {
+            return context.pages()[0];
         }
         const page = await context.newPage();
-        return page;
-    }
-
-    // Initialize Playwright, get browser, context, and page
-    static async initPlaywright(browserContextOptions) {
-        const browser = await Playwright.getBrowser();
-        const browserContext = await Playwright.getBrowserContext(browser, browserContextOptions);
-        const page = await Playwright.newPage(browserContext);
         return page;
     }
 
@@ -111,6 +109,20 @@ class Playwright {
         } catch (err) {
             console.error("Error during Playwright interaction:", err);
         }
+    }
+
+    // Get the path to the stealth script
+    static getStealthScriptPath() {
+        let filePath;
+        if (process.pkg && process.pkg.entrypoint) {
+            const entrypointDir = path.dirname(process.pkg.entrypoint);
+            const parentDir = path.dirname(entrypointDir);
+            filePath = path.join(parentDir, 'assets/stealth.min.js');
+        } else {
+            filePath = path.join(process.cwd(), 'assets', 'stealth.min.js');
+        }
+        console.log("filePath", fs.existsSync(filePath));
+        return filePath;
     }
 }
 

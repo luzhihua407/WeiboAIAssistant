@@ -2,7 +2,7 @@ import path from 'path';
 import { Sequelize } from 'sequelize';
 import JdAppConfig from '#root/models/JdAppConfig.js';
 import WeiboAccount from '#root/models/WeiboAccount.js';
-
+import SysDict from '#root/models/SysDict.js';
 // 当前工作目录
   // 构建 assets 目录的完整路径（假设 assets 在项目根目录）
 const dbPath = path.join(process.cwd(), 'assets', 'phoenix.sqlite');
@@ -15,6 +15,7 @@ const sequelize = new Sequelize({
     logging: console.log, // 启用日志
 });
 // 导入模型
+SysDict.init(sequelize);
 JdAppConfig.init(sequelize);
 WeiboAccount.init(sequelize);
 

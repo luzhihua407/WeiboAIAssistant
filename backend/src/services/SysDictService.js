@@ -59,6 +59,26 @@ class SysDictService {
     return sysDict;
   }
 
+  async addOrUpdate(code, value) {
+    const existingDict = await SysDict.findOne({ where: { code } });
+    if (existingDict) {
+      existingDict.value = value;
+      await existingDict.save();
+      return existingDict;
+    } else {
+      const newDict = await SysDict.create({ code, value });
+      return newDict;
+    }
+  }
+
+  // New method to get cookies by code
+  async getCookies(code) {
+    const sysDict = await this.getDictByCode(code);
+    if (sysDict) {
+      return JSON.parse(sysDict.value);
+    }
+  }
+
 }
 
-export default SysDictService;
+export default new SysDictService;

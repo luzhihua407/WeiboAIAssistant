@@ -34,4 +34,4 @@ class WeiboAccountService {
     }
 }
 
-export default WeiboAccountService;
+export default new WeiboAccountService;

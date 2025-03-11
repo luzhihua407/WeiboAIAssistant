@@ -3,7 +3,6 @@
       v-model:open="open"
       :title="`请${channel}扫码登录`"
       ok-text="刷新" cancel-text="关闭"
-      :footer="null"
       :closable="false"
       :centered="true"
       :forceRender="true"
@@ -61,7 +60,6 @@ async function yuanbaoRefreshQrcode(data:any) {
 async function weiboRefreshQrcode(data:any) {
   try {
     await weibo_refresh_qrcode(data);
-    
   } catch (error) {
     console.error('Error fetching product page:', error);
   }

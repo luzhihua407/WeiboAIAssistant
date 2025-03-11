@@ -1,8 +1,7 @@
 import JDService from '#root/services/JDService.js';
-import WeiboService from '#root/services/WeiboService.js';
+import WeiboAgent from '#root/agents/WeiboAgent.js';
 import ResponseModel from '#root/models/ResponseModel.js';
 import Utils  from '#root/utils/utils.js';
-import WeiboAgent from '#root/agents/WeiboAgent.js';
 import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
 import JdAppConfigService from '#root/services/JdAppConfigService.js';
 import WeiboAccountService from '#root/services/WeiboAccountService.js';
@@ -91,15 +90,8 @@ const get = async (req, res) => {
     const app_key=jdConfig.jd_app_key;
     const app_secret=jdConfig.jd_app_secret;
     const jdService = new JDService(app_key,app_secret);
-    const weiboAgent = new WeiboAgent();
-    const llmaAgent = new YuanBaoAgent();
     try {
-        await weiboAgent.ready();
-        const weiboService = new WeiboService(weiboAgent);
-        await weiboService.initialize();
-        await llmaAgent.ready();
-        const weiboAccountService = new WeiboAccountService();
-        const weiboAccount = await weiboAccountService.getById(1);
+        const weiboAccount = await WeiboAccountService.getById(1);
         const product = await jdService.getProduct(productId);
         const coupons = await jdService.getCoupons(product.id);
         const couponUrls = coupons.map(coupon => coupon.link);
@@ -112,9 +104,9 @@ const get = async (req, res) => {
         }
 
         const buyUrl = await jdService.convertBuyUrl(couponUrls, product.item_id);
-        await llmaAgent.setSseHandler()
-        await llmaAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
-        const content = llmaAgent.reply;
+        await YuanBaoAgent.setSseHandler()
+        await YuanBaoAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
+        const content = YuanBaoAgent.reply;
 
         const weiboReq = {
             content,
@@ -123,7 +115,7 @@ const get = async (req, res) => {
             comment: `限时优惠：${buyUrl}`
         };
 
-        await weiboService.sendWeiboAndComment(weiboReq);
+        await WeiboAgent.sendWeiboAndComment(weiboReq);
 
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
@@ -131,10 +123,7 @@ const get = async (req, res) => {
         console.error(err);
         const responseModel = new ResponseModel({ msg: 'Error fetching product details', code: 500 });
         return res.status(200).json(responseModel.modelDump());
-    }finally{
-        await weiboAgent.browserContext.close();
-        await llmaAgent.browserContext.close();
-    }   
+    }
 };
 
 export { page, saveGoods, get };

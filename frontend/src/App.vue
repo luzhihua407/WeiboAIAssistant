@@ -27,8 +27,8 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
-      <a-layout-content :style="{ background: '#f0f2f5', overflow: 'initial', minHeight: '280px', padding: '24px' }">
-        <div :style="{ padding: '24px', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }">
+      <a-layout-content>
+        <div :style="{ padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }">
           <a-config-provider :theme="{ token: { fontSize: 15 } }">
             <Login />
             <RouterView />

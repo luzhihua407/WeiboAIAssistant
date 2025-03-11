@@ -28,8 +28,7 @@
     "vue": "^3.3.4",
     "vue-lazyload": "^3.0.0",
     "vue-router": "^4.4.5",
-    "vuex": "^4.0.2",
-    "winston": "^3.17.0"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

@@ -3,16 +3,19 @@ import axios from 'axios';
 import sendNotification from '#root/utils/messageSender.js';
 import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
+import SysDictService from '#root/services/SysDictService.js';
+import Playwright from '#root/utils/playwright.js';
 
+const browser = await Playwright.getBrowser();
+const cookies = await SysDictService.getCookies('yuanbao_cookie');
+const browserContext = await Playwright.getBrowserContext(browser,{storageState: cookies});
+const page = await Playwright.newPage(browserContext);
 class YuanBaoAgent extends BaseAgent {
     constructor() {
         super();
+        this.page = page;
+        this.browserContext=browserContext;
         this.storePath = path.join(process.cwd(), 'temp');
-        this.cookieCache = path.join(process.cwd(), 'cookies', 'yuanbao.json');
-        super.browserContextOptions = {
-            storageState: this.cookieCache
-        }
-        Utils.createJsonFile(this.cookieCache);
         this.baseUrl = "https://yuanbao.tencent.com/chat";
     }
 
@@ -24,8 +27,7 @@ class YuanBaoAgent extends BaseAgent {
                 let formattedJson = line.replace('data: {"type":"text"', '{"type":"text"');
                 try {
                     const mapObj = JSON.parse(formattedJson);
-                    const type = mapObj.type;
-                    if (type === 'text') {
+                    if (mapObj.type === 'text') {
                         let msg = mapObj.msg;
                         if (msg && msg.startsWith('[](@replace=0)')) {
                             msg = msg.replace('[](@replace=0)', '');
@@ -35,7 +37,7 @@ class YuanBaoAgent extends BaseAgent {
                         }
                     }
                 } catch (error) {
-                    // Ignore JSON parsing errors
+                    console.error('Error parsing JSON:', error);
                 }
             }
         }
@@ -43,55 +45,60 @@ class YuanBaoAgent extends BaseAgent {
     }
 
     async setSseHandler() {
-        await this.page.route('**/api/chat/**', async route => {
-            const response = await route.fetch();
-            const text = await response.text();
-            const formattedMessage = this.formatEventStreamMessage(text);
-            console.log(formattedMessage)
-            this.reply = formattedMessage;
-            await route.fulfill({ response });
-          });
-        await this.page.goto(this.baseUrl);
+        try {
+            await this.page.route('**/api/chat/**', async route => {
+                const response = await route.fetch();
+                const text = await response.text();
+                const formattedMessage = this.formatEventStreamMessage(text);
+                console.log(formattedMessage);
+                this.reply = formattedMessage;
+                await route.fulfill({ response });
+            });
+            await this.page.goto(this.baseUrl);
+        } catch (error) {
+            console.error('Error setting SSE handler:', error);
+        }
     }
 
-    getCookiesDict() {
-        const cookieText = Utils.readFile(this.cookieCache);
-        const cookieJson = JSON.parse(cookieText);
-        const cookiesList = cookieJson.cookies || [];
-        const cookiesDict = {};
-        cookiesList.forEach(cookie => {
-            cookiesDict[cookie.name] = cookie.value;
-        });
-        const cookiesString = Object.entries(cookiesDict)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('; ');
-        return cookiesString;
+    async getCookiesDict() {
+        try {
+            const cookiesList =cookies==undefined?[]: cookies.cookies;
+            const cookiesDict = {};
+            cookiesList.forEach(cookie => {
+                cookiesDict[cookie.name] = cookie.value;
+            });
+            return Object.entries(cookiesDict)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('; ');
+        } catch (error) {
+            console.error('Error getting cookies dictionary:', error);
+            return '';
+        }
     }
 
     async isLogined() {
         try {
             const url = "https://yuanbao.tencent.com/api/getuserinfo";
-            const cookiesDict = this.getCookiesDict();
+            const cookiesDict = await this.getCookiesDict();
             const response = await axios.get(url, {
                 headers: {
-                'Content-Type': 'application/json' ,
-                'Cookie': cookiesDict
+                    'Content-Type': 'application/json',
+                    'Cookie': cookiesDict
                 }
-              });
-            const json = response.data;
-            const loggedIn = !json.error;
-            await sendNotification("login_success",{islogined: true });
-            console.log("元宝已登录")
+            });
+            const loggedIn = !response.data.error;
+            await sendNotification("login_success", { islogined: true });
+            console.log("元宝已登录");
             return loggedIn;
         } catch (error) {
-            console.log("元宝报错",error)
             return false;
         }
     }
 
     async scanLogin() {
         try {
-            await this.page.goto("https://yuanbao.tencent.com");
+            await this.page.goto("https://yuanbao.tencent.com", { waitUntil: "commit" });
+            await this.page.waitForTimeout(1000);
             const responseInfo = this.page.waitForResponse("**/api/joint/login", { timeout: 60000 });
             await this.page.locator("//span[text()='登录']").click();
             await this.page.waitForTimeout(5000);
@@ -102,28 +109,39 @@ class YuanBaoAgent extends BaseAgent {
             const qrcodePath = path.join(this.storePath, "yuanbao_qrcode.jpg");
             Utils.deleteFile(qrcodePath);
             await Utils.screenshot(img, qrcodePath);
-            console.log("Sent login QR code notification.");
-            await sendNotification("not_login",{qrcode: qrcodePath, channel: "元宝" });
+            console.log("Sent Yuanbao login QR code notification.");
+            await sendNotification("not_login", { qrcode: qrcodePath, channel: "元宝" });
             const response = await responseInfo;
             if (response.status() === 200) {
                 await this.saveCookie();
-                await sendNotification("login_success",{islogined: true });
+                await sendNotification("login_success", { islogined: true });
             }
         } catch (error) {
-            console.log("元宝扫描登录报错：",error)
-            this.scanLogin();
+            console.error('Error during scan login:', error);
+            throw new Error('元宝登录失败');
         }
-        
     }
-
+    async saveCookie() {
+      try {
+          const storageState = await this.browserContext.storageState();
+          const cookieJson = JSON.stringify(storageState);
+          await SysDictService.addOrUpdate("yuanbao_cookie", cookieJson);
+          console.info(`Yuanbao Cookies saved`);
+      } catch (error) {
+          console.error(`Failed to save cookies: ${error.message}`);
+      }
+    }
     async fillSubmit(prompt, sysPrompt = '') {
-        const editorLocator = await this.page.locator("//div[@class='ql-editor ql-blank']");
-        await editorLocator.fill(`${sysPrompt}\n${prompt}`);
-        const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
-        await sendButtonLocator.click();
-        const response = await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
+        try {
+            const editorLocator = await this.page.locator("//div[@class='ql-editor ql-blank']");
+            await editorLocator.fill(`${sysPrompt}\n${prompt}`);
+            const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
+            await sendButtonLocator.click();
+            await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
+        } catch (error) {
+            console.error('Error filling and submitting prompt:', error);
+        }
     }
-
 }
 
-export default YuanBaoAgent;
+export default new YuanBaoAgent;

@@ -5,6 +5,7 @@ import Utils  from '#root/utils/utils.js';
 import YuanBaoAgent from '#root/agents/YuanbaoAgent.js';
 import JdAppConfigService from '#root/services/JdAppConfigService.js';
 import WeiboAccountService from '#root/services/WeiboAccountService.js';
+import ConfigLoader from '#root/utils/ConfigLoader.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;
@@ -107,10 +108,11 @@ const get = async (req, res) => {
         await YuanBaoAgent.setSseHandler()
         await YuanBaoAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
         const content = YuanBaoAgent.reply;
+        const configData = ConfigLoader.loadConfig();
 
         const weiboReq = {
             content,
-            is_self_see: false,
+            is_self_see: configData.weibo.is_self_see,
             img_list: imgList,
             comment: `限时优惠：${buyUrl}`
         };

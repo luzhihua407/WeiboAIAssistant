@@ -1,1 +1,3 @@
 headless: true
+weibo:
+  is_self_see: true

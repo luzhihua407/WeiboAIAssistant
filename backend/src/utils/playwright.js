@@ -1,8 +1,7 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
-import yaml from 'js-yaml';
-
+import ConfigLoader from './configLoader.js';
 class Playwright {
     static browser = null;
 
@@ -13,22 +12,7 @@ class Playwright {
 
     // Get the browser instance, launch if not already done
     static async getBrowser() {
-        let config;
-        if (process.pkg && process.pkg.entrypoint) {
-            const entrypointDir = path.dirname(process.pkg.entrypoint);
-            const parentDir = path.dirname(entrypointDir);
-            config = path.join(parentDir, 'assets/config.yaml');
-        } else {
-            config = path.join(process.cwd(), 'assets', 'config.yaml');
-        }
-        let configData;
-        try {
-            const fileContents = fs.readFileSync(config, 'utf8');
-            configData = yaml.load(fileContents);
-        } catch (e) {
-            console.error("Error reading config file:", e);
-            configData = {};
-        }
+        const configData = ConfigLoader.loadConfig();
 
         const headless = configData.headless !== undefined ? configData.headless : true;
         const filePath = path.join(process.cwd(), 'pw-browsers/chromium-1155/chrome-win/chrome.exe');

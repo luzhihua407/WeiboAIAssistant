@@ -20,7 +20,7 @@ import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../api/jdapi'; // 根据实际路径引入
 import { login } from '../api/yuanbaoapi'; // 根据实际路径引入
-import { message as message_ant } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';
 const columns: TableColumnsType = [
   { title: '商品', width: 300, dataIndex: 'sku_name' },
@@ -64,6 +64,7 @@ async function getpage(pageNo: number, pageSize: number) {
       console.log(pagination)
     } else {
       console.error('Invalid response structure:', response);
+      message.error(response.msg);
     }
     
   } catch (error) {
@@ -79,10 +80,10 @@ async function onSendWeibo(id:any) {
     if(resp.data.is_logined){
       const response = await sendWeibo({ id:id });
       if (response.code!=200) {
-        message_ant.error(response.msg);
+        message.error(response.msg);
         console.error('Invalid response structure:', response);
       } else {
-        message_ant.info('操作完成');
+        message.info('操作完成');
       }
     }
  
@@ -100,16 +101,16 @@ async function onSaveGoods() {
     if (response.code!=200) {
       this.loading=false
       this.state.loading=false;
-      message_ant.error(response.msg);
+      message.error(response.msg);
     }else{
       this.loading=false
-      message_ant.info('操作完成');
+      message.info('操作完成');
       getpage(pagination.value.current, pagination.value.pageSize);
     }
   } catch (error) {
     this.loading=false
     this.state.loading=false;
-    message_ant.error(error);
+    message.error(error);
     console.error('Error fetching product page:', error);
   }
 }

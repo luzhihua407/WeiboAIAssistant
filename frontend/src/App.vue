@@ -1,7 +1,7 @@
 <template>
-  <a-layout style="min-height: 100vh">
+  <a-layout style="min-height: 100vh; background: #f5f5f7;">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" theme="light" collapsible
-      :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, background: '#001529' }">
+      :style="{ overflow: 'auto', position: 'fixed', height: '100vh', left: 0, top: 0, bottom: 0, background: '#d3d3d3' }">
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" style="height: 100%; border-right: 0;">
         <a-sub-menu key="1">
@@ -27,13 +27,11 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
-      <a-layout-content>
-        <div :style="{ padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }">
-          <a-config-provider :theme="{ token: { fontSize: 15 } }">
-            <Login />
-            <RouterView />
-          </a-config-provider>
-        </div>
+      <a-layout-content :style="{ padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'}">
+        <a-config-provider :theme="{ token: { fontSize: 15 } }">
+          <Login />
+          <RouterView />
+        </a-config-provider>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -107,20 +105,22 @@ onMounted(() => {
 }
 
 a-layout-sider {
-  background: #001529;
+  background: #d3d3d3;
 }
 
 a-menu {
-  background: #001529;
+  background: #2d2d2d;
   color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 a-menu-item, a-sub-menu-title {
   color: #fff;
+  font-size: 14px;
 }
 
 a-menu-item:hover, a-menu-item-active, a-menu-item-selected {
-  background: #1890ff;
+  background: #007aff;
   color: #fff;
 }
 

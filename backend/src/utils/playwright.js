@@ -66,6 +66,7 @@ class Playwright {
 
     // Create a new page in the browser context
     static async newPage(context) {
+        
         if (context.pages().length > 0) {
             return context.pages()[0];
         }
@@ -73,28 +74,7 @@ class Playwright {
         return page;
     }
 
-    // Main function to demonstrate usage
-    static async main() {
-        try {
-            const browser = await Playwright.getBrowser();
-            const browserContext = await Playwright.getBrowserContext(browser);
-            const page = await Playwright.newPage(browserContext);
-
-            await page.goto('https://www.baidu.com');
-            console.log(2, browser.isConnected());
-
-            // Perform your actions here...
-
-            await page.close();
-            console.log(3, browser.isConnected());
-
-            await browser.close();
-            console.log(4, browser.isConnected());
-        } catch (err) {
-            console.error("Error during Playwright interaction:", err);
-        }
-    }
-
+   
     // Get the path to the stealth script
     static getStealthScriptPath() {
         let filePath;

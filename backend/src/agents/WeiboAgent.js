@@ -12,6 +12,7 @@ const page = await Playwright.newPage(browserContext);
 class WeiboAgent extends BaseAgent {
     constructor() {
         super();
+        console.info("------------")
         this.page = page;
         this.browserContext=browserContext;
         this.storePath = path.join(process.cwd(), 'temp');
@@ -34,6 +35,8 @@ class WeiboAgent extends BaseAgent {
             return qrcodePath;
         } catch (error) {
             console.error(error);
+        }finally{
+            await this.page.close();
         }
     }
 
@@ -65,15 +68,24 @@ class WeiboAgent extends BaseAgent {
     }
 
     async isLogined() {
-        await this.page.goto(this.baseUrl);
-        const visible = await this.page.locator('textarea[placeholder="有什么新鲜事想分享给大家？"]').isVisible();
-        if (visible) {
-            await sendNotification("login_success", { islogined: true });
-            console.log('微博已登录');
-            return true;
+        try {
+            await this.page.goto(this.baseUrl);
+            const visible = await this.page.locator('textarea[placeholder="有什么新鲜事想分享给大家？"]').isVisible();
+            if (visible) {
+                await sendNotification("login_success", { islogined: true });
+                console.log('微博已登录');
+                return true;
+            }
+            console.log('微博没登录');
+            return false;
+        } catch (error) {
+            console.error(`Error occurred: ${error.message}`);
+            return false;
+            
+        }finally{
+            await this.page.close();
         }
-        console.log('微博没登录');
-        return false;
+  
     }
 
     async sendPost(content, imgList) {

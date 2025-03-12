@@ -13,6 +13,10 @@ const page = async (req, res) => {
 
     try {
         const jdConfig = await JdAppConfigService.getConfigById(1);
+        if (!jdConfig) {
+            const responseModel = new ResponseModel({ msg: '京东app_key没配置', code: 404 });
+            return res.status(200).json(responseModel.modelDump());
+        }
         const app_key=jdConfig.jd_app_key;
         const app_secret=jdConfig.jd_app_secret;
         const jdService = new JDService(app_key,app_secret);
@@ -21,7 +25,7 @@ const page = async (req, res) => {
         return res.json(responseModel.modelDump());
     } catch (err) {
         console.log(err);
-        const responseModel = new ResponseModel({ msg: 'Error fetching products', code: 500 });
+        const responseModel = new ResponseModel({ msg: err.message, code: 500 });
         return res.status(200).json(responseModel.modelDump());
     }
 };

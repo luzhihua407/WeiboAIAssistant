@@ -27,8 +27,23 @@ const refreshQRCode = async (req, res) => {
         return res.json(responseModel.modelDump());
     }
 };
+const generateContent = async (req, res) => {
+    try {
+        const { input } = req.body;
+        await YuanBaoAgent.setSseHandler()
+        await YuanBaoAgent.fillSubmit(input, weiboAccount.system_prompt);
+        const content = YuanBaoAgent.reply;
+        const responseModel = new ResponseModel({ data: { content:content } });
+        return res.json(responseModel.modelDump());
+    } catch (error) {
+        console.error(`捕获到自定义异常: ${error.message}`);
+        const responseModel = new ResponseModel({ code: error.code, msg: error.message });
+        return res.json(responseModel.modelDump());
+    }
+};
 
 export {
     login,
-    refreshQRCode
+    refreshQRCode,
+    generateContent
 };

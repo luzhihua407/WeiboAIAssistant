@@ -9,8 +9,22 @@
         ¥{{ record.purchase_price }}
       </template>
       <template v-if="column.key === 'operation'">
-        <a-button :loading="sendLoading" @click="onSendWeibo(record.id)"><SendOutlined />发微博</a-button>
-      </template>
+        <a-button @click="showModal(record)"><SendOutlined />发微博</a-button>
+        <a-modal v-model:visible="isModalVisible" title="发微博" @ok="handleOk" @cancel="handleCancel">
+          <a-form :model="form">
+            <a-form-item label="原内容">
+              <a-textarea v-model:value="form.originalContent" disabled />
+            </a-form-item>
+            <a-form-item label="生成内容">
+              <a-textarea v-model:value="form.generatedContent" />
+              <a-button @click="generateContent" :loading="aiLoading">AI生成</a-button>
+            </a-form-item>
+          </a-form>
+          <template #footer>
+            <a-button @click="handleCancel">取消</a-button>
+            <a-button type="primary" :loading="sendLoading" @click="handleOk">发送</a-button>
+          </template>
+        </a-modal></template>
     </template>
   </a-table>
 </template>
@@ -19,6 +33,7 @@
 import { ref, onMounted,reactive } from 'vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { getProductPage,sendWeibo,saveGoods } from '../api/jdapi'; // 根据实际路径引入
+import {generateContent} from '../api/yuanbaoapi.js'; // 根据实际路径引入
 import { login } from '../api/yuanbaoapi'; // 根据实际路径引入
 import { message } from 'ant-design-vue';
 import { SendOutlined,ReloadOutlined,CloudDownloadOutlined } from '@ant-design/icons-vue';
@@ -54,6 +69,47 @@ const state = reactive<{
   selectedRowKeys: [], // Check here to configure the default column
   loading: false,
 });
+
+const isModalVisible = ref(false);
+const form = reactive({
+  originalContent: '',
+  generatedContent: ''
+});
+const aiLoading = ref(false);
+
+function showModal(record: DataItem) {
+  form.originalContent = record.sku_name;
+  form.generatedContent = ''; // Reset the generated content
+  isModalVisible.value = true;
+}
+
+function handleOk() {
+  // Handle the OK button click
+  isModalVisible.value = false;
+}
+
+function handleCancel() {
+  // Handle the Cancel button click
+  isModalVisible.value = false;
+}
+
+async function generateContent() {
+  try {
+    aiLoading.value = true;
+    const response = await generateContent({ input: form.originalContent });
+    if (response.code === 200) {
+      form.generatedContent = response.data.content;
+    } else {
+      message.error(response.msg);
+    }
+  } catch (error) {
+    console.error('Error generating content:', error);
+    message.error('生成内容失败');
+  } finally {
+    aiLoading.value = false;
+  }
+}
+
 async function getpage(pageNo: number, pageSize: number) {
   try {
     state.loading=true;

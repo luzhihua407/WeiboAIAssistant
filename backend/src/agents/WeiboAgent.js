@@ -35,8 +35,6 @@ class WeiboAgent extends BaseAgent {
             return qrcodePath;
         } catch (error) {
             console.error(error);
-        }finally{
-            await this.page.close();
         }
     }
 
@@ -82,8 +80,6 @@ class WeiboAgent extends BaseAgent {
             console.error(`Error occurred: ${error.message}`);
             return false;
             
-        }finally{
-            await this.page.close();
         }
   
     }

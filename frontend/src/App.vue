@@ -25,6 +25,17 @@
             </a-menu-item>
         </a-sub-menu>
       </a-menu>
+      <div style="position: absolute; bottom: 0; width: 100%; padding: 10px; background: #d3d3d3; text-align: center;">
+        <RouterLink to="/setting">
+        <a-avatar :src="user_pic" v-if="isLogined == true" />
+        <a-avatar v-if="isLogined == false">
+          <template #icon>
+            <UserOutlined />
+          </template>
+        </a-avatar>
+        <span style="margin-left: 10px;">{{ user.screenName }}</span>
+      </RouterLink>
+      </div>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-content :style="{ padding: '24px', background: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'}">
@@ -47,14 +58,32 @@ import {
 } from '@ant-design/icons-vue';
 import { ref, onMounted } from 'vue';
 import Login from "./Login.vue";
+import { RouterLink, RouterView } from 'vue-router';
+import { get_user,login } from './api/weiboapi';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useStore } from 'vuex';
 import { io } from 'socket.io-client';
+const user_pic = ref<string>();
+const user = ref<{ screenName: string; userImg: string }>({ screenName: '', userImg: '' });
 
 const collapsed = ref<boolean>(false);
+const isLogined = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['1']);
 const store = useStore();
+async function getLogin() {
+  const response=await get_user()
+    if (response.code==200) {
+      user.value=response.data
+      const assetUrl = convertFileSrc(user.value.userImg);
+      console.log(assetUrl)
+      user_pic.value=assetUrl
+      isLogined.value=true
+    }else if(response.code==10000){
+      login()
+    }
+    console.log("登录状态",isLogined)
+}
 function initWebSocket() {
   const socket = io('http://localhost:3000', {
     withCredentials: false // 或者 true，取决于你的服务器配置
@@ -85,6 +114,7 @@ function initWebSocket() {
 }
 onMounted(() => {
   initWebSocket()
+  getLogin()
 });
 </script>
 
@@ -116,7 +146,7 @@ a-menu {
 
 a-menu-item, a-sub-menu-title {
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 a-menu-item:hover, a-menu-item-active, a-menu-item-selected {

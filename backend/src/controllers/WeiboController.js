@@ -59,6 +59,10 @@ const sendWeibo = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
+        const cookies=await SysDictService.getCookies("weibo_cookie");
+        if (cookies && cookies.cookies) {
+            WeiboService.setCookies(cookies.cookies); // 判断null或undefined情况
+        }
         const user = await WeiboService.getUser();
         const responseModel = new ResponseModel({ data: user });
         return res.json(responseModel.modelDump());

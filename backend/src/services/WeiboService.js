@@ -123,7 +123,7 @@ class WeiboService {
                     await WeiboAccountService.saveOrUpdate({ weibo_account_id: id.toString(), weibo_account_name: screen_name });
                     const profileImageUrl = `https://image.baidu.com/search/down?url=${user.profile_image_url}`;
                     const userImg = await Utils.downloadImage(profileImageUrl, this.storePath, 'avatar.png');
-                    return { userId: user.idstr, userImg };
+                    return { userId: user.idstr, userImg, screenName: user.screen_name, description: user.description };
                 }else{
                     console.error("微博未登录");
                 }

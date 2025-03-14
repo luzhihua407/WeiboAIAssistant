@@ -1,12 +1,7 @@
 <template>
   <div>
     <a-space style="margin-bottom:16px">
-      <a-avatar :src="user_pic" v-if="isLogined == true" />
-      <a-avatar v-if="isLogined == false">
-        <template #icon>
-          <UserOutlined />
-        </template>
-      </a-avatar>
+      
       <a-button @click="onRemoveSelect">
         <DeleteOutlined />
         删除所选
@@ -64,15 +59,16 @@
     </a-table>
     <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
       :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" style="position: absolute;right: 0;"/>
+      <a-back-top />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,get_user,login,longtext } from '../api/weiboapi'; // 根据实际路径引入
-import { UserOutlined,CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { page,delete_by_id,longtext } from '../api/weiboapi'; // 根据实际路径引入
+import { CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
+
 const columns: TableColumnsType = [
   { title: '微博内容', width: 300,key:'text',  dataIndex: 'text',ellipsis: false },
   {
@@ -94,7 +90,7 @@ interface DataItem {
 const data = ref<DataItem[]>([]);
 const isLogined = ref<boolean>(false);
 const sendLoading = ref<boolean>(false);
-const user_pic = ref<string>();
+
 const pagination = ref({
   current: 1,
   pageSize: 20,
@@ -174,20 +170,7 @@ async function deleteWeibo(data:any) {
 function onFreshData(){
   getpage(pagination.value.current, pagination.value.pageSize);
 }
-async function getLogin() {
-  const response=await get_user()
-    if (response.code==200) {
-      const user_img=response.data.userImg
-      const assetUrl = convertFileSrc(user_img);
-      console.log(assetUrl)
-      user_pic.value=assetUrl
-      isLogined.value=true
-      getpage(pagination.value.current, pagination.value.pageSize);
-    }else if(response.code==10000){
-      login()
-    }
-    console.log("登录状态",isLogined)
-}
+
 
 function handlePageChange(page:number, pageSize:number) {
   console.log(page,pageSize)

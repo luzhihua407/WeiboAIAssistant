@@ -179,7 +179,6 @@ function handlePageChange(page:number, pageSize:number) {
   getpage(page, pageSize);
 }
 onMounted(() => {
-  getLogin()
 });
 
 </script>

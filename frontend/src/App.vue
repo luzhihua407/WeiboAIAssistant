@@ -20,9 +20,6 @@
           <a-menu-item key="5"> 
               <RouterLink to="/weibo_list"><WeiboOutlined />微博列表</RouterLink>
             </a-menu-item>
-            <a-menu-item key="7">
-              <RouterLink to="/setting"><TableOutlined />系统设置</RouterLink>
-            </a-menu-item>
         </a-sub-menu>
       </a-menu>
       <div style="position: absolute; bottom: 0; width: 100%; padding: 10px; background: #d3d3d3; text-align: center;">

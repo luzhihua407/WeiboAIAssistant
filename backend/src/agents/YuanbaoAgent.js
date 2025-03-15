@@ -5,6 +5,7 @@ import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
 import SysDictService from '#root/services/SysDictService.js';
 import Playwright from '#root/utils/playwright.js';
+import { EventSource } from 'eventsource';
 
 const browser = await Playwright.getBrowser();
 const cookies = await SysDictService.getCookies('yuanbao_cookie');
@@ -54,6 +55,7 @@ class YuanBaoAgent extends BaseAgent {
                 this.reply = formattedMessage;
                 await route.fulfill({ response });
             });
+            // 监听网络响应
             await this.page.goto(this.baseUrl);
         } catch (error) {
             console.error('Error setting SSE handler:', error);
@@ -133,6 +135,7 @@ class YuanBaoAgent extends BaseAgent {
     }
     async fillSubmit(prompt, sysPrompt = '') {
         try {
+            console.log(prompt,sysPrompt);
             const editorLocator = await this.page.locator("//div[@class='ql-editor ql-blank']");
             await editorLocator.fill(`${sysPrompt}\n${prompt}`);
             const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");

@@ -89,14 +89,14 @@ const saveGoods = async (req, res) => {
     }
 };
 
-const get = async (req, res) => {
-    const productId = req.query.id;
+const sendProductToWeibo = async (req, res) => {
+    const productId = req.body.id;
+    const content = req.body.content;
     const jdConfig = await JdAppConfigService.getConfigById(1);
     const app_key=jdConfig.jd_app_key;
     const app_secret=jdConfig.jd_app_secret;
     const jdService = new JDService(app_key,app_secret);
     try {
-        const weiboAccount = await WeiboAccountService.getById(1);
         const product = await jdService.getProduct(productId);
         const coupons = await jdService.getCoupons(product.id);
         const couponUrls = coupons.map(coupon => coupon.link);
@@ -109,9 +109,6 @@ const get = async (req, res) => {
         }
 
         const buyUrl = await jdService.convertBuyUrl(couponUrls, product.item_id);
-        await YuanBaoAgent.setSseHandler()
-        await YuanBaoAgent.fillSubmit(product.sku_name, weiboAccount.system_prompt);
-        const content = YuanBaoAgent.reply;
         const configData = ConfigLoader.loadConfig();
 
         const weiboReq = {
@@ -127,9 +124,9 @@ const get = async (req, res) => {
         return res.json(responseModel.modelDump());
     } catch (err) {
         console.error(err);
-        const responseModel = new ResponseModel({ msg: 'Error fetching product details', code: 500 });
+        const responseModel = new ResponseModel({ msg: err.message, code: 500 });
         return res.status(200).json(responseModel.modelDump());
     }
 };
 
-export { page, saveGoods, get };
+export { page, saveGoods, sendProductToWeibo };

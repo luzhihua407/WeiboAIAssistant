@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Product Routes
 router.get('/jd/page', jdController.page);
-router.get('/jd/get', jdController.get);
+router.post('/jd/sendProductToWeibo', jdController.sendProductToWeibo);
 router.get('/jd/save_goods', jdController.saveGoods);
 
 // Weibo Routes
@@ -25,8 +25,9 @@ router.get('/weibo/refresh_qrcode', weiboController.refreshQRCode);
 router.get('/weibo/longtext', weiboController.longtext);
 // Yuanbao Routes
 router.get('/yuanbao/login', yuanbaoController.login);
+router.get('/yuanbao/checkLogin', yuanbaoController.checkLogin);
 router.get('/yuanbao/refresh_qrcode', yuanbaoController.refreshQRCode);
-router.get('/yuanbao/generate_content', yuanbaoController.generateContent);
+router.post('/yuanbao/generate_content', yuanbaoController.generateContent);
 
 // SysDict Routes
 router.get('/sysdict/page', sysDictController.page);

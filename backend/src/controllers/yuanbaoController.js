@@ -1,12 +1,24 @@
 import YuanBaoAgent from '#root/agents/YuanBaoAgent.js';
 import ResponseModel from '#root/models/ResponseModel.js';
-
+import WeiboAccountService from '#root/services/WeiboAccountService.js';
 const login = async (req, res) => {
     try {
         const isLogined = await YuanBaoAgent.isLogined();
         if (!isLogined) {
             YuanBaoAgent.scanLogin();  // In real app, this would trigger QR code scan
         }
+        const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
+        return res.json(responseModel.modelDump());
+    } catch (error) {
+        console.error(`捕获到自定义异常: ${error}`);
+        const responseModel = new ResponseModel({ code: error.code, msg: error.message });
+        return res.json(responseModel.modelDump());
+    }
+};
+const checkLogin = async (req, res) => {
+    try {
+        const isLogined = await YuanBaoAgent.isLogined();
+    
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
     } catch (error) {
@@ -30,6 +42,7 @@ const refreshQRCode = async (req, res) => {
 const generateContent = async (req, res) => {
     try {
         const { input } = req.body;
+        const weiboAccount = await WeiboAccountService.getById(1);
         await YuanBaoAgent.setSseHandler()
         await YuanBaoAgent.fillSubmit(input, weiboAccount.system_prompt);
         const content = YuanBaoAgent.reply;
@@ -45,5 +58,6 @@ const generateContent = async (req, res) => {
 export {
     login,
     refreshQRCode,
-    generateContent
+    generateContent,
+    checkLogin
 };

@@ -48,9 +48,9 @@ export async function saveGoods(data) {
   }
 }
 export async function sendWeibo(data) {
-  const url = '/jd/get';
+  const url = '/jd/sendProductToWeibo';
   try {
-    const response = await api.get(url, data);
+    const response = await api.post(url, data);
     console.log('操作成功:', response);
     return response;
   } catch (error) {

@@ -179,6 +179,7 @@ function handlePageChange(page:number, pageSize:number) {
   getpage(page, pageSize);
 }
 onMounted(() => {
+  onFreshData()
 });
 
 </script>

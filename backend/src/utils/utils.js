@@ -4,7 +4,6 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import ejs from 'ejs';
 import PDFDocument from 'pdfkit';
-import { fileURLToPath } from 'url';
 
 
 class Utils {

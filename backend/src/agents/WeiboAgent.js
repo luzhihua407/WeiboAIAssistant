@@ -28,8 +28,8 @@ class WeiboAgent extends BaseAgent {
         try {
             await this.page.goto('https://passport.weibo.com/sso/signin',{waitUntil: 'domcontentloaded'});
             const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
-            await Utils.sleep(2000); // Delay to wait for QR code to appear
-            const img = await this.page.locator('img.w-full');
+            const img =  this.page.locator('img.w-full')
+            await img.waitFor({ state: 'visible',timeout: 8000 });
             Utils.deleteFile(qrcodePath);
             await img.screenshot({ path: qrcodePath });
             return qrcodePath;

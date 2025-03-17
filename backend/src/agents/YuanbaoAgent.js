@@ -5,7 +5,6 @@ import Utils from '#root/utils/utils.js';
 import BaseAgent from './BaseAgent.js';
 import SysDictService from '#root/services/SysDictService.js';
 import Playwright from '#root/utils/playwright.js';
-import { EventSource } from 'eventsource';
 
 const browser = await Playwright.getBrowser();
 const cookies = await SysDictService.getCookies('yuanbao_cookie');

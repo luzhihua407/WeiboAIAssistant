@@ -5,16 +5,14 @@ import Utils from '#root/utils/utils.js';
 import BaseAgent from './base-agent.js';
 import SysDictService from '#root/service/sys-dict-service.js';
 import Playwright from '#root/utils/playwright.js';
+import Memory from '#root/utils/memory.js';
 
-const browser = await Playwright.getBrowser();
 const cookies = await SysDictService.getCookies('yuanbao_cookie');
-const browserContext = await Playwright.getBrowserContext(browser,{storageState: cookies});
-const page = await Playwright.newPage(browserContext);
 class YuanBaoAgent extends BaseAgent {
     constructor() {
         super();
-        this.page = page;
-        this.browserContext=browserContext;
+        this.page;
+        this.browserContext;
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://yuanbao.tencent.com/chat";
     }
@@ -51,7 +49,10 @@ class YuanBaoAgent extends BaseAgent {
                 const text = await response.text();
                 const formattedMessage = this.formatEventStreamMessage(text);
                 console.log(formattedMessage);
-                this.reply = formattedMessage;
+                Memory.clear();
+                // 使用记忆类存储最新的响应结果
+                Memory.store(formattedMessage);
+
                 await route.fulfill({ response });
             });
             // 监听网络响应
@@ -134,9 +135,11 @@ class YuanBaoAgent extends BaseAgent {
     }
     async fillSubmit(prompt, sysPrompt = '') {
         try {
-            console.log(prompt,sysPrompt);
-            const editorLocator = await this.page.locator("//div[@class='ql-editor ql-blank']");
+            console.log(prompt, sysPrompt);
+            const editorLocator = await this.page.locator("//div[@class='ql-editor']");
+            // // 填写内容到输入框
             await editorLocator.fill(`${sysPrompt}\n${prompt}`);
+            // 点击发送按钮
             const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
             await sendButtonLocator.click();
             await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });

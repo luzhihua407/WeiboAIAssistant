@@ -1,6 +1,6 @@
 // socket.js
 import { Server } from 'socket.io';
-import WeiboAgent from '#root/agents/WeiboAgent.js';
+import WeiboAgent from '#root/agent/weibo-agent.js';
 let io;
 export function initializeSocket(server) {
   io = new Server(server, {

@@ -33,7 +33,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import type { TableColumnsType } from 'ant-design-vue';
-import { getProductPage, saveGoods } from '../api/jdapi'; // 根据实际路径引入
+import { getProductPage, saveGoods } from '../api/jd-api'; // 根据实际路径引入
 import { message } from 'ant-design-vue';
 import { SendOutlined, ReloadOutlined, CloudDownloadOutlined } from '@ant-design/icons-vue';
 

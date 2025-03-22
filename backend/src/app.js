@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import apiRoutes from '#root/routes/apiRoutes.js';
+import apiRoutes from './routes/api-routes.js';
 import { createServer } from 'http';
-import { initializeSocket } from '#root/utils/socket.js';
+import { initializeSocket } from './utils/socket.js';
 const app = express();
 
 // Middleware

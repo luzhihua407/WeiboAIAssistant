@@ -43,7 +43,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { message } from 'ant-design-vue';
 import { PlusOutlined, ReloadOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons-vue';
-import { page, get_dict, add_dict, update_dict, delete_dict } from '../api/dictapi';
+import { page, get_dict, add_dict, update_dict, delete_dict } from '../api/dict-api';
 
 const data = ref([]);
 const loading = ref(false);

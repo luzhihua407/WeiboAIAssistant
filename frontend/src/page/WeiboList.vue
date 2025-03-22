@@ -66,7 +66,7 @@
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,longtext } from '../api/weiboapi'; // 根据实际路径引入
+import { page,delete_by_id,longtext } from '../api/weibo-api'; // 根据实际路径引入
 import { CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 
 const columns: TableColumnsType = [

@@ -19,8 +19,8 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { generateContent, checkLogin } from '../api/yuanbaoapi'; // 根据实际路径引入
-import { sendWeibo } from '../api/jdapi'; // 根据实际路径引入
+import { generateContent, checkLogin } from '../api/yuanbao-api'; // 根据实际路径引入
+import { sendWeibo } from '../api/jd-api'; // 根据实际路径引入
 import { message } from 'ant-design-vue';
 
 const router = useRouter();

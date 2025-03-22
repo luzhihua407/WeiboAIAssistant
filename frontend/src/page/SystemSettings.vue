@@ -76,7 +76,7 @@
       getJdAppConfigById,
       updateOrCreateConfig,
       updateWeiboAccount,
-  } from '../api/systemSettingsApi';
+  } from '../api/system-settings-api';
   
   export default {
     name: 'SystemSettings',

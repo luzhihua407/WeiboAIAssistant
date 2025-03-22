@@ -30,7 +30,7 @@
             <UserOutlined />
           </template>
         </a-avatar>
-        <span style="margin-left: 10px;">{{ user.screenName }}</span>
+        <span style="margin-left: 10px;">{{ user?.screenName || '未登录' }}</span>
       </RouterLink>
       </div>
     </a-layout-sider>
@@ -54,9 +54,9 @@ import {
   TableOutlined
 } from '@ant-design/icons-vue';
 import { ref, onMounted } from 'vue';
-import Login from "./Login.vue";
+import Login from "./page/Login.vue";
 import { RouterLink, RouterView } from 'vue-router';
-import { get_user,login } from './api/weiboapi';
+import { get_user, login } from './api/weibo-api'; // Corrected import path
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useStore } from 'vuex';
 import { io } from 'socket.io-client';
@@ -98,6 +98,7 @@ function initWebSocket() {
 
     const qrcode = data.qrcode
     const channel = data.channel
+    console.log('Qrcode:', qrcode);
     const assetUrl = convertFileSrc(qrcode);
     store.dispatch('loginWin', { "show": true, "qrcode": assetUrl, "channel": channel });
   });

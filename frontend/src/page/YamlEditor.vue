@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { get,update } from '../api/configapi';
+import { get, update } from '../api/config-api';
 import { message } from 'ant-design-vue';
 import { SaveOutlined } from '@ant-design/icons-vue';
 const yamlContent = ref('');

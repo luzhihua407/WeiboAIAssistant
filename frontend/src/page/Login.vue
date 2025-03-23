@@ -7,7 +7,7 @@
       :centered="true"
       :forceRender="true"
       :maskClosable="false"
-      @ok="handleOk"
+      :footer="null"
       width="300px"
     >
     <div class="qrcode-container">
@@ -23,11 +23,6 @@
         </div>
       </a-spin>
     </div>
-    <template #footer>
-      <a-button type="primary" @click="handleOk">
-        刷新
-      </a-button>
-    </template>
     </a-modal>
 </template>
 <script lang="ts" setup>
@@ -54,30 +49,15 @@ const handleOk = async (e: MouseEvent) => {
   loading.value = true;
   try {
     if(channel.value=='微博'){
-      await weiboRefreshQrcode()
+      await weibo_refresh_qrcode();
     }
     if(channel.value=='元宝'){
-      await yuanbaoRefreshQrcode()
+      await yuanbao_refresh_qrcode();
     }
   } finally {
     loading.value = false;
   }
 };
-async function yuanbaoRefreshQrcode(data:any) {
-  try {
-    await yuanbao_refresh_qrcode(data);
-    
-  } catch (error) {
-    console.error('Error fetching product page:', error);
-  }
-}
-async function weiboRefreshQrcode(data:any) {
-  try {
-    await weibo_refresh_qrcode(data);
-  } catch (error) {
-    console.error('Error fetching product page:', error);
-  }
-}
 </script>
 <style scoped>
 .qrcode-container {

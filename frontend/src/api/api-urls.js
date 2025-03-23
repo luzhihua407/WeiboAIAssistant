@@ -4,7 +4,7 @@ export const API_URLS = {
     checkLogin: '/yuanbao/checkLogin',
     login: '/yuanbao/login',
     refreshQrcode: '/yuanbao/refresh_qrcode',
-    generateContent: '/yuanbao/generate_content',
+    chat: '/yuanbao/generate_content',
   },
   weibo: {
     page: '/weibo/page',

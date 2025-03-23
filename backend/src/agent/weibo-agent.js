@@ -12,7 +12,6 @@ const page = await Playwright.newPage(browserContext);
 class WeiboAgent extends BaseAgent {
     constructor() {
         super();
-        console.info("------------")
         this.page = page;
         this.browserContext=browserContext;
         this.storePath = path.join(process.cwd(), 'temp');
@@ -27,12 +26,15 @@ class WeiboAgent extends BaseAgent {
     async getQRCodeImg() {
         try {
             await this.page.goto('https://passport.weibo.com/sso/signin',{waitUntil: 'domcontentloaded'});
-            const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
-            const img =  this.page.locator('img.w-full')
-            await img.waitFor({ state: 'visible',timeout: 8000 });
-            Utils.deleteFile(qrcodePath);
-            await img.screenshot({ path: qrcodePath });
-            return qrcodePath;
+            const response = await this.page.waitForResponse(response => response.url().includes('/inf/gen') && response.status() === 200, { timeout: 8000 });
+            const url = response.url();
+            console.log(`inf/gen request URL: ${url}`);
+            // const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
+            // const img =  this.page.locator('img.w-full')
+            // await img.waitFor({ state: 'visible',timeout: 8000 });
+            // Utils.deleteFile(qrcodePath);
+            // await img.screenshot({ path: qrcodePath });
+            return url;
         } catch (error) {
             console.error(error);
         }
@@ -49,8 +51,9 @@ class WeiboAgent extends BaseAgent {
                 await sendNotification("login_success", { islogined: true });
             }
         } catch (e) {
-            console.log(`Error occurred: ${e}`);
-            throw new Error('微博登录失败');
+            console.log(`微博登录失败: ${e}`);
+            //再次发起扫码
+            this.scanLogin();
         }
     }
 

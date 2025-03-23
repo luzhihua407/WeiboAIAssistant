@@ -8,7 +8,7 @@
       <a-form-item label="生成内容" class="form-item">
         <a-textarea v-model:value="form.generatedContent" :rows="10" />
         <div style="margin: 10px 0;">
-          <a-button @click="aiGenerateContent" :loading="aiLoading" class="button">AI生成</a-button>
+          <a-button @click="aichat" :loading="aiLoading" class="button">AI生成</a-button>
         </div>
       </a-form-item>
     </a-form>
@@ -19,10 +19,9 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { generateContent, checkLogin } from '../api/yuanbao-api'; // 根据实际路径引入
+import { chat, checkLogin,yuanbao_refresh_qrcode } from '../api/yuanbao-api'; // 根据实际路径引入
 import { sendWeibo } from '../api/jd-api'; // 根据实际路径引入
 import { message } from 'ant-design-vue';
-
 const router = useRouter();
 const route = useRoute();
 const record = JSON.parse(route.query.record);
@@ -40,22 +39,26 @@ function goBack() {
   router.back();
 }
 
-async function aiGenerateContent() {
+async function aichat() {
   try {
     aiLoading.value = true;
     const loginResponse = await checkLogin();
     if (loginResponse.code == 200) {
-        if (!loginResponse.data.is_logined) {
-            message.error('请先登录元宝');
-            return;
-        }
+      if (!loginResponse.data.is_logined) {
+        yuanbao_refresh_qrcode();
+        message.error('请先登录元宝');
+        aiLoading.value = false;
+        return;
+      }
     }
-    const response = await generateContent({ input: form.originalContent });
-    if (response.code === 200) {
-      form.generatedContent = response.data.content;
-    } else {
-      message.error(response.msg);
-    }
+
+    form.generatedContent = ''; // Clear previous content
+
+    await chat({ input: form.originalContent }, (chunk) => {
+      form.generatedContent += chunk; // Append new content chunk
+    });
+
+    message.success('生成内容完成');
   } catch (error) {
     console.error('Error generating content:', error);
     message.error('生成内容失败');

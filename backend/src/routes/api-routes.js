@@ -27,7 +27,7 @@ router.get('/weibo/longtext', weiboController.longtext);
 router.get('/yuanbao/login', yuanbaoController.login);
 router.get('/yuanbao/checkLogin', yuanbaoController.checkLogin);
 router.get('/yuanbao/refresh_qrcode', yuanbaoController.refreshQRCode);
-router.post('/yuanbao/generate_content', yuanbaoController.generateContent);
+router.post('/yuanbao/generate_content', yuanbaoController.chat);
 
 // SysDict Routes
 router.get('/sysdict/page', sysDictController.page);

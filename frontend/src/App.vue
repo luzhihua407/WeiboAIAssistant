@@ -68,18 +68,34 @@ const isLogined = ref<boolean>(false);
 const selectedKeys = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['1']);
 const store = useStore();
-async function getLogin() {
-  const response=await get_user()
+async function handleLoginSuccess(data: { islogined: boolean }) {
+  if (data.islogined) {
+    const response=await get_user()
     if (response.code==200) {
       user.value=response.data
       const assetUrl = convertFileSrc(user.value.userImg);
       console.log(assetUrl)
       user_pic.value=assetUrl
       isLogined.value=true
-    }else if(response.code==10000){
-      login()
+      store.dispatch('loginWin', { "show": false });
+      console.log('Login successful');
     }
-    console.log("登录状态",isLogined)
+  } else {
+    console.log('Login failed');
+  }
+}
+async function loginIfNotLoggedIn() {
+  const response = await get_user();
+  if (response.code == 200) {
+    user.value = response.data;
+    const assetUrl = convertFileSrc(user.value.userImg);
+    console.log(assetUrl);
+    user_pic.value = assetUrl;
+    isLogined.value = true;
+  } else if (response.code == 10000) {
+    login();
+  }
+  console.log("登录状态", isLogined);
 }
 function initWebSocket() {
   const socket = io('http://localhost:3000', {
@@ -99,20 +115,19 @@ function initWebSocket() {
     const qrcode = data.qrcode
     const channel = data.channel
     console.log('Qrcode:', qrcode);
-    const assetUrl = convertFileSrc(qrcode);
-    store.dispatch('loginWin', { "show": true, "qrcode": assetUrl, "channel": channel });
+    store.dispatch('loginWin', { "show": true, "qrcode": qrcode, "channel": channel });
   });
   socket.on('login_success', (data) => {
     console.log('New message:', data);
     const islogined = data.islogined
     if (islogined) {
-      store.dispatch('loginWin', { "show": false });
+       handleLoginSuccess({ islogined: islogined });
     }
   });
 }
 onMounted(() => {
   initWebSocket()
-  getLogin()
+  loginIfNotLoggedIn()
 });
 </script>
 

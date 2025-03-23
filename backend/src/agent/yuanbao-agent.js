@@ -1,10 +1,8 @@
 import path from 'path';
 import axios from 'axios';
 import sendNotification from '#root/utils/message-sender.js';
-import Utils from '#root/utils/utils.js';
 import BaseAgent from './base-agent.js';
 import SysDictService from '#root/service/sys-dict-service.js';
-import Playwright from '#root/utils/playwright.js';
 import Memory from '#root/utils/memory.js';
 
 const cookies = await SysDictService.getCookies('yuanbao_cookie');
@@ -103,24 +101,18 @@ class YuanBaoAgent extends BaseAgent {
             await this.page.waitForTimeout(1000);
             const responseInfo = this.page.waitForResponse("**/api/joint/login", { timeout: 60000 });
             await this.page.locator("//span[text()='登录']").click();
-            await this.page.waitForTimeout(5000);
-            const iframeLocator = this.page.locator(".hyc-wechat-login");
-            await iframeLocator.waitFor({ timeout: 60000 });
-            const iframe = iframeLocator.frameLocator("iframe");
-            const img = iframe.locator(".wrp_code").locator("img");
-            const qrcodePath = path.join(this.storePath, "yuanbao_qrcode.jpg");
-            Utils.deleteFile(qrcodePath);
-            await Utils.screenshot(img, qrcodePath);
-            console.log("Sent Yuanbao login QR code notification.");
-            await sendNotification("not_login", { qrcode: qrcodePath, channel: "元宝" });
+            const qrcodeResponse = await this.page.waitForResponse(response => response.url().includes("qrcode") && response.status() === 200, { timeout: 60000 });
+            const qrcodeUrl = qrcodeResponse.url();
+            console.log("QR Code URL:", qrcodeUrl);
+            await sendNotification("not_login", { qrcode: qrcodeUrl, channel: "元宝" });
             const response = await responseInfo;
             if (response.status() === 200) {
                 await this.saveCookie();
                 await sendNotification("login_success", { islogined: true });
             }
         } catch (error) {
-            console.error('Error during scan login:', error);
-            throw new Error('元宝登录失败');
+            console.error('元宝登录失败:', error);
+            this.scanLogin();
         }
     }
     async saveCookie() {
@@ -135,14 +127,16 @@ class YuanBaoAgent extends BaseAgent {
     }
     async fillSubmit(prompt, sysPrompt = '') {
         try {
-            console.log(prompt, sysPrompt);
-            const editorLocator = await this.page.locator("//div[@class='ql-editor']");
-            // // 填写内容到输入框
-            await editorLocator.fill(`${sysPrompt}\n${prompt}`);
+            await this.page.getByRole('paragraph').filter({ hasText: /^$/ }).click();
+            await this.page.locator('.ql-editor').fill(`${sysPrompt}\n${prompt}`);
+            // const editorLocator = await this.page.locator("//div[@class='ql-editor']");
+            // await editorLocator.press(' ');
+            // // // 填写内容到输入框
+            // await editorLocator.fill(`${sysPrompt}\n${prompt}`);
             // 点击发送按钮
             const sendButtonLocator = this.page.locator("//span[@class='hyc-common-icon iconfont icon-send']");
             await sendButtonLocator.click();
-            await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
+            // await this.page.waitForResponse("**/api/chat/**", { timeout: 60000 });
         } catch (error) {
             console.error('Error filling and submitting prompt:', error);
         }

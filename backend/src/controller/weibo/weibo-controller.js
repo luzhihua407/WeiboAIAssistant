@@ -1,10 +1,10 @@
-import WeiboService from '#root/service/weibo-service.js';
-import SysDictService from '#root/service/sys-dict-service.js';
-import ResponseModel from '#root/model/response-model.js';
-import PageParams from '#root/model/page-params.js';
-import WeiboAgent from '#root/agent/weibo-agent.js';
+import WeiboService from '../../service/weibo/weibo.js';
+import ResponseModel from '../../model/response-model.js';
+import PageParams from '../../model/page-params.js';
+import WeiboTool from '../../webtool/weibo.js';
+
 const deleteAllWeibo = async (req, res) => {
-    await WeiboAgent.deleteAllWeibo();
+    await WeiboTool.deleteAllWeibo();
     const responseModel = new ResponseModel();
     return res.json(responseModel.modelDump());
 };
@@ -13,10 +13,6 @@ const weiboPage = async (req, res) => {
     const params = req.query;  // Extract query parameters
     const pageParams = new PageParams(params);
     const pageNumber = pageParams.pageNo || 1;  // Default to page 1 if not provided
-    const cookies=await SysDictService.getCookies("weibo_cookie");
-    if (cookies && cookies.cookies) {
-        WeiboService.setCookies(cookies.cookies); // 判断null或undefined情况
-    }
     const pageModel = await WeiboService.getWeiboPage(pageNumber);
 
     const responseModel = new ResponseModel({ data: pageModel });
@@ -25,11 +21,7 @@ const weiboPage = async (req, res) => {
 
 const deleteWeibo = async (req, res) => {
     const { ids } = req.body;  // Assuming 'ids' is an array of IDs
-    const cookies=await SysDictService.getCookies("weibo_cookie");
-    if (cookies && cookies.cookies) {
-        WeiboService.setCookies(cookies.cookies); // 判断null或undefined情况
-    }
-    const success = await WeiboService.deleteWeibo(ids);
+    const success = await WeiboTool.deleteWeibo(ids);
 
     const msg = success === 1 ? "删除成功" : "删除失败";
     const responseModel = new ResponseModel({ msg });
@@ -38,19 +30,15 @@ const deleteWeibo = async (req, res) => {
 };
 
 const longtext = async (req, res) => {
-    const cookies=await SysDictService.getCookies("weibo_cookie");
-    if (cookies && cookies.cookies) {
-        WeiboService.setCookies(cookies.cookies); // 判断null或undefined情况
-    }
-    const data = await WeiboService.longtext(req.query.id);
+    const data = await WeiboTool.longtext(req.query.id);
     const responseModel = new ResponseModel({ data });
     return res.json(responseModel.modelDump());
 };
 
 const sendWeibo = async (req, res) => {
-
+    await WeiboTool.startBrowser();
     const params = req.body;
-    await WeiboAgent.send(params.content, params.img_list, params.is_self_see);
+    await WeiboTool.send(params.content, params.img_list, params.is_self_see);
 
     const responseModel = new ResponseModel();
     return res.json(responseModel.modelDump());
@@ -58,10 +46,6 @@ const sendWeibo = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const cookies=await SysDictService.getCookies("weibo_cookie");
-        if (cookies && cookies.cookies) {
-            WeiboService.setCookies(cookies.cookies); // 判断null或undefined情况
-        }
         const user = await WeiboService.getUser();
       
         const responseModel = new ResponseModel({ data: user });
@@ -75,7 +59,8 @@ const getUser = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        WeiboAgent.signin();
+        await WeiboTool.startBrowser();
+        WeiboTool.signin();
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (error) {
@@ -87,7 +72,8 @@ const login = async (req, res) => {
 
 const refreshQRCode = async (req, res) => {
     try {
-        WeiboAgent.getLoginQRCode();
+        await WeiboTool.startBrowser();
+        WeiboTool.getLoginQRCode();
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (error) {

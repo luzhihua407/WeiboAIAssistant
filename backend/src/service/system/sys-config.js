@@ -1,5 +1,5 @@
-import SysConfig from '#root/model/sys-config.js';
-import sequelize from '#root/storage/database.js';
+import SysConfig from '../../model/system/sys-config.js';
+import sequelize from '../../storage/database.js';
 const SysConfigDao = SysConfig.init(sequelize);
 
 class SysConfigService {

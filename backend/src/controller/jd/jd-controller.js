@@ -1,9 +1,9 @@
-import JDService from '#root/service/jd-service.js';
-import ResponseModel from '#root/model/response-model.js';
-import Utils from '#root/utils/utils.js';
-import JdAppConfigService from '#root/service/jd-app-config-service.js';
-import ConfigLoader from '#root/utils/config-loader.js';
-import WeiboAgent from '#root/agent/weibo-agent.js';
+import JDService from '../../service/jd/jd.js';
+import ResponseModel from '../../model/response-model.js';
+import Utils from '../../utils/utils.js';
+import JdAppConfigService from '../../service/jd/jd-app-config.js';
+import ConfigLoader from '../../utils/config-loader.js';
+
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;
@@ -102,7 +102,7 @@ const sendProductToWeibo = async (req, res) => {
         const imgList = [];
 
         for (const image of images) {
-            const imgPath = await Utils.downloadImage(image.image_url, './images');
+            const imgPath = await Utils.downloadImage(image.image_url, './temp');
             imgList.push(imgPath);
         }
 
@@ -116,7 +116,7 @@ const sendProductToWeibo = async (req, res) => {
             comment: `限时优惠：${buyUrl}`
         };
 
-        await WeiboAgent.sendWeiboAndComment(weiboReq);
+        await WeiboService.sendWeiboAndComment(weiboReq);
 
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());

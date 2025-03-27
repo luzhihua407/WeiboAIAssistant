@@ -1,5 +1,5 @@
 import Playwright from '#root/utils/playwright.js';
-import SysDictService from '#root/service/sys-dict-service.js';
+import SysDictService from '#root/service/system/sys-dict.js';
 
 const initializeBrowser = async (cookieKey) => {
     let browser = await Playwright.getBrowser();
@@ -9,7 +9,19 @@ const initializeBrowser = async (cookieKey) => {
     const cookies = await SysDictService.getCookies(cookieKey);
     const browserContext = await Playwright.getBrowserContext(browser, { storageState: cookies });
     const page = await Playwright.newPage(browserContext);
-    return { browserContext, page };
+    const client = await page.context().newCDPSession(page);
+    await client.send('Network.enable');
+    
+    // 监听所有网络事件
+    client.on('Network.requestWillBeSent', request => {
+        console.log(`\n🚀 [Request] ${request.request.method} ${request.request.url}`);
+    });
+
+    client.on('Network.responseReceived', async response => {
+        console.log(`\n📥 [Response] ${response.response.status} ${response.response.url}`);
+    });
+
+    return { browserContext, page,cookies };
 };
 
 const closeBrowser = async (browserContext) => {

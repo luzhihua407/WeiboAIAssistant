@@ -1,4 +1,4 @@
-import SysDict from '#root/model/sys-dict.js';
+import SysDict from '../../model/system/sys-dict.js';
 
 class SysDictService {
   async page(pageNumber, pageSize) {

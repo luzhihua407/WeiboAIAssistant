@@ -1,4 +1,4 @@
-import WeiboAccount from '#root/model/weibo-account.js';
+import WeiboAccount from '../../model/weibo/weibo-account.js';
 
 class WeiboAccountService {
     async save(weiboAccountData) {

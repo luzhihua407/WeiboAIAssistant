@@ -1,8 +1,8 @@
 import path from 'path';
 import { Sequelize } from 'sequelize';
-import JdAppConfig from '#root/model/jd-app-config.js';
-import WeiboAccount from '#root/model/weibo-account.js';
-import SysDict from '#root/model/sys-dict.js';
+import JdAppConfig from '#root/model/jd/jd-app-config.js';
+import WeiboAccount from '#root/model/weibo/weibo-account.js';
+import SysDict from '#root/model/system/sys-dict.js';
 // 当前工作目录
   // 构建 assets 目录的完整路径（假设 assets 在项目根目录）
 const dbPath = path.join(process.cwd(), 'assets', 'phoenix.sqlite');

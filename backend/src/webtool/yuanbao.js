@@ -1,16 +1,15 @@
 import path from 'path';
 import axios from 'axios';
 import sendNotification from '#root/utils/message-sender.js';
-import BaseAgent from './base-agent.js';
-import SysDictService from '#root/service/sys-dict-service.js';
+import BaseTool from './base.js';
+import SysDictService from '#root/service/system/sys-dict.js';
 import Memory from '#root/utils/memory.js';
 
-const cookies = await SysDictService.getCookies('yuanbao_cookie');
-class YuanBaoAgent extends BaseAgent {
+class YuanBaoTool extends BaseTool {
+    static COOKIE_KEY = 'yuanbao_cookie'; // Define as a constant class property
+
     constructor() {
-        super();
-        this.page;
-        this.browserContext;
+        super(YuanBaoTool.COOKIE_KEY); // Use the constant property
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://yuanbao.tencent.com/chat";
     }
@@ -62,7 +61,7 @@ class YuanBaoAgent extends BaseAgent {
 
     async getCookiesDict() {
         try {
-            const cookiesList =cookies==undefined?[]: cookies.cookies;
+            const cookiesList =this.cookies==undefined?[]: this.cookies.cookies;
             const cookiesDict = {};
             cookiesList.forEach(cookie => {
                 cookiesDict[cookie.name] = cookie.value;
@@ -119,7 +118,7 @@ class YuanBaoAgent extends BaseAgent {
       try {
           const storageState = await this.browserContext.storageState();
           const cookieJson = JSON.stringify(storageState);
-          await SysDictService.addOrUpdate("yuanbao_cookie", cookieJson);
+          await SysDictService.addOrUpdate(YuanBaoTool.COOKIE_KEY, cookieJson);
           console.info(`Yuanbao Cookies saved`);
       } catch (error) {
           console.error(`Failed to save cookies: ${error.message}`);
@@ -143,4 +142,4 @@ class YuanBaoAgent extends BaseAgent {
     }
 }
 
-export default new YuanBaoAgent;
+export default new YuanBaoTool;

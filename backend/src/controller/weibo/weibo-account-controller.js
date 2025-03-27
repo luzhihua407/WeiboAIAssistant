@@ -1,6 +1,5 @@
-import WeiboAccountService from '#root/service/weibo-account-service.js';
-import ResponseModel from '#root/model/response-model.js';
-
+import WeiboAccountService from '../../service/weibo/weibo-account.js';
+import ResponseModel from '../../model/response-model.js';
 
 export const save = async (req, res) => {
     const weiboAccountData = req.body;

@@ -1,5 +1,5 @@
-import SysDictService from '#root/service/sys-dict-service.js';
-import ResponseModel from '#root/model/response-model.js';
+import SysDictService from '../../service/system/sys-dict.js';
+import ResponseModel from '../../model/response-model.js';
 
 export const page = async (req, res) => {
     const params = req.query;  // Extract query parameters

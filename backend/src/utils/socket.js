@@ -1,6 +1,7 @@
 // socket.js
 import { Server } from 'socket.io';
-import WeiboAgent from '#root/agent/weibo-agent.js';
+import WeiboTool from '#root/webtool/weibo.js';
+
 let io;
 export function initializeSocket(server) {
   io = new Server(server, {
@@ -13,7 +14,11 @@ export function initializeSocket(server) {
 
   io.on('connection', (socket) => {
     console.log('客户端已连接');
-    WeiboAgent.signin();
+    WeiboTool.startBrowser().then(() => {
+      console.log('浏览器已启动');
+      WeiboTool.signin();
+    });
+    
     // Send a message to the client immediately after they connect
     socket.emit('message', 'Hello from server!');
 

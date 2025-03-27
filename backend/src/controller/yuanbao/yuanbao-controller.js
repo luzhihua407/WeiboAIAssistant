@@ -1,19 +1,13 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const EventSource = require('eventsource');
-
-import YuanBaoAgent from '#root/agent/yuanbao-agent.js';
-import ResponseModel from '#root/model/response-model.js';
-import WeiboAccountService from '#root/service/weibo-account-service.js';
-import Memory from '#root/utils/memory.js';
-import { initializeBrowser, closeBrowser } from '#root/utils/browser-helper.js';
-import SysDictService from '#root/service/sys-dict-service.js';
-
+import YuanBaoTool from '../../webtool/yuanbao.js';
+import ResponseModel from '../../model/response-model.js';
+import WeiboAccountService from '../../service/weibo/weibo-account.js';
+    
 const login = async (req, res) => {
     try {
-        const isLogined = await YuanBaoAgent.isLogined();
+        await YuanBaoTool.startBrowser();
+        const isLogined = await YuanBaoTool.isLogined();
         if (!isLogined) {
-            YuanBaoAgent.scanLogin();  // In real app, this would trigger QR code scan
+            YuanBaoTool.scanLogin();  // In real app, this would trigger QR code scan
         }
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
@@ -26,8 +20,8 @@ const login = async (req, res) => {
 
 const checkLogin = async (req, res) => {
     try {
-        const isLogined = await YuanBaoAgent.isLogined();
-    
+        await YuanBaoTool.startBrowser();
+        const isLogined = await YuanBaoTool.isLogined();
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
     } catch (error) {
@@ -38,32 +32,27 @@ const checkLogin = async (req, res) => {
 };
 
 const refreshQRCode = async (req, res) => {
-    const { browserContext, page } = await initializeBrowser("yuanbao_cookie");
-    try {
-        YuanBaoAgent.browserContext = browserContext;
-        YuanBaoAgent.page = page;
-        await YuanBaoAgent.scanLogin();  // Trigger QR code scan
+   try {
+        await YuanBaoTool.startBrowser();
+        await YuanBaoTool.scanLogin();  // Trigger QR code scan
         const responseModel = new ResponseModel();
-        await closeBrowser(browserContext);
+        await YuanBaoTool.stopBrowser();
         return res.json(responseModel.modelDump());
     } catch (error) {
         console.error(`捕获到自定义异常: ${error.message}`);
         const responseModel = new ResponseModel({ code: error.code, msg: error.message });
         // 确保在发生错误时也关闭浏览器
-        await closeBrowser(browserContext);
+        await YuanBaoTool.stopBrowser();
         return res.json(responseModel.modelDump());
     }
 };
 
 const chat = async (req, res) => {
-    const { browserContext, page } = await initializeBrowser("yuanbao_cookie");
     try {
         const { input } = req.body;
         const weiboAccount = await WeiboAccountService.getById(1);
 
-        // 初始化浏览器
-        YuanBaoAgent.browserContext = browserContext;
-        YuanBaoAgent.page = page;
+        await YuanBaoTool.startBrowser();
         await page.goto("https://yuanbao.tencent.com/chat");
 
         // 设置响应头以支持 SSE
@@ -113,18 +102,17 @@ const chat = async (req, res) => {
         });
 
         // 执行操作
-        await YuanBaoAgent.fillSubmit(input, weiboAccount.system_prompt);
+        await YuanBaoTool.fillSubmit(input, weiboAccount.system_prompt);
 
         // 关闭浏览器
-        await closeBrowser(browserContext);
+        await YuanBaoTool.stopBrowser();
 
 
     } catch (error) {
         console.error(`捕获到自定义异常: ${error.message}`);
 
         // 确保在发生错误时也关闭浏览器
-        await closeBrowser(browserContext);
-
+        await YuanBaoTool.stopBrowser();
         // 发送错误信息到客户端
         res.write(`event: error\ndata: ${JSON.stringify({ code: error.code, msg: error.message })}\n\n`);
         res.end();

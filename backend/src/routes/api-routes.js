@@ -1,11 +1,11 @@
 import express from 'express';
-import * as jdController from '../controller/jd-controller.js';
-import * as weiboController from '../controller/weibo-controller.js';
-import * as sysDictController from '../controller/sys-dict-controller.js';
-import * as yuanbaoController from '../controller/yuanbao-controller.js';
-import * as sysConfigController from '../controller/sys-config-controller.js';
-import * as weiboAccountController from '../controller/weibo-account-controller.js';
-import jdAppConfigController from '../controller/jd-app-config-controller.js';
+import * as jdController from '../controller/jd/jd-controller.js';
+import * as weiboController from '../controller/weibo/weibo-controller.js';
+import * as sysDictController from '../controller/system/sys-dict-controller.js';
+import * as yuanbaoController from '../controller/yuanbao/yuanbao-controller.js';
+import * as sysConfigController from '../controller/system/sys-config-controller.js';
+import * as weiboAccountController from '../controller/weibo/weibo-account-controller.js';
+import jdAppConfigController from '../controller/jd/jd-app-config-controller.js';
 
 const router = express.Router();
 

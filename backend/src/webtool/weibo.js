@@ -1,22 +1,18 @@
 import path from 'path';
 import sendNotification from '#root/utils/message-sender.js';
 import Utils from '#root/utils/utils.js';
-import BaseAgent from '#root/agent/base-agent.js';
-import SysDictService from '#root/service/sys-dict-service.js';
-import Playwright from '#root/utils/playwright.js';
-import WeiboAccountService from '#root/service/weibo-account-service.js';
-const browser = await Playwright.getBrowser();
-const cookies = await SysDictService.getCookies('weibo_cookie');
-const browserContext = await Playwright.getBrowserContext(browser,{storageState: cookies});
-const page = await Playwright.newPage(browserContext);
-class WeiboAgent extends BaseAgent {
+import BaseTool from '#root/webtool/base.js';
+import SysDictService from '#root/service/system/sys-dict.js';
+
+class WeiboTool extends BaseTool {
+    static COOKIE_KEY = 'weibo_cookie'; // Define as a constant class property
+
     constructor() {
-        super();
-        this.page = page;
-        this.browserContext=browserContext;
+        super(WeiboTool.COOKIE_KEY); // Use the constant property
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://weibo.com/";
     }
+
     async getLoginQRCode() {
         const qrcodePath = await this.getQRCodeImg();
         console.log("发起微博登录扫码");
@@ -53,7 +49,7 @@ class WeiboAgent extends BaseAgent {
         } catch (e) {
             console.log(`微博登录失败: ${e}`);
             //再次发起扫码
-            this.scanLogin();
+            await this.scanLogin();
         }
     }
 
@@ -87,15 +83,7 @@ class WeiboAgent extends BaseAgent {
   
     }
 
-    async sendPost(content, imgList) {
-        return await this.doSendPost(content, imgList, false);
-    }
-
-    async sendPrivatePost(content, imgList) {
-        return await this.doSendPost(content, imgList, true);
-    }
-
-    async doSendPost(content, imgList, isSelfSee) {
+    async doSendPost(content, imgPathList, isSelfSee) {
         if (isSelfSee) {
             await this.page.locator('div[title="公开"]').click();
             await this.page.locator('div:text("仅自己可见")').click();
@@ -103,9 +91,9 @@ class WeiboAgent extends BaseAgent {
 
         await this.page.locator('textarea[placeholder="有什么新鲜事想分享给大家？"]').fill(content);
 
-        if (imgList) {
+        if (imgPathList) {
             const fileInput = await this.page.locator('input[type="file"]');
-            for (let imgPath of imgList) {
+            for (let imgPath of imgPathList) {
                 const filePath = path.resolve(imgPath);
                 await fileInput.setInputFiles(filePath);
             }
@@ -115,19 +103,17 @@ class WeiboAgent extends BaseAgent {
         return true;
     }
 
-    async send(content, imgList, isSelfSee) {
+    async send(content, base64ImgList, isSelfSee) {
         this.page.goto('https://weibo.com');
-        console.log(content);
         if (isSelfSee) {
             await this.page.locator('div[title="公开"]').click();
             await this.page.locator('div:text("仅自己可见")').click();
         }
-
         await this.page.locator('textarea[placeholder="有什么新鲜事想分享给大家？"]').fill(content);
 
-        if (imgList) {
+        if (base64ImgList) {
             const fileInput = await this.page.locator('input[type="file"]');
-            for (let item of imgList) {
+            for (let item of base64ImgList) {
                 const base64ImageData = item.base64;
                 const filename = item.name;
                 const mimeType = item.type;
@@ -196,10 +182,10 @@ class WeiboAgent extends BaseAgent {
     }
 
     async deletePost(ids) {
-        const cookies=await SysDictService.getCookies("weibo_cookie");
         console.log('Deleting posts:', ids);
         const url = 'https://weibo.com/ajax/statuses/destroy';
-        const xsrfToken = Utils.getCookie(cookies, 'XSRF-TOKEN');
+        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+   
         const headers = { 'x-xsrf-token': xsrfToken };
 
         for (let idstr of ids) {
@@ -216,9 +202,94 @@ class WeiboAgent extends BaseAgent {
         }
     }
 
+    async deleteWeibo(ids) {
+        const url = 'https://weibo.com/ajax/statuses/destroy';
+        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+   
+        const headers = {
+            'x-xsrf-token': xsrfToken,
+            'Content-Type': 'application/json',
+            'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+        };
+
+        for (let idstr of ids) {
+            try {
+                const response = await this.page.request.post(url, { data: { id: idstr }, headers });
+                const json = await response.json();
+                if (!json.ok) {
+                    console.log(`Failed to delete post: ${idstr}`);
+                }
+            } catch (e) {
+                console.log(`Error deleting post: ${e}`);
+            }
+        }
+    }
+    async longtext(id) {
+        const url = 'https://weibo.com/ajax/statuses/longtext';
+        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+   
+        const headers = {
+            'x-xsrf-token': xsrfToken,
+            'Content-Type': 'application/json',
+            'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+        };
+        const params = {
+            id: id, // Example user ID
+        };
+
+        try {
+            const response = await axios.get(url, { headers, params });
+            if (response.data.ok !== 1) {
+                throw new Error('longtext failed');
+            } else {
+                return response.data;
+            }
+        } catch (e) {
+            console.error(`Error fetching longtext: ${e.message}`);
+        }
+    }
+
+    async mymblog(userId,pageNumber) {
+        try {
+            const url = 'https://www.weibo.com/ajax/statuses/mymblog';
+            const headers = { Cookie: this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ') };
+  
+            if (userId != null) {
+                const params = {
+                    uid: userId, // Example user ID
+                    page: pageNumber,
+                    feature: 0,
+                };
+  
+                const response = await axios.get(url, { headers, params });
+                return response;
+            }
+        } catch (err) {
+            console.error('调用失败:', err);
+        }
+    }
+  
+       async getUserDetails(userId) {
+            const url = 'https://weibo.com/ajax/profile/info';
+            const params = { uid: userId };
+            const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+   
+            const headers = {
+                'x-xsrf-token': xsrfToken,
+                'Content-Type': 'application/json',
+                'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+            };
+            try {
+                const response = await axios.get(url, { headers, params });
+                return response;
+            } catch (error) {
+                console.error('Error fetching user details:', error.message);
+                return {};
+            }
+        }
+    
     async deleteAllWeibo() {
-        const cookies=await SysDictService.getCookies("weibo_cookie");
-        await this.page.setCookie(...cookies.map(cookie => ({ name: cookie.name, value: cookie.value, domain: 'weibo.com' })));
+        await this.page.setCookie(...this.cookies.map(cookie => ({ name: cookie.name, value: cookie.value, domain: 'weibo.com' })));
         await this.page.goto('https://weibo.com', { waitUntil: 'commit' });
 
         try {
@@ -248,24 +319,10 @@ class WeiboAgent extends BaseAgent {
         }
     }
 
-    async sendWeiboAndComment(request) {
-        try {
-            await this.doSendPost(request.content + "\n" + request.comment, request.img_list, request.is_self_see);
-            await Utils.sleep(3000);
-            // Send comment if provided
-            if (request.comment) {
-                const weiboAccount = await WeiboAccountService.getById(1);
-                const weibo_account_name=weiboAccount.weibo_account_name;
-                await this.sendComment(weibo_account_name, request.comment);
-                await this.sendLike(weibo_account_name);
-            }
-        } catch (e) {
-            console.error(`Error occurred: ${e.message}`);
-        }
-    }
+
 
    
 
 }
 
-export default new WeiboAgent;
+export default new WeiboTool();

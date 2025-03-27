@@ -90,11 +90,5 @@ class Playwright {
     }
 }
 
-// // Run the main function to demonstrate usage
-// Playwright.main().then(() => {
-//     console.log("Playwright interaction completed.");
-// }).catch((err) => {
-//     console.error("Error running Playwright:", err);
-// });
 
 export default Playwright;

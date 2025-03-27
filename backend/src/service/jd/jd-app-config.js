@@ -1,4 +1,4 @@
-import JdAppConfig from '../model/jd-app-config.js';
+import JdAppConfig from '../../model/jd/jd-app-config.js';
 
 class JdAppConfigService {
     async createConfig(data) {

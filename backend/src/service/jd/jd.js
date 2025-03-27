@@ -1,8 +1,8 @@
-import JdProductInfo from '#root/model/jd-product-info.js';
-import JdProductImageInfo from '#root/model/jd-product-image-info.js';
-import JdCouponInfo from '#root/model/jd-coupon-info.js';
+import JdProductInfo from '../../model/jd/jd-product-info.js';
+import JdProductImageInfo from '../../model/jd/jd-product-image-info.js';
+import JdCouponInfo from '../../model/jd/jd-coupon-info.js';
 import { appinfo, UnionOpenGoodsCombinationpageGetRequest, UnionOpenGoodsRankQueryRequest, RankGoodsReq } from './jd-api.js';
-import { MyCustomError } from '#root/exception/exception.js';
+import { MyCustomError } from '../../exception/exception.js';
 
 class JDService {
   app_key;

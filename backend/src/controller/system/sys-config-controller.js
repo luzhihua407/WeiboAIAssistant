@@ -1,8 +1,7 @@
-import SysConfigService from '#root/service/sys-config-service.js';
-import ResponseModel from '#root/model/response-model.js'; // Corrected import
+import SysConfigService from '../../service/system/sys-config.js';
+import ResponseModel from '../../model/response-model.js';
 
 const sysConfigService = new SysConfigService();
-
 
 export const update = async (req, res) => {
     const sysConfig = req.body;

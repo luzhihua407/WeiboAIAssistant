@@ -1,5 +1,5 @@
-import JdAppConfigService from '#root/service/jd-app-config-service.js';
-import ResponseModel from '#root/model/response-model.js';
+import JdAppConfigService from '../../service/jd/jd-app-config.js';
+import ResponseModel from '../../model/response-model.js';
 class JdAppConfigController {
     async createConfig(req, res) {
         try {

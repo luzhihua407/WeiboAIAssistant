@@ -1,12 +1,11 @@
 import Playwright from '#root/utils/playwright.js';
-import SysDictService from '#root/service/system/sys-dict.js';
 
-const initializeBrowser = async (cookieKey) => {
+const initializeBrowser = async (cookies) => {
     let browser = await Playwright.getBrowser();
     if (!browser) {
         browser = await Playwright.launchBrowser();
     }
-    const cookies = await SysDictService.getCookies(cookieKey);
+
     const browserContext = await Playwright.getBrowserContext(browser, { storageState: cookies });
     const page = await Playwright.newPage(browserContext);
     const client = await page.context().newCDPSession(page);

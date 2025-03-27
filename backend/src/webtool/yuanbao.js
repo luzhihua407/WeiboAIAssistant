@@ -4,12 +4,12 @@ import sendNotification from '#root/utils/message-sender.js';
 import BaseTool from './base.js';
 import SysDictService from '#root/service/system/sys-dict.js';
 import Memory from '#root/utils/memory.js';
-
+const COOKIE_KEY = 'yuanbao_cookie'; // Define as a constant class property
+const cookies = await SysDictService.getCookies(COOKIE_KEY);
 class YuanBaoTool extends BaseTool {
-    static COOKIE_KEY = 'yuanbao_cookie'; // Define as a constant class property
 
     constructor() {
-        super(YuanBaoTool.COOKIE_KEY); // Use the constant property
+        super(cookies); // Use the constant property
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://yuanbao.tencent.com/chat";
     }
@@ -61,7 +61,7 @@ class YuanBaoTool extends BaseTool {
 
     async getCookiesDict() {
         try {
-            const cookiesList =this.cookies==undefined?[]: this.cookies.cookies;
+            const cookiesList =cookies==undefined?[]: cookies.cookies;
             const cookiesDict = {};
             cookiesList.forEach(cookie => {
                 cookiesDict[cookie.name] = cookie.value;

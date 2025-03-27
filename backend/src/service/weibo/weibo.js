@@ -73,6 +73,7 @@ class WeiboService {
     async sendWeiboAndComment(request) {
         try {
             await WeiboTool.startBrowser();
+            await WeiboTool.page.goto(WeiboTool.baseUrl);
             await WeiboTool.doSendPost(request.content + "\n" + request.comment, request.img_list, request.is_self_see);
             await Utils.sleep(3000);
             // Send comment if provided

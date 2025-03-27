@@ -20,7 +20,6 @@ const login = async (req, res) => {
 
 const checkLogin = async (req, res) => {
     try {
-        await YuanBaoTool.startBrowser();
         const isLogined = await YuanBaoTool.isLogined();
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
@@ -53,7 +52,7 @@ const chat = async (req, res) => {
         const weiboAccount = await WeiboAccountService.getById(1);
 
         await YuanBaoTool.startBrowser();
-        await page.goto("https://yuanbao.tencent.com/chat");
+        await YuanBaoTool.page.goto("https://yuanbao.tencent.com/chat");
 
         // 设置响应头以支持 SSE
         res.setHeader('Content-Type', 'text/event-stream');
@@ -61,7 +60,7 @@ const chat = async (req, res) => {
         res.setHeader('Connection', 'keep-alive');
 
         // 拦截并中断 SSE 请求，获取其请求参数
-        await page.route("**/api/chat/**", async (route) => {
+        await YuanBaoTool.page.route("**/api/chat/**", async (route) => {
             const originalRequest = route.request();
             const postData = originalRequest.postData();
             console.log('拦截到的 SSE 请求参数:', postData);

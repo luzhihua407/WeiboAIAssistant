@@ -3,7 +3,7 @@ import ResponseModel from '../../model/response-model.js';
 import Utils from '../../utils/utils.js';
 import JdAppConfigService from '../../service/jd/jd-app-config.js';
 import ConfigLoader from '../../utils/config-loader.js';
-
+import WeiboService from '../../service/weibo/weibo.js';
 const page = async (req, res) => {
     const pageParams = req.query;  // Assuming query parameters for pagination
     const pageNumber = parseInt(pageParams.pageNo) || 1;

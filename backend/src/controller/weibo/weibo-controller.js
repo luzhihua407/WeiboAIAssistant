@@ -23,7 +23,7 @@ const deleteWeibo = async (req, res) => {
     const { ids } = req.body;  // Assuming 'ids' is an array of IDs
     const success = await WeiboTool.deleteWeibo(ids);
 
-    const msg = success === 1 ? "删除成功" : "删除失败";
+    const msg = success == true ? "删除成功" : "删除失败";
     const responseModel = new ResponseModel({ msg });
 
     return res.json(responseModel.modelDump());

@@ -1,22 +1,20 @@
 import { initializeBrowser, closeBrowser } from '#root/utils/browser-helper.js';
 
 class BaseTool {
-    constructor(cookieKey) {
+    constructor(cookies) {
         if (this.constructor === BaseTool) {
             throw new TypeError('Abstract class "BaseAgent" cannot be instantiated directly.');
         }
-        this.cookieKey = cookieKey;
         this.browserContext = null;
         this.page = null;
-        this.cookies = {};
+        this.cookies = cookies;
     }
 
     async startBrowser() {
         try {
-            const { browserContext, page,cookies } = await initializeBrowser(this.cookieKey);
+            const { browserContext, page } = await initializeBrowser(this.cookies);
             this.browserContext = browserContext;
             this.page = page;
-            this.cookies = cookies;
         } catch (error) {
             console.error('Error initializing browser:', error);
         }
@@ -96,6 +94,7 @@ class BaseTool {
             console.error(`Error during signin: ${error.message}`);
         }
     }
+
 }
 
 export default BaseTool;

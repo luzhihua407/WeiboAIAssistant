@@ -3,12 +3,14 @@ import sendNotification from '#root/utils/message-sender.js';
 import Utils from '#root/utils/utils.js';
 import BaseTool from '#root/webtool/base.js';
 import SysDictService from '#root/service/system/sys-dict.js';
-
+import axios from 'axios';
+const COOKIE_KEY = 'weibo_cookie'; // Define as a constant class property
+const cookies = await SysDictService.getCookies(COOKIE_KEY);
+const cookiesList=cookies==undefined?[]: cookies.cookies;
 class WeiboTool extends BaseTool {
-    static COOKIE_KEY = 'weibo_cookie'; // Define as a constant class property
 
     constructor() {
-        super(WeiboTool.COOKIE_KEY); // Use the constant property
+        super(cookies); // Use the constant property
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://weibo.com/";
     }
@@ -184,7 +186,7 @@ class WeiboTool extends BaseTool {
     async deletePost(ids) {
         console.log('Deleting posts:', ids);
         const url = 'https://weibo.com/ajax/statuses/destroy';
-        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN').value;
    
         const headers = { 'x-xsrf-token': xsrfToken };
 
@@ -204,34 +206,43 @@ class WeiboTool extends BaseTool {
 
     async deleteWeibo(ids) {
         const url = 'https://weibo.com/ajax/statuses/destroy';
-        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
-   
+        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN')?.value;
+
+        if (!xsrfToken) {
+            console.error('XSRF-TOKEN not found in cookies');
+            return;
+        }
+
         const headers = {
             'x-xsrf-token': xsrfToken,
             'Content-Type': 'application/json',
-            'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+            'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
         };
 
         for (let idstr of ids) {
             try {
-                const response = await this.page.request.post(url, { data: { id: idstr }, headers });
-                const json = await response.json();
-                if (!json.ok) {
+                const response = await axios.post(url, { id: idstr }, { headers });
+                if (response.data.ok !== 1) {
                     console.log(`Failed to delete post: ${idstr}`);
+                    return false;
+                } else {
+                    console.log(`Successfully deleted post: ${idstr}`);
+                    return true;
                 }
             } catch (e) {
-                console.log(`Error deleting post: ${e}`);
+                console.error(`Error deleting post ${idstr}: ${e.message}`);
             }
         }
     }
+
     async longtext(id) {
         const url = 'https://weibo.com/ajax/statuses/longtext';
-        const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN').value;
    
         const headers = {
             'x-xsrf-token': xsrfToken,
             'Content-Type': 'application/json',
-            'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+            'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
         };
         const params = {
             id: id, // Example user ID
@@ -252,7 +263,7 @@ class WeiboTool extends BaseTool {
     async mymblog(userId,pageNumber) {
         try {
             const url = 'https://www.weibo.com/ajax/statuses/mymblog';
-            const headers = { Cookie: this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ') };
+            const headers = { Cookie: cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ') };
   
             if (userId != null) {
                 const params = {
@@ -272,12 +283,14 @@ class WeiboTool extends BaseTool {
        async getUserDetails(userId) {
             const url = 'https://weibo.com/ajax/profile/info';
             const params = { uid: userId };
-            const xsrfToken = this.cookies.find(cookie => cookie.name === 'XSRF-TOKEN').value;
+            console.info("cookiesList")
+            console.info(cookiesList)
+            const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN').value;
    
             const headers = {
                 'x-xsrf-token': xsrfToken,
                 'Content-Type': 'application/json',
-                'Cookie': this.cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+                'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
             };
             try {
                 const response = await axios.get(url, { headers, params });
@@ -289,7 +302,7 @@ class WeiboTool extends BaseTool {
         }
     
     async deleteAllWeibo() {
-        await this.page.setCookie(...this.cookies.map(cookie => ({ name: cookie.name, value: cookie.value, domain: 'weibo.com' })));
+        await this.page.setCookie(...cookiesList.map(cookie => ({ name: cookie.name, value: cookie.value, domain: 'weibo.com' })));
         await this.page.goto('https://weibo.com', { waitUntil: 'commit' });
 
         try {

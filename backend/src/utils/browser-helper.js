@@ -17,7 +17,7 @@ const initializeBrowser = async (cookies) => {
     });
 
     client.on('Network.responseReceived', async response => {
-        console.log(`\n📥 [Response] ${response.response.status} ${response.response.url}`);
+        console.log(`\n📥 [Response] ${response.response.status}`);
     });
 
     return { browserContext, page,cookies };

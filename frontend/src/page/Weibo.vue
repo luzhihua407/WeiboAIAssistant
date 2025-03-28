@@ -7,6 +7,10 @@
   >
       <a-form-item name="content" label="内容">
         <QuillEditor ref="quillRef" style="height: 200px;" theme="snow" v-model:content="formState.content" contentType="text" placeholder="有什么新鲜事想分享给大家？"/>
+        <div style="margin: 10px 0;">
+          <a-button @click="aichat" :loading="aiLoading" class="button">AI生成</a-button>
+          <a-button @click="clearContent" class="button">清空内容</a-button>
+        </div>
       </a-form-item>
       <a-form-item name="is_self_see" label="可见性">
         <a-checkbox v-model:checked="formState.is_self_see">仅自己可见</a-checkbox>
@@ -43,6 +47,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { PlusOutlined,SendOutlined } from '@ant-design/icons-vue';
   import type { UploadChangeParam } from 'ant-design-vue';
+  import { chat, checkLogin, yuanbao_refresh_qrcode } from '../api/yuanbao-api'; // 根据实际路径引入
 
   const layout = {
     labelCol: { span: 8 },
@@ -52,6 +57,7 @@ const previewVisible = ref(false);
 const loading = ref(false);
 const previewImage = ref('');
 const previewTitle = ref('');
+let currentContent = ref(''); // Initialize as an empty string
 const rules: Record<string, Rule[]> = {
   content: [{ required: true, message: '内容不能为空', trigger: 'change'}]
 };
@@ -64,6 +70,40 @@ const formState = reactive({
     is_self_see: false
 
   });
+const aiLoading = ref(false);
+
+async function aichat() {
+  try {
+    if (!formState.content.trim()) {
+      message.warning('请先输入内容再生成');
+      return;
+    }
+
+    aiLoading.value = true;
+    const loginResponse = await checkLogin();
+    if (loginResponse.code == 200) {
+      if (!loginResponse.data.is_logined) {
+        yuanbao_refresh_qrcode();
+        message.error('请先登录元宝');
+        aiLoading.value = false;
+        return;
+      }
+    }
+    currentContent.value = ''; // Clear previous content
+    await chat({ input: formState.content }, (chunk) => {
+      currentContent.value += chunk; // Append to the actual value of the ref
+      quillRef.value.setText(currentContent.value); // Insert new content into Quill editor
+      console.log('currentContent:',currentContent.value); // Log the received chunk
+    });
+
+    message.success('生成内容完成');
+  } catch (error) {
+    console.error('Error generating content:', error);
+    message.error('生成内容失败');
+  } finally {
+    aiLoading.value = false;
+  }
+}
   function getBase64(file: File) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -120,5 +160,16 @@ const onSubmit =async () => {
     loading.value=false
   }
 };
+
+function clearContent() {
+  formState.content = ''; // Clear the reactive content state
+  quillRef.value.setText(''); // Clear the Quill editor content
+}
   </script>
+<style scoped>
+.button {
+  margin: 0 5px; /* Add left and right margins of 5px */
+  margin-bottom: 10px;
+}
+</style>
 

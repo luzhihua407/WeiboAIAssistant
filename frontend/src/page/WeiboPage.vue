@@ -41,6 +41,11 @@ function goBack() {
 
 async function aichat() {
   try {
+    if (!form.originalContent.trim()) {
+      message.warning('请先输入内容再生成');
+      return;
+    }
+
     aiLoading.value = true;
     const loginResponse = await checkLogin();
     if (loginResponse.code == 200) {
@@ -97,7 +102,7 @@ async function handleOk() {
 }
 
 .button {
-  margin-right: 10px;
+  margin: 0 5px; /* Add left and right margins of 5px */
   margin-bottom: 10px;
 }
 </style>

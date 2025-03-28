@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.rpa-app-ui.app",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm run dev && cd ../backend && npm install && npx pm2 start ecosystem.config.cjs --env development",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run build && cd ../backend && npm install && npx pm2 start ecosystem.config.cjs",
     "frontendDist": "../dist"
   },
   "app": {

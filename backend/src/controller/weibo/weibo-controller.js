@@ -37,9 +37,10 @@ const longtext = async (req, res) => {
 
 const sendWeibo = async (req, res) => {
     await WeiboTool.startBrowser();
+    await WeiboTool.page.goto(WeiboTool.baseUrl);
     const params = req.body;
     await WeiboTool.send(params.content, params.img_list, params.is_self_see);
-
+    await WeiboTool.stopBrowser();
     const responseModel = new ResponseModel();
     return res.json(responseModel.modelDump());
 };
@@ -60,7 +61,17 @@ const getUser = async (req, res) => {
 const login = async (req, res) => {
     try {
         await WeiboTool.startBrowser();
-        WeiboTool.signin();
+        WeiboTool.signin().then(() => {
+            console.log('登录成功');
+            WeiboTool.stopBrowser().then(() => {
+                console.log('浏览器已关闭');
+            });
+        }).catch((error) => {
+            console.error('登录失败:', error.message);
+            WeiboTool.stopBrowser().then(() => {
+                console.log('浏览器已关闭');
+            });
+        });
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (error) {
@@ -73,7 +84,17 @@ const login = async (req, res) => {
 const refreshQRCode = async (req, res) => {
     try {
         await WeiboTool.startBrowser();
-        WeiboTool.getLoginQRCode();
+        WeiboTool.getLoginQRCode().then(() => {
+            console.log('二维码已刷新');
+            WeiboTool.stopBrowser().then(() => {
+                console.log('浏览器已关闭');
+            });
+        }).catch((error) => {
+            console.error('刷新二维码失败:', error.message);
+            WeiboTool.stopBrowser().then(() => {
+                console.log('浏览器已关闭');
+            });
+        });
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());
     } catch (error) {

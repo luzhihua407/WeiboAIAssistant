@@ -13,11 +13,18 @@ const initializeBrowser = async (cookies) => {
     
     // 监听所有网络事件
     client.on('Network.requestWillBeSent', request => {
-        console.log(`\n🚀 [Request] ${request.request.method} ${request.request.url}`);
+        const headers = request.request?.headers;
+        if (headers && headers['x-requested-with'] === 'XMLHttpRequest') {
+            console.log(`\n🚀 [XHR Request] ${request.request.method} ${request.request.url}`);
+        }
     });
 
     client.on('Network.responseReceived', async response => {
-        console.log(`\n📥 [Response] ${response.response.status}`);
+        const request = await client.send('Network.getRequestPostData', { requestId: response.requestId }).catch(() => null);
+        const headers = request?.headers;
+        if (headers && headers['x-requested-with'] === 'XMLHttpRequest') {
+            console.log(`\n📥 [XHR Response] ${response.response.status}`);
+        }
     });
 
     return { browserContext, page,cookies };

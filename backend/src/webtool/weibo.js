@@ -5,14 +5,26 @@ import BaseTool from '#root/webtool/base.js';
 import SysDictService from '#root/service/system/sys-dict.js';
 import axios from 'axios';
 const COOKIE_KEY = 'weibo_cookie'; // Define as a constant class property
-const cookies = await SysDictService.getCookies(COOKIE_KEY);
-const cookiesList=cookies==undefined?[]: cookies.cookies;
+let cookies = await SysDictService.getCookies(COOKIE_KEY);
+let cookiesList=cookies==undefined?[]: cookies.cookies;
 class WeiboTool extends BaseTool {
 
     constructor() {
         super(cookies); // Use the constant property
         this.storePath = path.join(process.cwd(), 'temp');
         this.baseUrl = "https://weibo.com/";
+    }
+
+    createHeaders() {
+        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN')?.value;
+        if (!xsrfToken) {
+            throw new Error('XSRF-TOKEN not found in cookies');
+        }
+        return {
+            'x-xsrf-token': xsrfToken,
+            'Content-Type': 'application/json',
+            'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+        };
     }
 
     async getLoginQRCode() {
@@ -27,11 +39,6 @@ class WeiboTool extends BaseTool {
             const response = await this.page.waitForResponse(response => response.url().includes('/inf/gen') && response.status() === 200, { timeout: 8000 });
             const url = response.url();
             console.log(`inf/gen request URL: ${url}`);
-            // const qrcodePath = path.join(this.storePath, 'weibo_qrcode.jpg');
-            // const img =  this.page.locator('img.w-full')
-            // await img.waitFor({ state: 'visible',timeout: 8000 });
-            // Utils.deleteFile(qrcodePath);
-            // await img.screenshot({ path: qrcodePath });
             return url;
         } catch (error) {
             console.error(error);
@@ -50,8 +57,6 @@ class WeiboTool extends BaseTool {
             }
         } catch (e) {
             console.log(`微博登录失败: ${e}`);
-            //再次发起扫码
-            await this.scanLogin();
         }
     }
 
@@ -59,8 +64,10 @@ class WeiboTool extends BaseTool {
       try {
           const storageState = await this.browserContext.storageState();
           const cookieJson = JSON.stringify(storageState);
-          await SysDictService.addOrUpdate("weibo_cookie", cookieJson);
-          console.info(`Weibo Cookies saved`);
+          await SysDictService.addOrUpdate(COOKIE_KEY, cookieJson);
+          cookies = JSON.parse(cookieJson);
+          cookiesList=cookies==undefined?[]: cookies.cookies;
+          console.log("微博cookies保存成功");
       } catch (error) {
           console.error(`Failed to save cookies: ${error.message}`);
       }
@@ -99,8 +106,19 @@ class WeiboTool extends BaseTool {
                 const filePath = path.resolve(imgPath);
                 await fileInput.setInputFiles(filePath);
             }
+            let uploadedImagesCount = 0;
+            const totalImages = imgPathList.length;
+
+            this.page.on('response', response => {
+                if (response.url().includes('bmiddle') && response.status() === 200) {
+                    uploadedImagesCount++;
+                }
+            });
+
+            while (uploadedImagesCount < totalImages) {
+                await Utils.sleep(1000); // Wait for all images to be uploaded
+            }
         }
-        await Utils.sleep(3000);
         await this.page.locator('span:text("发送")').click();
         return true;
     }
@@ -126,6 +144,18 @@ class WeiboTool extends BaseTool {
 
                 // Upload the image from the buffer
                 await fileInput.setInputFiles([{ buffer, name: filename, mimeType }]);
+            }
+            let uploadedImagesCount = 0;
+            const totalImages = base64ImgList.length;
+
+            this.page.on('response', response => {
+                if (response.url().includes('bmiddle') && response.status() === 200) {
+                    uploadedImagesCount++;
+                }
+            });
+
+            while (uploadedImagesCount < totalImages) {
+                await Utils.sleep(1000); // Wait for all images to be uploaded
             }
         }
 
@@ -206,18 +236,13 @@ class WeiboTool extends BaseTool {
 
     async deleteWeibo(ids) {
         const url = 'https://weibo.com/ajax/statuses/destroy';
-        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN')?.value;
-
-        if (!xsrfToken) {
-            console.error('XSRF-TOKEN not found in cookies');
+        let headers;
+        try {
+            headers = this.createHeaders();
+        } catch (error) {
+            console.error(error.message);
             return;
         }
-
-        const headers = {
-            'x-xsrf-token': xsrfToken,
-            'Content-Type': 'application/json',
-            'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
-        };
 
         for (let idstr of ids) {
             try {
@@ -237,13 +262,13 @@ class WeiboTool extends BaseTool {
 
     async longtext(id) {
         const url = 'https://weibo.com/ajax/statuses/longtext';
-        const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN').value;
-   
-        const headers = {
-            'x-xsrf-token': xsrfToken,
-            'Content-Type': 'application/json',
-            'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
-        };
+        let headers;
+        try {
+            headers = this.createHeaders();
+        } catch (error) {
+            console.error(error.message);
+            return;
+        }
         const params = {
             id: id, // Example user ID
         };
@@ -284,14 +309,14 @@ class WeiboTool extends BaseTool {
             const url = 'https://weibo.com/ajax/profile/info';
             const params = { uid: userId };
             console.info("cookiesList")
-            console.info(cookiesList)
-            const xsrfToken = cookiesList.find(cookie => cookie.name === 'XSRF-TOKEN').value;
-   
-            const headers = {
-                'x-xsrf-token': xsrfToken,
-                'Content-Type': 'application/json',
-                'Cookie': cookiesList.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
-            };
+            console.info(cookiesList);
+            let headers;
+            try {
+                headers = this.createHeaders();
+            } catch (error) {
+                console.error(error.message);
+                return {};
+            }
             try {
                 const response = await axios.get(url, { headers, params });
                 return response;

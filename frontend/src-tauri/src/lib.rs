@@ -6,13 +6,13 @@ use tauri::{
 };
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
-// Function to spawn the Express server
+// Function to spawn the Express server using pm2
 fn start_server() -> Result<(), Box<dyn Error>> {
     let _output = tauri::async_runtime::block_on(async move {
-        Command::new("node")
-            .arg("src/app.js")
+        Command::new("pm2")
+            .args(&["start", "backend/src/app.js", "--name", "backend"])
             .spawn()
-            .expect("Failed to start Express server");
+            .expect("Failed to start backend server with pm2");
     });
 
     Ok(())

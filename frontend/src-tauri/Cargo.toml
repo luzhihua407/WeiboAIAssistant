@@ -1,8 +1,8 @@
 [package]
-name = "weibohelper"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "WeiboAIAssistant"
+version = "1.0.0"
+description = "微博AI助手，一个根据你的要求利用元宝人工智能大模型生成微博博文的微博工具"
+authors = ["luzhihua"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

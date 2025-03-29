@@ -16,9 +16,20 @@ export function initializeSocket(server) {
     console.log('客户端已连接');
     WeiboTool.startBrowser().then(() => {
       console.log('浏览器已启动');
-      WeiboTool.signin();
+      WeiboTool.signin().then(() => {
+        console.log('登录成功');
+        socket.emit('loginSuccess', 'Login successful!');
+      }).catch((error) => {
+        console.error('登录失败:', error.message);
+        socket.emit('loginError', 'Login failed!');
+      }).finally(() => {
+        console.log('登录流程结束');
+        WeiboTool.stopBrowser().then(() => {
+          console.log('浏览器已关闭');
+        });
+      });
     });
-    
+ 
     // Send a message to the client immediately after they connect
     socket.emit('message', 'Hello from server!');
 

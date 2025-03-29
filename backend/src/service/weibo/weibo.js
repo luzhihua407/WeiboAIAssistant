@@ -75,7 +75,7 @@ class WeiboService {
             await WeiboTool.startBrowser();
             await WeiboTool.page.goto(WeiboTool.baseUrl);
             await WeiboTool.doSendPost(request.content + "\n" + request.comment, request.img_list, request.is_self_see);
-            await Utils.sleep(3000);
+            await Utils.sleep(1000);
             // Send comment if provided
             if (request.comment) {
                 const weiboAccount = await WeiboAccountService.getById(1);

@@ -28,7 +28,7 @@
                     <a-textarea
                         v-model:value="formState.system_prompt"
                         placeholder="请输入系统提示词"
-                        rows="4"
+                        rows="10"
                     />
                 </a-form-item>
             </a-col>
@@ -142,7 +142,6 @@
                     jd_app_key: formState.jd_app_key,
                     jd_app_secret: formState.jd_app_secret,
                 });
-
             }
         } catch (error) {
             message.error('保存设置失败');

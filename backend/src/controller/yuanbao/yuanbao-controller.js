@@ -9,6 +9,7 @@ const login = async (req, res) => {
         if (!isLogined) {
             YuanBaoTool.scanLogin();  // In real app, this would trigger QR code scan
         }
+        await YuanBaoTool.stopBrowser();  // Close the browser after checking login status
         const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
         return res.json(responseModel.modelDump());
     } catch (error) {
@@ -33,9 +34,12 @@ const checkLogin = async (req, res) => {
 const refreshQRCode = async (req, res) => {
    try {
         await YuanBaoTool.startBrowser();
-        await YuanBaoTool.scanLogin();  // Trigger QR code scan
+        const success=await YuanBaoTool.scanLogin();  // Trigger QR code scan
+        if (success) {
+            throw new Error('二维码刷新失败');
+            await YuanBaoTool.stopBrowser();
+        }
         const responseModel = new ResponseModel();
-        await YuanBaoTool.stopBrowser();
         return res.json(responseModel.modelDump());
     } catch (error) {
         console.error(`捕获到自定义异常: ${error.message}`);

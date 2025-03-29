@@ -61,7 +61,7 @@ class SysDictService {
   }
 
   async addOrUpdate(code, value) {
-    const existingDict = await SysDict.findOne({ where: { code } });
+    const existingDict = await SysDict.findOne({ where: { code: code } });
     if (existingDict) {
       existingDict.value = value;
       await existingDict.save();

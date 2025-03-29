@@ -150,6 +150,7 @@ const onSubmit =async () => {
       formRef.value.resetFields()
       img_list.value=[]
       quillRef.value.setText('')
+      message.success('发布成功');
     }
     
     console.log('response', response); // 打印响应

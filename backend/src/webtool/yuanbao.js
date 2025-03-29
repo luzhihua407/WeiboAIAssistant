@@ -5,7 +5,7 @@ import BaseTool from './base.js';
 import SysDictService from '#root/service/system/sys-dict.js';
 import Memory from '#root/utils/memory.js';
 const COOKIE_KEY = 'yuanbao_cookie'; // Define as a constant class property
-const cookies = await SysDictService.getCookies(COOKIE_KEY);
+let cookies = await SysDictService.getCookies(COOKIE_KEY);
 class YuanBaoTool extends BaseTool {
 
     constructor() {
@@ -99,7 +99,7 @@ class YuanBaoTool extends BaseTool {
             await this.page.goto("https://yuanbao.tencent.com", { waitUntil: "commit" });
             await this.page.waitForTimeout(1000);
             const responseInfo = this.page.waitForResponse("**/api/joint/login", { timeout: 60000 });
-            await this.page.locator("//span[text()='登录']").click();
+            await this.page.locator('span[class="yb-icon iconfont-yb icon-yb-newchat2"]').click();
             const qrcodeResponse = await this.page.waitForResponse(response => response.url().includes("qrcode") && response.status() === 200, { timeout: 60000 });
             const qrcodeUrl = qrcodeResponse.url();
             console.log("QR Code URL:", qrcodeUrl);
@@ -109,17 +109,19 @@ class YuanBaoTool extends BaseTool {
                 await this.saveCookie();
                 await sendNotification("login_success", { islogined: true });
             }
+            return true;
         } catch (error) {
             console.error('元宝登录失败:', error);
-            this.scanLogin();
         }
     }
     async saveCookie() {
       try {
           const storageState = await this.browserContext.storageState();
           const cookieJson = JSON.stringify(storageState);
-          await SysDictService.addOrUpdate(YuanBaoTool.COOKIE_KEY, cookieJson);
-          console.info(`Yuanbao Cookies saved`);
+          await SysDictService.addOrUpdate(COOKIE_KEY, cookieJson);
+          cookies = JSON.parse(cookieJson); // Update the class property with the new cookies
+
+          console.info(`元宝cookies保存成功`);
       } catch (error) {
           console.error(`Failed to save cookies: ${error.message}`);
       }
@@ -142,4 +144,4 @@ class YuanBaoTool extends BaseTool {
     }
 }
 
-export default new YuanBaoTool;
+export default new YuanBaoTool();

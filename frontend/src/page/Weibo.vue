@@ -6,7 +6,7 @@
     :rules="rules"
   >
       <a-form-item name="content" label="内容">
-        <QuillEditor ref="quillRef" style="height: 200px;" theme="snow" v-model:content="formState.content" contentType="text" placeholder="有什么新鲜事想分享给大家？"/>
+        <QuillEditor ref="quillRef" style="height: 200px;" theme="snow" v-model:content="formState.content" contentType="text" placeholder="有什么新鲜事想分享给大家？" :toolbar="[]"/>
         <div style="margin: 10px 0;">
           <a-button @click="aichat" :loading="aiLoading" class="button">AI生成</a-button>
           <a-button @click="clearContent" class="button">清空内容</a-button>
@@ -139,6 +139,10 @@ const handleChange = async (info: UploadChangeParam) => {
     };
 const onSubmit =async () => {
   // 验证表单
+  if (!formState.content.trim()) {
+      message.warning('请先输入内容再发布');
+      return;
+    }
   await formRef.value.validate();
   console.log('values', formState);
   loading.value=true

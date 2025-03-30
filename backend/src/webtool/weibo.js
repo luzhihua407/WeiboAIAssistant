@@ -308,8 +308,6 @@ class WeiboTool extends BaseTool {
        async getUserDetails(userId) {
             const url = 'https://weibo.com/ajax/profile/info';
             const params = { uid: userId };
-            console.info("cookiesList")
-            console.info(cookiesList);
             let headers;
             try {
                 headers = this.createHeaders();
@@ -357,9 +355,32 @@ class WeiboTool extends BaseTool {
         }
     }
 
+    async modifyVisible({ ids, visible }) {
+        const url = 'https://www.weibo.com/ajax/statuses/modifyVisible';
+        let headers;
+        try {
+            headers = this.createHeaders();
+        } catch (error) {
+            console.error(error.message);
+            return false;
+        }
 
+        const data = { ids, visible };
 
-   
+        try {
+            const response = await axios.post(url, data, { headers });
+            if (response.data.ok !== 1) {
+                console.error(`Failed to modify visibility for post: ${ids}`);
+                return false;
+            } else {
+                console.log(`Successfully modified visibility for post: ${ids}`);
+                return true;
+            }
+        } catch (error) {
+            console.error(`Error modifying visibility for post ${ids}: ${error.message}`);
+            return false;
+        }
+    }
 
 }
 

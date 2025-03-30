@@ -104,6 +104,16 @@ const refreshQRCode = async (req, res) => {
     }
 };
 
+const modifyVisible = async (req, res) => {
+    const { ids, visible } = req.body; // Extract 'ids' and 'visible' from the request body
+    const success = await WeiboTool.modifyVisible({ ids, visible });
+
+    const msg = success ? "修改可见性成功" : "修改可见性失败";
+    const responseModel = new ResponseModel({ msg });
+
+    return res.json(responseModel.modelDump());
+};
+
 export {
     deleteAllWeibo,
     weiboPage,
@@ -112,5 +122,6 @@ export {
     getUser,
     longtext,
     login,
-    refreshQRCode
+    refreshQRCode,
+    modifyVisible
 };

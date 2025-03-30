@@ -23,6 +23,8 @@ router.get('/weibo/login', weiboController.login);
 router.post('/weibo/delete', weiboController.deleteWeibo);
 router.get('/weibo/refresh_qrcode', weiboController.refreshQRCode);
 router.get('/weibo/longtext', weiboController.longtext);
+router.post('/weibo/modify_visible', weiboController.modifyVisible); // Added route for modifyVisible
+
 // Yuanbao Routes
 router.get('/yuanbao/login', yuanbaoController.login);
 router.get('/yuanbao/checkLogin', yuanbaoController.checkLogin);

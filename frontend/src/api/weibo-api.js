@@ -85,3 +85,15 @@ export async function longtext(data) {
     throw error;
   }
 }
+
+export async function modifyVisible(data) {
+  const url = API_URLS.weibo.modifyVisible;
+  try {
+    const response = await api.post(url, data);
+    console.log('操作成功:', response);
+    return response;
+  } catch (error) {
+    console.error('操作失败:', error);
+    throw error;
+  }
+}

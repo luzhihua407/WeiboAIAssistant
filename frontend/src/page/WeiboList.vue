@@ -22,10 +22,10 @@
                 <ClockCircleOutlined /> {{ record.createdAt }}
               </a-col>
               <a-col :span="8" v-if="record.visible=='公开'">
-                <EyeOutlined /> 公开
+                <EyeOutlined @click="toggleVisibility(record, '1')" style="cursor: pointer;" /> 公开
               </a-col>
               <a-col :span="8" v-if="record.visible!='公开'">
-                <EyeInvisibleOutlined /> 私密
+                <EyeInvisibleOutlined @click="toggleVisibility(record, '0')" style="cursor: pointer;" /> 私密
               </a-col>
             </a-row>
             <div><div v-html="record.text" @click="handleExpand(record)"></div></div>
@@ -40,7 +40,7 @@
 
             </a-row>
             <div class="photo-wall">
-            <div class="photo-item" v-for="(photo, index) in record.pic_infos">
+            <div class="photo-item" v-for="(photo, index) in record.pic_infos" :key="index" @click="showImage(photo.large.url)">
               <img v-lazy="photo.large.url" :alt="`Photo ${index + 1}`" />
             </div>
           </div>
@@ -60,13 +60,16 @@
     <a-pagination v-if="pagination.total>0" v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
       :total="pagination.total" :show-total="total => `总${total}条`" @change="handlePageChange" style="position: absolute;right: 0;"/>
       <a-back-top />
+      <a-modal v-model:visible="imageModalVisible" :footer=null width="60%" :centered="true" @cancel="closeImageModal">
+        <img :src="currentImage" alt="Enlarged Image" style="width: 100%; height: auto;" />
+      </a-modal>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted,reactive  } from 'vue';
 import { TableColumnsType,message } from 'ant-design-vue';
-import { page,delete_by_id,longtext } from '../api/weibo-api'; // 根据实际路径引入
+import { page,delete_by_id,longtext,modifyVisible } from '../api/weibo-api'; // 根据实际路径引入
 import { CommentOutlined,EyeOutlined,EyeInvisibleOutlined,ReadOutlined,ClockCircleOutlined,DeleteOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 
 const columns: TableColumnsType = [
@@ -86,6 +89,7 @@ interface DataItem {
   readsCount: string;
   commentsCount: string;
   visible: string;
+  pic_infos: Array<{ large: { url: string } }>;
 }
 const data = ref<DataItem[]>([]);
 const isLogined = ref<boolean>(false);
@@ -103,6 +107,9 @@ const state = reactive<{
   selectedRowKeys: [], // Check here to configure the default column
   loading: false,
 });
+const imageModalVisible = ref(false);
+const currentImage = ref('');
+
 const rowSelection: TableProps['rowSelection'] = {
   onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -128,7 +135,7 @@ async function handleExpand(record) {
 
       const response = await longtext({ id:record.id });
       if (response.code==200 && response.data!=null) {
-        record.text = response.data.data.longTextContent;
+        record.text = response.data.data.longTextContent.replace(/\n\n/g, '<br /><br />');
       } else {
         console.error('Invalid response structure:', response);
       }
@@ -150,9 +157,9 @@ async function getpage(pageNo: number, pageSize: number) {
 }
 
 function onDeleteWeibo(id:any) {
-    this.sendLoading=true
+    sendLoading.value=true
     deleteWeibo({ids:id})
-    this.sendLoading=false
+    sendLoading.value=false
 }
 async function deleteWeibo(data:any) {
   try {
@@ -178,6 +185,33 @@ function handlePageChange(page:number, pageSize:number) {
   pagination.value.pageSize = pageSize;
   getpage(page, pageSize);
 }
+
+// Toggle visibility (private/public)
+async function toggleVisibility(record, visible) {
+  try {
+    const response = await modifyVisible({ ids: record.id, visible });
+    if (response.code == 200) {
+      message.success(response.msg);
+      record.visible = visible === '0' ? '公开' : '私密';
+    } else {
+      message.error('修改可见性失败');
+    }
+  } catch (error) {
+    console.error('Error modifying visibility:', error);
+  }
+}
+
+// Show image in modal
+function showImage(url: string) {
+  currentImage.value = url;
+  imageModalVisible.value = true;
+}
+
+// Close image modal
+function closeImageModal() {
+  imageModalVisible.value = false;
+}
+
 onMounted(() => {
   onFreshData()
 });
@@ -196,6 +230,7 @@ onMounted(() => {
   overflow: hidden;
   border-radius: 8px;
   background-color: #f0f0f0; /* 占位符背景色 */
+  cursor: pointer;
 }
 
 .photo-item img {

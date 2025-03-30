@@ -14,6 +14,7 @@ export const API_URLS = {
     sendWeibo: '/weibo/send',
     refreshQrcode: '/weibo/refresh_qrcode',
     longtext: '/weibo/longtext',
+    modifyVisible: '/weibo/modify_visible',
   },
   weiboAccount: {
     save: '/weiboAccount/save',

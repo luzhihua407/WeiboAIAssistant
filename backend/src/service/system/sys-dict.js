@@ -80,6 +80,10 @@ class SysDictService {
     }
   }
 
+  async deleteAll() {
+    await SysDict.destroy({ where: {} });
+  }
+
 }
 
 export default new SysDictService;

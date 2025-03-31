@@ -6,8 +6,19 @@ import * as yuanbaoController from '../controller/yuanbao/yuanbao-controller.js'
 import * as sysConfigController from '../controller/system/sys-config-controller.js';
 import * as weiboAccountController from '../controller/weibo/weibo-account-controller.js';
 import jdAppConfigController from '../controller/jd/jd-app-config-controller.js';
-
+import { isWeiboLoggedIn } from '../middleware/auth-middleware.js'; // Import the middleware
+import ResponseModel from '../model/response-model.js';
 const router = express.Router();
+
+// Middleware to check if the user is logged in to Weibo
+router.use(async (req, res, next) => {
+  const loggedIn = await isWeiboLoggedIn();
+  if (!loggedIn) {
+    const responseModel = new ResponseModel({code:401, msg: '请先登录微博' });
+    return res.status(200).json(responseModel.modelDump());
+  }
+  next();
+});
 
 // Product Routes
 router.get('/jd/page', jdController.page);
@@ -45,6 +56,7 @@ router.get('/weiboAccount/get', weiboAccountController.get);
 
 router.get('/sysconfig/get', sysConfigController.get);
 router.post('/sysconfig/update', sysConfigController.update);
+router.post('/system/logout', sysConfigController.logout);
 
 // JdAppConfig Routes
 router.post('/jdAppConfig/updateOrCreateConfig', jdAppConfigController.updateOrCreateConfig);

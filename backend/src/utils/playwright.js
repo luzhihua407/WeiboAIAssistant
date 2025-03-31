@@ -1,5 +1,4 @@
 import { chromium } from 'playwright';
-import fs from 'fs';
 import path from 'path';
 import ConfigLoader from './config-loader.js';
 class Playwright {
@@ -15,14 +14,11 @@ class Playwright {
         const configData = ConfigLoader.loadConfig();
 
         const headless = configData.headless !== undefined ? configData.headless : true;
-        const filePath = path.join(process.cwd(), 'pw-browsers/chromium-1155/chrome-win/chrome.exe');
-        console.log("filePath", filePath, fs.existsSync(filePath));
         if (!Playwright.browser) {
             console.log(">>> browser is none");
 
             Playwright.browser = await chromium.launch({
                 headless: headless,
-                executablePath: filePath,
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -85,7 +81,6 @@ class Playwright {
         } else {
             filePath = path.join(process.cwd(), 'assets', 'stealth.min.js');
         }
-        console.log("filePath", fs.existsSync(filePath));
         return filePath;
     }
 }

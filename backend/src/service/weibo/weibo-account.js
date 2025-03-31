@@ -32,6 +32,10 @@ class WeiboAccountService {
             return await this.save(weiboAccountData);
         }
     }
+
+    async deleteAll() {
+        await WeiboAccount.destroy({ where: {} });
+    }
 }
 
 export default new WeiboAccountService;

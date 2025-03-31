@@ -17,8 +17,6 @@ export function initializeSocket(server) {
     WeiboTool.startBrowser().then(() => {
       console.log('浏览器已启动');
       WeiboTool.signin().then(() => {
-        console.log('登录成功');
-        socket.emit('loginSuccess', 'Login successful!');
       }).catch((error) => {
         console.error('登录失败:', error.message);
         socket.emit('loginError', 'Login failed!');

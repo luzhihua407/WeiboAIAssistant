@@ -67,7 +67,7 @@ class SysDictService {
       await existingDict.save();
       return existingDict;
     } else {
-      const newDict = await SysDict.create({ code, value });
+      const newDict = await SysDict.create({code, value });
       return newDict;
     }
   }

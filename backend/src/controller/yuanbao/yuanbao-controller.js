@@ -35,9 +35,8 @@ const refreshQRCode = async (req, res) => {
    try {
         await YuanBaoTool.startBrowser();
         const success=await YuanBaoTool.scanLogin();  // Trigger QR code scan
-        if (success) {
+        if (!success) {
             throw new Error('二维码刷新失败');
-            await YuanBaoTool.stopBrowser();
         }
         const responseModel = new ResponseModel();
         return res.json(responseModel.modelDump());

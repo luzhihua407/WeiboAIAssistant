@@ -15,7 +15,6 @@ router.use(async (req, res, next) => {
   const loggedIn = await isWeiboLoggedIn();
   if (!loggedIn) {
     const responseModel = new ResponseModel({code:401, msg: '请先登录微博' });
-    await sendNotification("login_success", { islogined: false });
     return res.status(200).json(responseModel.modelDump());
   }
   next();

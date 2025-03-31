@@ -78,22 +78,7 @@ npm run tauri build
 
 本项目使用 Playwright 进行浏览器自动化操作。请按照以下步骤安装 Chromium：
 
-### **1. 安装到指定路径**
-在 PowerShell 中运行以下命令，将 Chromium 安装到自定义目录：
-```powershell
-$Env:PLAYWRIGHT_BROWSERS_PATH="D:\code\rpa_app_ui\backend\pw-browsers"
 npx playwright install chromium
-```
-
-### **2. 配置 Playwright 使用已安装的 Chromium**
-编辑 `utils/playwright.js` 文件，指定 Chromium 可执行文件的路径：
-```javascript
-launch({
-  executablePath: "D:\\code\\rpa_app_ui\\backend\\pw-browsers\\chromium\\path\\to\\executable"
-});
-```
-
----
 
 
 ## **贡献指南**

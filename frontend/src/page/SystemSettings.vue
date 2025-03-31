@@ -60,12 +60,11 @@
       </a-card>
   
       <!-- 提交按钮（可选，如果需要手动保存） -->
-      <!-- 
       <a-form-item>
         <a-button type="primary" html-type="submit">保存设置</a-button>
       </a-form-item>
-      -->
     </a-form>
+    <a-button type="danger" @click="handleLogout">退出登录</a-button>
   </template>
   
   <script>
@@ -76,6 +75,7 @@
       getJdAppConfigById,
       updateOrCreateConfig,
       updateWeiboAccount,
+      logout,
   } from '../api/system-settings-api';
   
   export default {
@@ -148,6 +148,21 @@
             console.error(error);
         }
       };
+
+      const handleLogout = async () => {
+        try {
+          await logout();
+          message.success('退出成功');
+          formState.weibo_account_id = '';
+          formState.weibo_account_name = '';
+          formState.system_prompt = '';
+          formState.jd_app_key = '';
+          formState.jd_app_secret = '';
+        } catch (error) {
+          message.error('退出失败');
+          console.error(error);
+        }
+      };
   
       watch(
         () => JSON.parse(JSON.stringify(formState)), // 深拷贝以监听整个对象
@@ -164,6 +179,7 @@
       return {
         formState,
         rules,
+        handleLogout,
       };
     },
   };

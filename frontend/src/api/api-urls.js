@@ -47,4 +47,7 @@ export const API_URLS = {
     get: '/sysconfig/get',
     update: '/sysconfig/update',
   },
+  system: {
+    logout: '/system/logout',
+  },
 };

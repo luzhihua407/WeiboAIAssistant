@@ -122,3 +122,16 @@ export async function getJdAppConfigByKey(key) {
         throw error;
     }
 }
+
+// API to delete weibo_account and sys_dict data
+export async function logout() {
+    const url = API_URLS.system.logout;
+    try {
+        const response = await api.post(url);
+        console.log('操作成功:', response);
+        return response;
+    } catch (error) {
+        console.error('操作失败:', error);
+        throw error;
+    }
+}

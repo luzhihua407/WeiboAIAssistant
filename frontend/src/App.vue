@@ -122,6 +122,9 @@ function initWebSocket() {
     const islogined = data.islogined
     if (islogined) {
        handleLoginSuccess({ islogined: islogined });
+    }else {
+      console.log('Login failed');
+      login();
     }
   });
 }

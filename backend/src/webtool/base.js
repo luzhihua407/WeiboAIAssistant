@@ -92,6 +92,7 @@ class BaseTool {
             }
         } catch (error) {
             console.error(`Error during signin: ${error.message}`);
+            throw new Error(`登录失败: ${e}`);
         }
     }
 

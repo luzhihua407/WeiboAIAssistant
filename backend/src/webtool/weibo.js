@@ -4,6 +4,7 @@ import Utils from '#root/utils/utils.js';
 import BaseTool from '#root/webtool/base.js';
 import SysDictService from '#root/service/system/sys-dict.js';
 import axios from 'axios';
+import WeiboAccountService from '#root/service/weibo/weibo-account.js';
 const COOKIE_KEY = 'weibo_cookie'; // Define as a constant class property
 let cookies = await SysDictService.getCookies(COOKIE_KEY);
 let cookiesList=cookies==undefined?[]: cookies.cookies;
@@ -57,6 +58,8 @@ class WeiboTool extends BaseTool {
             }
         } catch (e) {
             console.log(`微博登录失败: ${e}`);
+            throw new Error(`微博登录失败: ${e}`);
+          
         }
     }
 
@@ -65,6 +68,15 @@ class WeiboTool extends BaseTool {
           const storageState = await this.browserContext.storageState();
           const cookieJson = JSON.stringify(storageState);
           await SysDictService.addOrUpdate(COOKIE_KEY, cookieJson);
+          const localStorageData = storageState.origins[0].localStorage;
+          
+          const autoplaySigns = localStorageData.find(item => item.name === 'autoplaySigns')?.value;
+          console.log('autoplaySigns:', autoplaySigns);
+          const userId = autoplaySigns ? Object.keys(JSON.parse(autoplaySigns))[0] : null;
+          console.log('userId:', userId);
+            if (userId) {
+                await WeiboAccountService.saveOrUpdate({id: 1, weibo_account_id: userId.toString()});
+            }
           cookies = JSON.parse(cookieJson);
           cookiesList=cookies==undefined?[]: cookies.cookies;
           console.log("微博cookies保存成功");

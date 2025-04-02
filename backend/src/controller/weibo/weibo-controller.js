@@ -48,7 +48,13 @@ const sendWeibo = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const user = await WeiboService.getUser();
-      
+
+        if (user.userId == null) {
+            console.error('用户信息为空');
+            const responseModel = new ResponseModel({ code: 10000, msg: "用户信息为空" });
+            return res.json(responseModel.modelDump());
+        }
+
         const responseModel = new ResponseModel({ data: user });
         return res.json(responseModel.modelDump());
     } catch (error) {

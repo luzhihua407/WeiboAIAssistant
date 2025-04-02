@@ -12,25 +12,33 @@
     >
     <div class="qrcode-container">
       <div class="spin-content">
-        <a-qrcode
-          :value="qrcodeImg"
-          :status="qrcodeStatus"
-          :icon-size="80"
-          :size="200"
-          @refresh="handleRefresh"
-        />
+        <div v-if="qrcodeStatus !== QRCODE_STATUS.ACTIVE">
+          <a-qrcode
+              value="http://www.antdv.com"
+              :status=qrcodeStatus
+              @refresh="handleRefresh"
+            />
+        </div>
+        <a-image
+            v-else
+            :preview="false"
+            :width="200"
+            :height="200"
+            :src="qrcodeImg"
+          />
       </div>
     </div>
     </a-modal>
 </template>
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { yuanbao_refresh_qrcode } from '../api/yuanbao-api'; // Corrected path
-import { weibo_refresh_qrcode } from '../api/weibo-api'; // Corrected path
+import {login as yuanbao_login } from '../api/yuanbao-api'; // Corrected path
+import {login as weibo_login } from '../api/weibo-api'; // Corrected path
 import { useStore } from 'vuex';
 
 const store = useStore();
 const qrcodeImg  = computed(() => store.state.qrcode);
+const qrcodeStatus  = computed(() => store.state.qrcodeStatus);
 const channel  = computed(() => store.state.channel);
 const open = computed({
   // getter
@@ -43,8 +51,6 @@ const open = computed({
   }
 });
 const loading = ref(false);
-let qrcodeStatus = ref<'active' | 'expired' | 'loading' | 'scanned'>('active'); // Changed to ref
-qrcodeStatus= computed(() => store.state.qrcode);
 const QRCODE_STATUS = {
   ACTIVE: 'active',
   EXPIRED: 'expired',
@@ -53,17 +59,16 @@ const QRCODE_STATUS = {
 } as const;
 
 const handleRefresh = async () => {
-  qrcodeStatus.value = QRCODE_STATUS.LOADING;
+  store.dispatch('setQRcodeStatus', { "qrcodeStatus": QRCODE_STATUS.LOADING });
   try {
     if (channel.value === '微博') {
-      await weibo_refresh_qrcode();
+      await weibo_login();
     }
     if (channel.value === '元宝') {
-      await yuanbao_refresh_qrcode();
+      await yuanbao_login();
     }
-    qrcodeStatus.value = QRCODE_STATUS.ACTIVE;
   } catch (error) {
-    qrcodeStatus.value = QRCODE_STATUS.EXPIRED;
+    store.dispatch('setQRcodeStatus', { "qrcodeStatus": QRCODE_STATUS.EXPIRED });
   }
 };
 </script>

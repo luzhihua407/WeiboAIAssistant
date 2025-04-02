@@ -3,7 +3,6 @@ export const API_URLS = {
   yuanbao: {
     checkLogin: '/yuanbao/checkLogin',
     login: '/yuanbao/login',
-    refreshQrcode: '/yuanbao/refresh_qrcode',
     chat: '/yuanbao/generate_content',
   },
   weibo: {
@@ -12,7 +11,6 @@ export const API_URLS = {
     login: '/weibo/login',
     deleteById: '/weibo/delete',
     sendWeibo: '/weibo/send',
-    refreshQrcode: '/weibo/refresh_qrcode',
     longtext: '/weibo/longtext',
     modifyVisible: '/weibo/modify_visible',
   },

@@ -29,7 +29,7 @@ export default createStore({
       console.log("loginWin=",payload)
       context.commit('openLogin',payload);
     },
-    refreshQRcode(context,payload) {
+    setQRcodeStatus(context,payload) {
       context.commit('setQRcodeStatus',payload);
     },
     setWeiboUserId(context,payload) {

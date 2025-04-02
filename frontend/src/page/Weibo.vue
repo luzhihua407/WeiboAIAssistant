@@ -47,7 +47,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { PlusOutlined,SendOutlined } from '@ant-design/icons-vue';
   import type { UploadChangeParam } from 'ant-design-vue';
-  import { chat, checkLogin, yuanbao_refresh_qrcode } from '../api/yuanbao-api'; // 根据实际路径引入
+  import { chat, checkLogin,login as  yuanbao_login } from '../api/yuanbao-api'; // 根据实际路径引入
 
   const layout = {
     labelCol: { span: 8 },
@@ -83,7 +83,7 @@ async function aichat() {
     const loginResponse = await checkLogin();
     if (loginResponse.code == 200) {
       if (!loginResponse.data.is_logined) {
-        yuanbao_refresh_qrcode();
+        yuanbao_login();
         message.error('请先登录元宝');
         aiLoading.value = false;
         return;

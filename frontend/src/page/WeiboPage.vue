@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { chat, checkLogin,yuanbao_refresh_qrcode } from '../api/yuanbao-api'; // 根据实际路径引入
+import { chat, checkLogin,login as yuanbao_login } from '../api/yuanbao-api'; // 根据实际路径引入
 import { sendWeibo } from '../api/jd-api'; // 根据实际路径引入
 import { message } from 'ant-design-vue';
 const router = useRouter();
@@ -50,7 +50,7 @@ async function aichat() {
     const loginResponse = await checkLogin();
     if (loginResponse.code == 200) {
       if (!loginResponse.data.is_logined) {
-        yuanbao_refresh_qrcode();
+        yuanbao_login();
         message.error('请先登录元宝');
         aiLoading.value = false;
         return;

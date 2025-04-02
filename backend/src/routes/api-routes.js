@@ -12,9 +12,14 @@ const router = express.Router();
 
 // Middleware to check if the user is logged in to Weibo
 router.use(async (req, res, next) => {
+  // Skip middleware for refresh_qrcode routes
+  if (req.path.includes('/login')) {
+    return next();
+  }
+
   const loggedIn = await isWeiboLoggedIn();
   if (!loggedIn) {
-    const responseModel = new ResponseModel({code:401, msg: '请先登录微博' });
+    const responseModel = new ResponseModel({ code: 401, msg: '请先登录微博' });
     return res.status(200).json(responseModel.modelDump());
   }
   next();
@@ -32,14 +37,12 @@ router.get('/weibo/page', weiboController.weiboPage);
 router.get('/weibo/get_user', weiboController.getUser);
 router.get('/weibo/login', weiboController.login);
 router.post('/weibo/delete', weiboController.deleteWeibo);
-router.get('/weibo/refresh_qrcode', weiboController.refreshQRCode);
 router.get('/weibo/longtext', weiboController.longtext);
 router.post('/weibo/modify_visible', weiboController.modifyVisible); // Added route for modifyVisible
 
 // Yuanbao Routes
 router.get('/yuanbao/login', yuanbaoController.login);
 router.get('/yuanbao/checkLogin', yuanbaoController.checkLogin);
-router.get('/yuanbao/refresh_qrcode', yuanbaoController.refreshQRCode);
 router.post('/yuanbao/generate_content', yuanbaoController.chat);
 
 // SysDict Routes

@@ -86,28 +86,6 @@ const login = async (req, res) => {
     }
 };
 
-const refreshQRCode = async (req, res) => {
-    try {
-        await WeiboTool.startBrowser();
-        WeiboTool.getLoginQRCode().then(() => {
-            console.log('二维码已刷新');
-            WeiboTool.stopBrowser().then(() => {
-                console.log('浏览器已关闭');
-            });
-        }).catch((error) => {
-            console.error('刷新二维码失败:', error.message);
-            WeiboTool.stopBrowser().then(() => {
-                console.log('浏览器已关闭');
-            });
-        });
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    } catch (error) {
-        console.error(`捕获到异常: ${error.message}`);
-        const responseModel = new ResponseModel({ code: error.code, msg: error.message });
-        return res.json(responseModel.modelDump());
-    }
-};
 
 const modifyVisible = async (req, res) => {
     const { ids, visible } = req.body; // Extract 'ids' and 'visible' from the request body
@@ -127,6 +105,5 @@ export {
     getUser,
     longtext,
     login,
-    refreshQRCode,
     modifyVisible
 };

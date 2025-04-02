@@ -26,17 +26,6 @@ export async function login(data) {
   }
 }
 
-export async function yuanbao_refresh_qrcode(data) {
-  const url = API_URLS.yuanbao.refreshQrcode;
-  try {
-    const response = await api.get(url, data);
-    console.log('操作成功:', response);
-    return response;
-  } catch (error) {
-    console.error('操作失败:', error);
-    throw error;
-  }
-}
 
 export async function chat(data, onMessage) {
   const url = API_URLS.yuanbao.chat;

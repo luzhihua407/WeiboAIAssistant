@@ -94,8 +94,7 @@ class BaseTool {
                 await this.scanLogin();
             }
         } catch (error) {
-            console.error(`Error during signin: ${error.message}`);
-            throw new Error(`登录失败: ${error.message}`);
+            console.error(`登录超时: ${error.message}`);
         }
     }
 

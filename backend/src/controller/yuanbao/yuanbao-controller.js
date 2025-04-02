@@ -31,24 +31,6 @@ const checkLogin = async (req, res) => {
     }
 };
 
-const refreshQRCode = async (req, res) => {
-   try {
-        await YuanBaoTool.startBrowser();
-        const success=await YuanBaoTool.scanLogin();  // Trigger QR code scan
-        if (!success) {
-            throw new Error('二维码刷新失败');
-        }
-        const responseModel = new ResponseModel();
-        return res.json(responseModel.modelDump());
-    } catch (error) {
-        console.error(`捕获到自定义异常: ${error.message}`);
-        const responseModel = new ResponseModel({ code: error.code, msg: error.message });
-        // 确保在发生错误时也关闭浏览器
-        await YuanBaoTool.stopBrowser();
-        return res.json(responseModel.modelDump());
-    }
-};
-
 const chat = async (req, res) => {
     try {
         const { input } = req.body;
@@ -123,7 +105,6 @@ const chat = async (req, res) => {
 
 export {
     login,
-    refreshQRCode,
     chat,
     checkLogin
 };

@@ -6,6 +6,7 @@ export default createStore({
       login_win_show: false,
       qrcode: null,
       channel: null,
+      qrcodeStatus: null,
       weiboUserId: null
     };
   },
@@ -18,12 +19,18 @@ export default createStore({
     },
     setWeiboUserId(state,data) {
       state.weiboUserId=data.weiboUserId;
+    },
+    setQRcodeStatus(state,data) {
+      state.qrcodeStatus=data.qrcodeStatus;
     }
   },
   actions: {
     loginWin(context,payload) {
       console.log("loginWin=",payload)
       context.commit('openLogin',payload);
+    },
+    refreshQRcode(context,payload) {
+      context.commit('setQRcodeStatus',payload);
     },
     setWeiboUserId(context,payload) {
       context.commit('setWeiboUserId',payload);

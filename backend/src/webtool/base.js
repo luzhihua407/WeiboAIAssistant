@@ -12,6 +12,9 @@ class BaseTool {
 
     async startBrowser() {
         try {
+            if (this.browserContext) {
+                await this.stopBrowser(); // Close any previously opened browser context
+            }
             const { browserContext, page } = await initializeBrowser(this.cookies);
             this.browserContext = browserContext;
             this.page = page;
@@ -92,7 +95,7 @@ class BaseTool {
             }
         } catch (error) {
             console.error(`Error during signin: ${error.message}`);
-            throw new Error(`登录失败: ${e}`);
+            throw new Error(`登录失败: ${error.message}`);
         }
     }
 

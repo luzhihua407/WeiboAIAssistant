@@ -109,8 +109,8 @@ function initWebSocket() {
     console.log('Disconnected from server');
   });
 
-  socket.on('not_login', (data) => {
-    console.log('New message:', data);
+  socket.on('qrcode', (data) => {
+    console.log('qrcode:', data);
 
     const qrcode = data.qrcode
     const channel = data.channel
@@ -118,13 +118,15 @@ function initWebSocket() {
     store.dispatch('loginWin', { "show": true, "qrcode": qrcode, "channel": channel });
   });
   socket.on('login_success', (data) => {
-    console.log('New message:', data);
+    console.log('login_success:', data);
     const islogined = data.islogined
     if (islogined) {
        handleLoginSuccess({ islogined: islogined });
     }else {
       console.log('Login failed');
-      login();
+      //设置二维码过期
+      const expired = 'expired'
+      store.dispatch('refreshQRcode', { "qrcodeStatus": expired });
     }
   });
 }

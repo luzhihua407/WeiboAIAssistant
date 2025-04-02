@@ -103,7 +103,7 @@ class YuanBaoTool extends BaseTool {
             const qrcodeResponse = await this.page.waitForResponse(response => response.url().includes("qrcode") && response.status() === 200, { timeout: 60000 });
             const qrcodeUrl = qrcodeResponse.url();
             console.log("QR Code URL:", qrcodeUrl);
-            await sendNotification("not_login", { qrcode: qrcodeUrl, channel: "元宝" });
+            await sendNotification("qrcode", { qrcode: qrcodeUrl, channel: "元宝" });
             const response = await responseInfo;
             if (response.status() === 200) {
                 await this.saveCookie();

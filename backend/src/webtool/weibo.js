@@ -31,7 +31,7 @@ class WeiboTool extends BaseTool {
     async getLoginQRCode() {
         const qrcodePath = await this.getQRCodeImg();
         console.log("发起微博登录扫码");
-        await sendNotification("not_login", { qrcode: qrcodePath, channel: '微博' });
+        await sendNotification("qrcode", { qrcode: qrcodePath, channel: '微博' });
     }
 
     async getQRCodeImg() {
@@ -58,6 +58,7 @@ class WeiboTool extends BaseTool {
             }
         } catch (e) {
             console.log(`微博登录失败: ${e}`);
+            await sendNotification("login_success", { islogined: false });
             throw new Error(`微博登录失败: ${e}`);
           
         }

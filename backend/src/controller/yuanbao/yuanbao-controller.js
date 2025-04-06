@@ -4,14 +4,18 @@ import WeiboAccountService from '../../service/weibo/weibo-account.js';
     
 const login = async (req, res) => {
     try {
-        await YuanBaoTool.startBrowser();
-        const isLogined = await YuanBaoTool.isLogined();
-        if (!isLogined) {
-            YuanBaoTool.scanLogin();  // In real app, this would trigger QR code scan
-        }
-        await YuanBaoTool.stopBrowser();  // Close the browser after checking login status
-        const responseModel = new ResponseModel({ data: { is_logined: isLogined } });
-        return res.json(responseModel.modelDump());
+                await YuanBaoTool.startBrowser();
+                YuanBaoTool.signin().then(() => {
+                }).catch((error) => {
+                    console.error('登录失败:', error.message);
+                }).finally(() => {
+                    console.log('登录流程结束');
+                    YuanBaoTool.stopBrowser().then(() => {
+                        console.log('浏览器已关闭');
+                    });
+                });
+                const responseModel = new ResponseModel();
+                return res.json(responseModel.modelDump());
     } catch (error) {
         console.error(`捕获到自定义异常: ${error}`);
         const responseModel = new ResponseModel({ code: error.code, msg: error.message });

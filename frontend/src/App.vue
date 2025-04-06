@@ -70,6 +70,8 @@ const openKeys = ref<string[]>(['1']);
 const store = useStore();
 async function handleLoginSuccess(data: { islogined: boolean }) {
   if (data.islogined) {
+    store.dispatch('loginWin', { "show": false });
+    console.log('Login successful');
     const response=await get_user()
     if (response.code==200) {
       user.value=response.data
@@ -77,8 +79,7 @@ async function handleLoginSuccess(data: { islogined: boolean }) {
       console.log(assetUrl)
       user_pic.value=assetUrl
       isLogined.value=true
-      store.dispatch('loginWin', { "show": false });
-      console.log('Login successful');
+
     }
   } else {
     console.log('Login failed');

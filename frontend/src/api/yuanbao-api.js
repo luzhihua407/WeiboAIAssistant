@@ -51,12 +51,14 @@ export async function chat(data, onMessage) {
       done = readerDone;
       if (value) {
         let chunk = decoder.decode(value, { stream: true });
-        const match = chunk.match(/data: ({.+})/);
-        if (match) {
-          const parsed = JSON.parse(match[1]);
-          if (parsed.msg) {
-              onMessage(parsed.msg);
-          }
+        if (!chunk.startsWith('data: {"type":"text"')) {
+          continue;
+        }
+        const match = chunk.match(/"msg":"(.*?)"/);
+        if (match && match[1]) {
+          const msgValue = match[1];
+          console.log('Extracted msg value:', msgValue);
+          onMessage(msgValue.replaceAll("\\n","<br>"));
         }
       }
     }

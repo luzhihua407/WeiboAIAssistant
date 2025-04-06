@@ -112,6 +112,7 @@ class YuanBaoTool extends BaseTool {
             return true;
         } catch (error) {
             console.error('元宝登录失败:', error);
+            await sendNotification("login_success", { islogined: false });
         }
     }
     async saveCookie() {

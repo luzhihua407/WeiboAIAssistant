@@ -70,7 +70,6 @@ const login = async (req, res) => {
         WeiboTool.signin().then(() => {
         }).catch((error) => {
             console.error('登录失败:', error.message);
-            socket.emit('loginError', 'Login failed!');
         }).finally(() => {
             console.log('登录流程结束');
             WeiboTool.stopBrowser().then(() => {

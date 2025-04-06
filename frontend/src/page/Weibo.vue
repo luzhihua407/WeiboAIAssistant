@@ -92,8 +92,7 @@ async function aichat() {
     currentContent.value = ''; // Clear previous content
     await chat({ input: formState.content }, (chunk) => {
       currentContent.value += chunk; // Append to the actual value of the ref
-      quillRef.value.setText(currentContent.value); // Insert new content into Quill editor
-      console.log('currentContent:',currentContent.value); // Log the received chunk
+      quillRef.value.setHTML(currentContent.value); // Insert new content into Quill editor
     });
 
     message.success('生成内容完成');
@@ -153,7 +152,7 @@ const onSubmit =async () => {
     if(response.code==200){
       formRef.value.resetFields()
       img_list.value=[]
-      quillRef.value.setText('')
+      quillRef.value.setHTML('')
       message.success('发布成功');
     }
     
@@ -168,7 +167,7 @@ const onSubmit =async () => {
 
 function clearContent() {
   formState.content = ''; // Clear the reactive content state
-  quillRef.value.setText(''); // Clear the Quill editor content
+  quillRef.value.setHTML(''); // Clear the Quill editor content
 }
   </script>
 <style scoped>

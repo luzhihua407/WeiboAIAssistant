@@ -74,6 +74,7 @@
 <script>
 import { reactive, watch, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
+import { useStore } from 'vuex';
 import {
     getAllWeiboAccounts,
     getJdAppConfigById,
@@ -109,6 +110,8 @@ export default {
           { required: true, message: '请输入系统提示词' },
       ],
     };
+
+    const store = useStore();
 
     const loadSettings = async () => {
       try {
@@ -162,6 +165,7 @@ export default {
         formState.system_prompt = '';
         formState.jd_app_key = '';
         formState.jd_app_secret = '';
+        store.commit('triggerLogout'); // Trigger logout in the store
       } catch (error) {
         message.error('退出失败');
         console.error(error);

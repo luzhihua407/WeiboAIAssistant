@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    rpa_app_ui_lib::run()
+    WeiboAIAssistant_lib::run()
 }

@@ -7,7 +7,8 @@ export default createStore({
       qrcode: null,
       channel: null,
       qrcodeStatus: null,
-      weiboUserId: null
+      weiboUserId: null,
+      isLoggedOut: false
     };
   },
   mutations: {
@@ -22,6 +23,12 @@ export default createStore({
     },
     setQRcodeStatus(state,data) {
       state.qrcodeStatus=data.qrcodeStatus;
+    },
+    triggerLogout(state) {
+      state.isLoggedOut = true;
+    },
+    resetLogoutState(state) {
+      state.isLoggedOut = false;
     }
   },
   actions: {

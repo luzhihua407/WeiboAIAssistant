@@ -23,15 +23,15 @@
         </a-sub-menu>
       </a-menu>
       <div style="position: absolute; bottom: 0; width: 100%; padding: 10px; background: #d3d3d3; text-align: center;">
-        <RouterLink to="/setting">
-        <a-avatar :src="user_pic" v-if="isLogined == true" />
-        <a-avatar v-if="isLogined == false">
-          <template #icon>
-            <UserOutlined />
-          </template>
-        </a-avatar>
-        <span style="margin-left: 10px;">{{ user?.screenName || '未登录' }}</span>
-      </RouterLink>
+        <RouterLink to="/setting" @click="clearSelectedKeys">
+          <a-avatar :src="user_pic" v-if="isLogined == true" />
+          <a-avatar v-if="isLogined == false">
+            <template #icon>
+              <UserOutlined />
+            </template>
+          </a-avatar>
+          <span style="margin-left: 10px;">{{ user?.screenName || '未登录' }}</span>
+        </RouterLink>
       </div>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
@@ -53,7 +53,7 @@ import {
   WeiboOutlined,
   TableOutlined
 } from '@ant-design/icons-vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import Login from "./page/Login.vue";
 import { RouterLink, RouterView } from 'vue-router';
 import { get_user, login } from './api/weibo-api'; // Corrected import path
@@ -128,9 +128,30 @@ function initWebSocket() {
     }
   });
 }
+function clearSelectedKeys() {
+  selectedKeys.value = [];
+  // Force reactivity update
+  setTimeout(() => {
+    selectedKeys.value = [];
+  }, 0);
+}
 onMounted(() => {
-  initWebSocket()
-  loginIfNotLoggedIn()
+  initWebSocket();
+  loginIfNotLoggedIn();
+
+  // Watch for logout action in the store
+  watch(
+    () => store.state.isLoggedOut,
+    (isLoggedOut) => {
+      if (isLoggedOut) {
+        user.value = { screenName: '', userImg: '' };
+        user_pic.value = '';
+        isLogined.value = false;
+        store.commit('resetLogoutState'); // Reset the logout state in the store
+        loginIfNotLoggedIn(); // Re-login after logout
+      }
+    }
+  );
 });
 </script>
 

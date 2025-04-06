@@ -121,7 +121,7 @@ class YuanBaoTool extends BaseTool {
           const cookieJson = JSON.stringify(storageState);
           await SysDictService.addOrUpdate(COOKIE_KEY, cookieJson);
           cookies = JSON.parse(cookieJson); // Update the class property with the new cookies
-
+          this.cookies = cookies; // Update the parent class's cookies property
           console.info(`元宝cookies保存成功`);
       } catch (error) {
           console.error(`Failed to save cookies: ${error.message}`);
